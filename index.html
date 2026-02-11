@@ -9,7 +9,7 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="data.js"></script>
     <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Roboto+Mono:wght@400;700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Ubuntu+Mono:wght@400;700&display=swap"
         rel="stylesheet">
     <style>
         :root {
@@ -282,11 +282,19 @@
         }
 
         .mono {
-            font-family: 'Roboto Mono', monospace;
+            font-family: 'Ubuntu Mono', monospace;
             background: var(--accent-bg);
             color: var(--text);
             border: 1px solid var(--border);
             font-weight: 700;
+            font-size: 1.1rem !important;
+            letter-spacing: 0.02em;
+        }
+
+        .light-mode .mono {
+            color: #000;
+            background: #e2e8f0;
+            border-color: #cbd5e1;
         }
 
         .badge {
