@@ -442,6 +442,11 @@
                 <i data-lucide="sun" class="w-5 h-5 block dark-icon"></i>
                 <i data-lucide="moon" class="w-5 h-5 hidden light-icon"></i>
             </button>
+            <button id="fullscreenToggle" class="p-2 text-zinc-500 hover:text-white transition-colors"
+                title="Plein écran">
+                <i data-lucide="maximize" class="w-5 h-5 block max-icon"></i>
+                <i data-lucide="minimize" class="w-5 h-5 hidden min-icon"></i>
+            </button>
             <div class="h-8 w-px bg-white/5 mx-2"></div>
             <button class="view-toggle-btn" data-view="grid" title="Grille">
                 <i data-lucide="layout-grid" class="w-4 h-4"></i>
@@ -823,6 +828,41 @@
             localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
             updateThemeIcons();
         });
+
+        // Fullscreen Logic
+        const fullscreenToggle = document.getElementById('fullscreenToggle');
+        fullscreenToggle.addEventListener('click', () => {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.error(`Error attempting to enable full-screen mode: ${err.message}`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        });
+
+        document.addEventListener('fullscreenchange', () => {
+            const maxIcon = document.querySelector('.max-icon');
+            const minIcon = document.querySelector('.min-icon');
+            if (document.fullscreenElement) {
+                maxIcon.classList.add('hidden');
+                minIcon.classList.remove('hidden');
+            } else {
+                maxIcon.classList.remove('hidden');
+                minIcon.classList.add('hidden');
+            }
+        });
+
+        // Auto-fullscreen on first click
+        const firstClickFullscreen = () => {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(() => { });
+            }
+            document.removeEventListener('click', firstClickFullscreen);
+        };
+        document.addEventListener('click', firstClickFullscreen);
 
         function updateThemeIcons() {
             const sun = document.querySelector('.dark-icon');
