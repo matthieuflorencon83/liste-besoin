@@ -139,8 +139,8 @@ try:
     df = df.replace({float('nan'): None})
     df = df.where(pd.notnull(df), None)
     
-    # Robust NaN handling for all types
-    print("DataFrame columns:", df.columns.tolist())
+    # Deduplicate columns before export to avoid missing data
+    df = df.loc[:, ~df.columns.duplicated()]
     data = df.to_dict(orient='records')
     cleaned_data = []
     for row in data:
