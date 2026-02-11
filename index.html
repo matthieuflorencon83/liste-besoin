@@ -213,7 +213,7 @@
         }
 
         .view-toggle-btn.active {
-            background: var(--accent);
+            background: var(--indigo);
             color: white;
         }
 
@@ -419,10 +419,6 @@
                     class="bg-zinc-900 light-mode:bg-white border border-white/10 light-mode:border-slate-200 rounded-md px-2 py-1.5 text-xs outline-none focus:border-indigo-500 min-w-[120px]">
                     <option value="">Type</option>
                 </select>
-                <button id="resetFilters" class="p-2 text-zinc-500 hover:text-white transition-colors"
-                    title="Réinitialiser">
-                    <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
-                </button>
             </div>
         </div>
 
@@ -446,9 +442,6 @@
             </button>
             <button class="view-toggle-btn" data-view="list" title="Liste">
                 <i data-lucide="list" class="w-4 h-4"></i>
-            </button>
-            <button id="resetFilters" class="text-zinc-500 hover:text-white transition-colors" title="Réinitialiser">
-                <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
             </button>
         </div>
 
@@ -803,13 +796,7 @@
             render();
         });
 
-        document.getElementById('resetFilters').addEventListener('click', () => {
-            [fFournisseur, fGamme, fSerie, fType].forEach(el => el.value = "");
-            searchInput.value = "";
-            showOnlyFavs = false;
-            toggleFavFilterBtn.classList.remove('active');
-            handleFilterChange();
-        });
+        // Favorites logic...
 
         toggleFavFilterBtn.addEventListener('click', () => {
             showOnlyFavs = !showOnlyFavs;
