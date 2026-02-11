@@ -13,25 +13,48 @@
         rel="stylesheet">
     <style>
         :root {
+            /* DARK MODE (DEFAULT) */
             --canvas: #09090b;
-            --surface: #18181b;
-            --border: rgba(255, 255, 255, 0.08);
-            --accent: #4f46e5;
-            --text-main: #f4f4f5;
+            --card: #18181b;
+            --card-hover: #27272a;
+            --text: #fafafa;
             --text-muted: #a1a1aa;
+            --border: rgba(255, 255, 255, 0.08);
+            --glass: rgba(24, 24, 27, 0.8);
+            --price-bg: #10b98115;
+            --indigo: #6366f1;
+        }
+
+        .light-mode {
+            --canvas: #f8fafc;
+            --card: #ffffff;
+            --card-hover: #f1f5f9;
+            --text: #0f172a;
+            --text-muted: #64748b;
+            --border: rgba(0, 0, 0, 0.08);
+            --glass: rgba(255, 255, 255, 0.8);
+            --price-bg: #10b98110;
+            --indigo: #4f46e5;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
         }
 
         body {
-            font-family: 'Inter', sans-serif;
             background-color: var(--canvas);
-            color: var(--text-main);
-            overflow: hidden;
+            color: var(--text);
+            overflow-x: hidden;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
         .glass {
-            background: rgba(24, 24, 27, 0.8);
+            background: var(--glass);
             backdrop-filter: blur(12px);
-            border: 1px solid var(--border);
+            -webkit-backdrop-filter: blur(12px);
         }
 
         .custom-scrollbar::-webkit-scrollbar {
@@ -70,8 +93,9 @@
         }
 
         .item-card {
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            background: var(--card);
             border: 1px solid var(--border);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             display: flex;
             flex-direction: column;
         }
@@ -84,9 +108,14 @@
         }
 
         .item-card:hover {
-            border-color: var(--accent);
-            background: rgba(79, 70, 229, 0.05);
-            transform: translateY(-2px);
+            transform: translateY(-4px);
+            border-color: var(--indigo);
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+            background: var(--card-hover);
+        }
+
+        .light-mode .item-card:hover {
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.1);
         }
 
         .img-container {
@@ -276,6 +305,32 @@
             border-radius: 999px;
             border: 2px solid var(--canvas);
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            transition: border-color 0.3s ease;
+        }
+
+        .mode-toggle-btn {
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            transition: color 0.2s, background-color 0.2s;
+            color: #71717a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .mode-toggle-btn:hover {
+            color: white;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .light-mode .mode-toggle-btn {
+            color: #64748b;
+        }
+
+        .light-mode .mode-toggle-btn:hover {
+            color: #0f172a;
+            background: rgba(0, 0, 0, 0.05);
         }
 
         /* Modal Visualizer */
@@ -338,6 +393,11 @@
                 <i data-lucide="star" class="w-4 h-4"></i>
                 <span class="hidden md:inline">Favoris</span>
                 <span id="favCountBadge" class="fav-badge hidden">0</span>
+            </button>
+            <button id="modeToggle" class="p-2 text-zinc-500 hover:text-white transition-colors"
+                title="Changer de mode">
+                <i data-lucide="sun" class="w-5 h-5 block dark-icon"></i>
+                <i data-lucide="moon" class="w-5 h-5 hidden light-icon"></i>
             </button>
             <div class="h-8 w-px bg-white/5 mx-2"></div>
             <button class="view-toggle-btn" data-view="grid" title="Grille">
@@ -411,6 +471,10 @@
         let currentView = 'compact';
         let favorites = JSON.parse(localStorage.getItem('art-favs') || '[]');
         let showOnlyFavs = false;
+        let isDarkMode = localStorage.getItem('theme') !== 'light';
+
+        // Apply theme early
+        if (!isDarkMode) document.body.classList.add('light-mode');
 
         // UI Elements
         const grid = document.getElementById('itemsGrid');
@@ -694,6 +758,28 @@
         document.querySelectorAll('.view-toggle-btn').forEach(btn => {
             btn.addEventListener('click', () => setView(btn.dataset.view));
         });
+
+        document.getElementById('modeToggle').addEventListener('click', () => {
+            isDarkMode = !isDarkMode;
+            document.body.classList.toggle('light-mode', !isDarkMode);
+            localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
+            updateThemeIcons();
+        });
+
+        function updateThemeIcons() {
+            const sun = document.querySelector('.dark-icon');
+            const moon = document.querySelector('.light-icon');
+            if (isDarkMode) {
+                sun.classList.remove('hidden');
+                moon.classList.add('hidden');
+            } else {
+                sun.classList.add('hidden');
+                moon.classList.remove('hidden');
+            }
+        }
+
+        // Init icons
+        updateThemeIcons();
 
         // VISUALIZER LOGIC
         window.openVisualizer = (src) => {
