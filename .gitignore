@@ -1,0 +1,11 @@
+data.js
+Installux/
+img_arcellor/
+analyze_excel.py
+merge_excel.py
+check_merge.py
+count_missing.py
+debug_meplat.py
+*.xlsx
+*.xlsm
+node_modules/

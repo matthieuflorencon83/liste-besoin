@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="fr" class="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catalogue Arts Alu 2026</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="data.js"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --canvas: #09090b;
+            --surface: #18181b;
+            --border: rgba(255, 255, 255, 0.08);
+            --accent: #4f46e5;
+            --text-main: #f4f4f5;
+            --text-muted: #a1a1aa;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--canvas);
+            color: var(--text-main);
+            overflow: hidden;
+        }
+
+        .glass {
+            background: rgba(24, 24, 27, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border);
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 10px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .grid-layout {
+            display: grid;
+            gap: 16px;
+        }
+
+        /* View Modes */
+        .view-grid {
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        }
+
+        .view-compact {
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        }
+
+        .view-list {
+            grid-template-columns: 1fr;
+        }
+
+        .item-card {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .view-list .item-card {
+            flex-direction: row;
+            align-items: center;
+            height: 80px;
+            padding: 8px 16px;
+        }
+
+        .item-card:hover {
+            border-color: var(--accent);
+            background: rgba(79, 70, 229, 0.05);
+            transform: translateY(-2px);
+        }
+
+        .img-container {
+            background: rgba(24, 24, 27, 0.5);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .view-grid .img-container {
+            width: 100%;
+            height: 128px;
+            margin-bottom: 8px;
+        }
+
+        .view-compact .img-container {
+            width: 100%;
+            height: 80px;
+            margin-bottom: 4px;
+        }
+
+        .view-list .img-container {
+            width: 60px;
+            height: 60px;
+            margin-right: 16px;
+            margin-bottom: 0;
+        }
+
+        .view-compact .item-card h3 {
+            font-size: 13px;
+        }
+
+        .view-compact .badge {
+            display: none;
+        }
+
+        .view-compact .price-grid {
+            border: none;
+            padding-top: 0;
+            margin-top: 4px;
+        }
+
+        .view-list .item-card .details-box {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .view-list h3 {
+            width: 300px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-bottom: 0;
+        }
+
+        .view-list .price-grid {
+            border: none;
+            padding-top: 0;
+            margin-top: 0;
+            display: flex;
+            gap: 24px;
+        }
+
+        .view-list .badge {
+            width: 100px;
+            text-align: center;
+        }
+
+        .badge {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 2px 8px;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+        }
+
+        .view-toggle-btn {
+            padding: 6px;
+            border-radius: 6px;
+            color: var(--text-muted);
+            transition: all 0.2s;
+        }
+
+        .view-toggle-btn.active {
+            background: var(--accent);
+            color: white;
+        }
+
+        .mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fade {
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+
+        /* Favorites */
+        .fav-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            z-index: 10;
+            padding: 6px;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.3);
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .fav-btn:hover {
+            transform: scale(1.1);
+            background: rgba(0, 0, 0, 0.6);
+            color: #fbbf24;
+        }
+
+        .fav-btn.active {
+            color: #fbbf24;
+            background: rgba(251, 191, 36, 0.1);
+            border-color: rgba(251, 191, 36, 0.4);
+        }
+
+        .view-list .fav-btn {
+            position: static;
+            margin-left: auto;
+            background: transparent;
+            border: none;
+            backdrop-filter: none;
+        }
+
+        .toggle-fav-filter {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            transition: all 0.2s;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+        }
+
+        .toggle-fav-filter.active {
+            background: #fbbf24;
+            color: #000;
+            border-color: #fbbf24;
+        }
+
+        /* Modal Visualizer */
+        #imageModal {
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        #imageModal.hidden {
+            opacity: 0;
+            visibility: hidden;
+            display: flex !important;
+            /* Keep display flex but hide with opacity */
+        }
+    </style>
+</head>
+
+<body class="flex flex-col h-screen">
+
+    <!-- TOP NAV -->
+    <header class="h-16 flex items-center justify-between px-6 border-b border-white/5 glass z-50 gap-4">
+        <div class="flex items-center gap-3 shrink-0">
+            <div class="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center">
+                <i data-lucide="layers" class="w-5 h-5 text-white"></i>
+            </div>
+            <h1 class="font-bold tracking-tight text-lg hidden sm:block">ARTS ALU <span
+                    class="text-indigo-500">2026</span></h1>
+        </div>
+
+        <!-- FILTERS IN HEADER -->
+        <div class="flex-1 flex items-center gap-2 overflow-x-auto no-scrollbar py-2">
+            <select id="filterFournisseur"
+                class="bg-zinc-900 border border-white/10 rounded-md px-2 py-1.5 text-xs outline-none focus:border-indigo-500 min-w-[120px]">
+                <option value="">Fournisseur</option>
+            </select>
+            <select id="filterGamme"
+                class="bg-zinc-900 border border-white/10 rounded-md px-2 py-1.5 text-xs outline-none focus:border-indigo-500 min-w-[120px]">
+                <option value="">Gamme</option>
+            </select>
+            <select id="filterSerie"
+                class="bg-zinc-900 border border-white/10 rounded-md px-2 py-1.5 text-xs outline-none focus:border-indigo-500 min-w-[120px]">
+                <option value="">Série</option>
+            </select>
+            <select id="filterType"
+                class="bg-zinc-900 border border-white/10 rounded-md px-2 py-1.5 text-xs outline-none focus:border-indigo-500 min-w-[120px]">
+                <option value="">Type</option>
+            </select>
+        </div>
+
+        <div class="flex items-center gap-2 border-l border-white/5 pl-4 shrink-0">
+            <button id="toggleFavFilter" class="toggle-fav-filter">
+                <i data-lucide="star" class="w-4 h-4"></i>
+                <span class="hidden md:inline">Favoris</span>
+            </button>
+            <div class="h-8 w-px bg-white/5 mx-2"></div>
+            <button class="view-toggle-btn" data-view="grid" title="Grille">
+                <i data-lucide="layout-grid" class="w-4 h-4"></i>
+            </button>
+            <button class="view-toggle-btn active" data-view="compact" title="Compact">
+                <i data-lucide="grid-2x2" class="w-4 h-4"></i>
+            </button>
+            <button class="view-toggle-btn" data-view="list" title="Liste">
+                <i data-lucide="list" class="w-4 h-4"></i>
+            </button>
+            <button id="resetFilters" class="text-zinc-500 hover:text-white transition-colors" title="Réinitialiser">
+                <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+            </button>
+        </div>
+
+        <!-- SEARCH REDUCED -->
+        <div class="w-48 shrink-0">
+            <div class="relative group">
+                <i data-lucide="search"
+                    class="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-zinc-500 group-focus-within:text-indigo-400 transition-colors"></i>
+                <input type="text" id="globalSearch" placeholder="Chercher..."
+                    class="w-full bg-zinc-900/50 border border-white/5 rounded-full py-1.5 pl-9 pr-4 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all">
+            </div>
+        </div>
+
+        <div class="flex items-center gap-4 ml-4 shrink-0">
+            <div
+                class="flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/20 px-3 py-1.5 rounded-full text-emerald-400 text-xs font-bold">
+                <span id="matchCount">0</span> articles
+            </div>
+            <button id="resetFilters" class="text-zinc-500 hover:text-white transition-colors" title="Réinitialiser">
+                <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+            </button>
+        </div>
+    </header>
+
+    <div class="flex flex-1 overflow-hidden">
+        <!-- SIDEBAR DELETED (AS REQUESTED) -->
+
+        <!-- CONTENT AREA FULL WIDTH -->
+        <main class="flex-1 flex flex-col bg-zinc-900/20 relative">
+            <div id="loadingOverlay" class="absolute inset-0 flex items-center justify-center bg-zinc-950/80 z-40">
+                <div class="flex flex-col items-center gap-4">
+                    <div class="w-10 h-10 border-4 border-indigo-500/20 border-t-indigo-500 rounded-full animate-spin">
+                    </div>
+                    <p class="text-sm text-zinc-400 font-medium">Chargement du catalogue...</p>
+                </div>
+            </div>
+
+            <!-- IMAGE MODAL -->
+            <div id="imageModal"
+                class="fixed inset-0 z-[100] bg-black/90 flex items-center justify-center p-4 cursor-zoom-out hidden">
+                <button class="absolute top-6 right-6 p-2 text-white/50 hover:text-white transition-colors">
+                    <i data-lucide="x" class="w-8 h-8"></i>
+                </button>
+                <img id="modalImage" src="" alt="Enlarged profile"
+                    class="max-w-full max-h-full object-contain shadow-2xl rounded-lg">
+            </div>
+
+            <main class="flex-1 overflow-y-auto custom-scrollbar p-6 bg-zinc-950/50">
+                <div id="itemsGrid" class="grid-layout view-grid">
+                    <!-- Cards injection -->
+                </div>
+
+                <div id="emptyState" class="hidden flex-col items-center justify-center h-64 text-zinc-500 gap-4">
+                    <i data-lucide="search-x" class="w-12 h-12 opacity-20"></i>
+                    <p>Aucun article ne correspond à votre recherche</p>
+                </div>
+
+                <div id="loadMoreContainer" class="hidden py-12 flex justify-center">
+                    <button id="loadMoreBtn"
+                        class="px-8 py-3 bg-white/5 border border-white/10 rounded-full text-sm font-semibold hover:bg-white/10 transition-all scale-100 active:scale-95">
+                        Charger plus d'articles
+                    </button>
+                </div>
+            </main>
+        </main>
+    </div>
+
+    <script>
+        const INCREMENT = 50;
+        let rawData = [];
+        let groupedData = [];
+        let filteredData = [];
+        let displayCount = INCREMENT;
+        let currentView = 'compact';
+        let favorites = JSON.parse(localStorage.getItem('art-favs') || '[]');
+        let showOnlyFavs = false;
+
+        // UI Elements
+        const grid = document.getElementById('itemsGrid');
+        const searchInput = document.getElementById('globalSearch');
+        const loadMoreBtn = document.getElementById('loadMoreBtn');
+        const loadMoreContainer = document.getElementById('loadMoreContainer');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const emptyState = document.getElementById('emptyState');
+        const imageModal = document.getElementById('imageModal');
+        const modalImage = document.getElementById('modalImage');
+        const toggleFavFilterBtn = document.getElementById('toggleFavFilter');
+
+        // Filters
+        const fFournisseur = document.getElementById('filterFournisseur');
+        const fGamme = document.getElementById('filterGamme');
+        const fSerie = document.getElementById('filterSerie');
+        const fType = document.getElementById('filterType');
+
+        // Pre-grouping logic with priority
+        function groupArticlesByRef(data) {
+            const groups = {};
+            data.forEach(item => {
+                // Unique key: Ref + Fabricant/Fournisseur + Designation
+                const key = `${item.reference || ''}_${item.fournisseur || item.fabricant || ''}_${item.designation || ''}`.toLowerCase();
+                const existing = groups[key];
+
+                if (!existing) {
+                    groups[key] = item;
+                } else {
+                    const existingDecor = String(existing.decor || '').toUpperCase();
+                    const newDecor = String(item.decor || '').toUpperCase();
+
+                    // Priority: 9010 > (BRUT/BT) > Current
+                    if (newDecor === '9010') {
+                        groups[key] = item;
+                    } else if ((newDecor.includes('BRUT') || newDecor === 'BT') && existingDecor !== '9010') {
+                        groups[key] = item;
+                    }
+                }
+            });
+            return Object.values(groups);
+        }
+
+        async function loadData() {
+            lucide.createIcons();
+            try {
+                if (!window.ART_DATA) {
+                    throw new Error("Données ART_DATA non trouvées.");
+                }
+                rawData = window.ART_DATA;
+                // Grouping only once on load for performance
+                groupedData = groupArticlesByRef(rawData);
+
+                populateFilter(fFournisseur, 'fournisseur');
+                populateFilter(fGamme, 'gamme');
+                populateFilter(fSerie, 'serie');
+                populateFilter(fType, 'type');
+
+                applyFilters();
+                loadingOverlay.classList.add('hidden');
+            } catch (err) {
+                console.error('Failed to load data:', err);
+                loadingOverlay.innerHTML = '<p class="text-red-400">Erreur lors du chargement des données. Assurez-vous que data.js est généré.</p>';
+            }
+        }
+
+        function populateFilter(select, field) {
+            const values = [...new Set(rawData.map(item => item[field]).filter(Boolean))].sort();
+            values.forEach(val => {
+                const opt = document.createElement('option');
+                opt.value = val;
+                opt.textContent = val;
+                select.appendChild(opt);
+            });
+        }
+
+        function handleFilterChange() {
+            const fournisseur = fFournisseur.value;
+            const gamme = fGamme.value;
+
+            // Update Gamme options based on selected Fournisseur
+            const dataForGamme = rawData.filter(item => !fournisseur || item.fournisseur === fournisseur);
+            const uniqueGammes = [...new Set(dataForGamme.map(item => item.gamme).filter(Boolean))].sort();
+            updateSelectOptions(fGamme, uniqueGammes, "Gamme");
+
+            // Update Serie options based on selected Fournisseur and Gamme
+            const dataForSerie = dataForGamme.filter(item => !gamme || item.gamme === gamme);
+            const uniqueSeries = [...new Set(dataForSerie.map(item => item.serie).filter(Boolean))].sort();
+            updateSelectOptions(fSerie, uniqueSeries, "Série");
+
+            // Update Type options based on selected Fournisseur, Gamme, and Serie
+            const dataForType = dataForSerie.filter(item => !fSerie.value || item.serie === fSerie.value);
+            const uniqueTypes = [...new Set(dataForType.map(item => item.type).filter(Boolean))].sort();
+            updateSelectOptions(fType, uniqueTypes, "Type");
+
+            applyFilters();
+        }
+
+        function updateSelectOptions(select, values, label) {
+            const currentVal = select.value;
+            select.innerHTML = `<option value="">${label}</option>`;
+            values.forEach(val => {
+                const opt = document.createElement('option');
+                opt.value = val;
+                opt.textContent = val;
+                if (val === currentVal) opt.selected = true;
+                select.appendChild(opt);
+            });
+            // If current value is no longer in options, reset to default
+            if (!values.includes(currentVal)) {
+                select.value = "";
+            }
+        }
+
+        function applyFilters() {
+            const query = searchInput.value.toLowerCase().trim();
+            const four = fFournisseur.value;
+            const gamme = fGamme.value;
+            const serie = fSerie.value;
+            const type = fType.value;
+
+            filteredData = groupedData.filter(item => {
+                const id = `${item.reference}_${item.fournisseur || item.fabricant || ''}`.toLowerCase();
+                const isFav = favorites.includes(id);
+                if (showOnlyFavs && !isFav) return false;
+
+                const matchesSearch = !query ||
+                    (item.reference && String(item.reference).toLowerCase().includes(query)) ||
+                    (item.designation && item.designation.toLowerCase().includes(query));
+
+                const matchesFou = !four || item.fournisseur === four;
+                const matchesGamme = !gamme || item.gamme === gamme;
+                const matchesSerie = !serie || item.serie === serie;
+                const matchesType = !type || item.type === type;
+
+                return matchesSearch && matchesFou && matchesGamme && matchesSerie && matchesType;
+            });
+
+            document.getElementById('matchCount').textContent = filteredData.length;
+            displayCount = INCREMENT;
+            render();
+        }
+
+        function toggleFav(e, ref, fou) {
+            e.stopPropagation();
+            const id = `${ref}_${fou || ''}`.toLowerCase();
+            const index = favorites.indexOf(id);
+            if (index > -1) {
+                favorites.splice(index, 1);
+            } else {
+                favorites.push(id);
+            }
+            localStorage.setItem('art-favs', JSON.stringify(favorites));
+            render();
+            if (showOnlyFavs) applyFilters();
+        }
+
+        function setView(view) {
+            currentView = view;
+            grid.className = `grid-layout view-${view}`;
+            document.querySelectorAll('.view-toggle-btn').forEach(b => {
+                b.classList.toggle('active', b.dataset.view === view);
+            });
+            render();
+        }
+
+        function render() {
+            grid.innerHTML = '';
+            const itemsToDisplay = filteredData.slice(0, displayCount);
+
+            if (itemsToDisplay.length === 0) {
+                emptyState.classList.remove('hidden');
+                loadMoreContainer.classList.add('hidden');
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+
+            itemsToDisplay.forEach((item, idx) => {
+                const id = `${item.reference}_${item.fournisseur || item.fabricant || ''}`.toLowerCase();
+                const isFav = favorites.includes(id);
+
+                const card = document.createElement('div');
+                card.className = 'item-card glass rounded-xl animate-fade overflow-hidden group p-4 relative';
+                if (currentView === 'grid') card.classList.add('gap-3');
+
+                card.style.animationDelay = `${(idx % 20) * 15}ms`;
+
+                const pxPublic = item.px_public ? Number(item.px_public).toFixed(2) + ' €' : '-';
+                const pxRemise = item.px_remise ? Number(item.px_remise).toFixed(2) + ' €' : '-';
+
+                const favBtnHtml = `
+                    <button class="fav-btn ${isFav ? 'active' : ''}" onclick="toggleFav(event, '${item.reference}', '${item.fournisseur || item.fabricant || ''}')">
+                        <i data-lucide="star" class="w-4 h-4 ${isFav ? 'fill-current' : ''}"></i>
+                    </button>
+                `;
+
+                // Image HTML with dynamic classes based on view
+                const imgHtml = item.image
+                    ? `<div class="img-container cursor-zoom-in group/img" onclick="openVisualizer('${item.image}')">
+                         <img src="${item.image}" alt="Profile" class="h-full w-auto object-contain transition-transform duration-500 group-hover:scale-110 group-hover/img:brightness-110"
+                              onerror="this.parentElement.style.display='none'">
+                       </div>`
+                    : `<div class="img-container opacity-20"><i data-lucide="image" class="w-6 h-6"></i></div>`;
+
+                if (currentView === 'list') {
+                    card.innerHTML = `
+                        ${imgHtml}
+                        <div class="details-box">
+                            <span class="mono text-xs font-bold text-white bg-white/5 px-2 py-1 rounded border border-white/10 select-all min-w-[80px] text-center">${item.reference || '-'}</span>
+                            <h3 class="font-bold text-sm text-zinc-100 flex-1">${item.designation || 'Sans désignation'}</h3>
+                            <span class="badge text-indigo-400 border-indigo-500/20">${item.type || item.fabricant || 'Standard'}</span>
+                            <div class="price-grid flex gap-6">
+                                <div class="flex flex-col"><span class="text-[9px] text-zinc-600 font-bold uppercase">Public</span><span class="text-xs font-semibold">${pxPublic}</span></div>
+                                <div class="flex flex-col"><span class="text-[9px] text-zinc-600 font-bold uppercase">Remisé</span><span class="text-sm font-black text-emerald-400">${pxRemise}</span></div>
+                            </div>
+                            ${favBtnHtml}
+                        </div>
+                    `;
+                } else {
+                    card.innerHTML = `
+                        <div class="flex justify-between items-start mb-1">
+                            <span class="mono text-sm font-bold text-white bg-white/5 px-2 py-1 rounded border border-white/10 select-all">${item.reference || '-'}</span>
+                            <span class="badge text-indigo-400 border-indigo-500/20">${item.type || 'Standard'}</span>
+                        </div>
+                        ${imgHtml}
+                        <div class="flex-1">
+                            <h3 class="font-bold text-sm leading-tight mb-1 text-zinc-100">${item.designation || 'Sans désignation'}</h3>
+                            ${currentView === 'grid' ? `
+                                <p class="text-[10px] text-zinc-500 flex items-center gap-1">
+                                    <i data-lucide="building-2" class="w-3 h-3"></i> ${item.fournisseur || item.fabricant || 'Catalogue'}
+                                </p>
+                            ` : ''}
+                        </div>
+                        <div class="price-grid grid grid-cols-2 gap-2 pt-2 border-t border-white/5 relative">
+                            <div class="flex flex-col"><span class="text-[8px] text-zinc-600 uppercase font-bold">Public</span><span class="text-xs font-semibold">${pxPublic}</span></div>
+                            <div class="flex flex-col items-end"><span class="text-[8px] text-zinc-600 uppercase font-bold">Remisé</span><span class="text-sm font-black text-emerald-400">${pxRemise}</span></div>
+                        </div>
+                        ${favBtnHtml}
+                    `;
+                }
+                grid.appendChild(card);
+            });
+
+            lucide.createIcons();
+            loadMoreContainer.classList.toggle('hidden', displayCount >= filteredData.length);
+        }
+
+
+        // Events
+        searchInput.addEventListener('input', applyFilters);
+        [fFournisseur, fGamme, fSerie, fType].forEach(el => el.addEventListener('change', handleFilterChange));
+
+        loadMoreBtn.addEventListener('click', () => {
+            displayCount += INCREMENT;
+            render();
+        });
+
+        document.getElementById('resetFilters').addEventListener('click', () => {
+            [fFournisseur, fGamme, fSerie, fType].forEach(el => el.value = "");
+            searchInput.value = "";
+            showOnlyFavs = false;
+            toggleFavFilterBtn.classList.remove('active');
+            handleFilterChange();
+        });
+
+        toggleFavFilterBtn.addEventListener('click', () => {
+            showOnlyFavs = !showOnlyFavs;
+            toggleFavFilterBtn.classList.toggle('active', showOnlyFavs);
+            applyFilters();
+        });
+
+        document.querySelectorAll('.view-toggle-btn').forEach(btn => {
+            btn.addEventListener('click', () => setView(btn.dataset.view));
+        });
+
+        // VISUALIZER LOGIC
+        window.openVisualizer = (src) => {
+            modalImage.src = src;
+            imageModal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        };
+
+        const closeVisualizer = () => {
+            imageModal.classList.add('hidden');
+            document.body.style.overflow = '';
+        };
+
+        imageModal.addEventListener('click', closeVisualizer);
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeVisualizer();
+        });
+
+        // Init
+        loadData();
+    </script>
+</body>
+
+</html>
