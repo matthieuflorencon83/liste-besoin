@@ -428,6 +428,12 @@
                     class="bg-zinc-900 light-mode:bg-white border border-white/10 light-mode:border-slate-200 rounded-md px-2 py-1.5 text-xs outline-none focus:border-indigo-500 min-w-[120px]">
                     <option value="">Type</option>
                 </select>
+                <button id="resetFilters"
+                    class="flex items-center gap-1.5 px-2 py-1.5 bg-zinc-800 hover:bg-zinc-700 light-mode:bg-slate-200 light-mode:hover:bg-slate-300 text-zinc-400 hover:text-white light-mode:text-slate-600 light-mode:hover:text-slate-900 rounded-md transition-all text-[10px] font-bold uppercase tracking-wider"
+                    title="Tout réinitialiser">
+                    <i data-lucide="rotate-ccw" class="w-3 h-3"></i>
+                    <span>Vider</span>
+                </button>
             </div>
         </div>
 
@@ -811,6 +817,13 @@
         });
 
         // Favorites logic...
+        document.getElementById('resetFilters').addEventListener('click', () => {
+            [fFournisseur, fGamme, fSerie, fType].forEach(el => el.value = "");
+            searchInput.value = "";
+            showOnlyFavs = false;
+            toggleFavFilterBtn.classList.remove('active');
+            handleFilterChange();
+        });
 
         toggleFavFilterBtn.addEventListener('click', () => {
             showOnlyFavs = !showOnlyFavs;
