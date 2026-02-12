@@ -647,7 +647,51 @@
                         Charger plus d'articles
                     </button>
                 </div>
-        </main>
+            </div>
+
+            <!-- NEEDS LIST VIEW -->
+            <div id="needsListView" class="hidden flex-1 flex-col overflow-hidden">
+                <div class="needs-table-container">
+                    <div class="flex items-center justify-between mb-6">
+                        <div class="flex items-center gap-3">
+                            <div class="p-2 bg-emerald-500/10 rounded-lg">
+                                <i data-lucide="clipboard-check" class="w-6 h-6 text-emerald-500"></i>
+                            </div>
+                            <div>
+                                <h1 class="text-xl font-black">Liste de besoin</h1>
+                                <p class="text-xs text-zinc-500">Gérez vos stocks et préparez vos commandes pour les
+                                    articles sélectionnés.</p>
+                            </div>
+                        </div>
+                        <button onclick="clearNeeds()"
+                            class="flex items-center gap-2 px-4 py-2 bg-red-500/10 hover:bg-red-500/20 text-red-500 rounded-lg text-xs font-bold transition-all">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                            Vider la liste
+                        </button>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="needs-table">
+                            <thead>
+                                <tr>
+                                    <th>Fournisseur</th>
+                                    <th>Référence</th>
+                                    <th>Désignation</th>
+                                    <th>RAL</th>
+                                    <th>Longueur</th>
+                                    <th class="text-center">Besoin</th>
+                                    <th class="text-center">Stock</th>
+                                    <th class="text-center">À commander</th>
+                                    <th class="text-center">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="needsTableBody">
+                                <!-- Table rows injected here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </main>
     </div>
 
