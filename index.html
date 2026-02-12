@@ -549,7 +549,7 @@
         </div>
 
         <!-- SEARCH + FILTERS COMBINED -->
-        <div class="flex-1 flex items-center gap-2">
+        <div id="filterContainer" class="flex-1 flex items-center gap-2">
             <div class="relative w-64 mr-2">
                 <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500"></i>
                 <input type="text" id="globalSearch" placeholder="Rechercher un profil..."
@@ -581,7 +581,7 @@
         </div>
 
         <div class="flex items-center gap-2 border-l border-white/5 pl-4 shrink-0">
-            <button id="toggleFavFilter" class="toggle-fav-filter relative">
+            <button id="toggleFavFilter" class="toggle-fav-filter relative catalog-only">
                 <i data-lucide="star" class="w-4 h-4"></i>
                 <span class="hidden md:inline">Favoris</span>
                 <span id="favCountBadge" class="fav-badge hidden">0</span>
@@ -596,16 +596,18 @@
                 <i data-lucide="maximize" class="w-5 h-5 block max-icon"></i>
                 <i data-lucide="minimize" class="w-5 h-5 hidden min-icon"></i>
             </button>
-            <div class="h-8 w-px bg-white/5 mx-2"></div>
-            <button class="view-toggle-btn" data-view="grid" title="Grille">
-                <i data-lucide="layout-grid" class="w-4 h-4"></i>
-            </button>
-            <button class="view-toggle-btn active" data-view="compact" title="Compact">
-                <i data-lucide="grid-2x2" class="w-4 h-4"></i>
-            </button>
-            <button class="view-toggle-btn" data-view="list" title="Liste">
-                <i data-lucide="list" class="w-4 h-4"></i>
-            </button>
+            <div class="h-8 w-px bg-white/5 mx-2 catalog-only"></div>
+            <div class="flex items-center gap-1 catalog-only">
+                <button class="view-toggle-btn" data-view="grid" title="Grille">
+                    <i data-lucide="layout-grid" class="w-4 h-4"></i>
+                </button>
+                <button class="view-toggle-btn active" data-view="compact" title="Compact">
+                    <i data-lucide="grid-2x2" class="w-4 h-4"></i>
+                </button>
+                <button class="view-toggle-btn" data-view="list" title="Liste">
+                    <i data-lucide="list" class="w-4 h-4"></i>
+                </button>
+            </div>
         </div>
 
         <div id="matchCountIndicator" class="text-[10px] text-zinc-500 font-mono whitespace-nowrap hidden lg:block">
@@ -702,9 +704,19 @@
         let filteredData = [];
         let displayCount = INCREMENT;
         let currentView = 'compact';
-        let favorites = JSON.parse(localStorage.getItem('art-favs') || '[]');
+        // Safe JSON Parse
+        function safeJSON(key, defaultVal) {
+            try {
+                const val = localStorage.getItem(key);
+                if (!val) return defaultVal;
+                const parsed = JSON.parse(val);
+                return (Array.isArray(defaultVal) && !Array.isArray(parsed)) ? defaultVal : parsed;
+            } catch (e) { return defaultVal; }
+        }
+
+        let favorites = safeJSON('art-favs', []);
         let showOnlyFavs = false;
-        let needs = JSON.parse(localStorage.getItem('art-needs') || '[]');
+        let needs = safeJSON('art-needs', []);
         let currentViewName = 'catalogue';
         let isDarkMode = localStorage.getItem('theme') !== 'light';
 
@@ -760,31 +772,59 @@
         }
 
         async function loadData() {
-            lucide.createIcons();
             try {
+                if (typeof lucide !== 'undefined') lucide.createIcons();
+
                 if (!window.ART_DATA) {
-                    throw new Error("Données ART_DATA non trouvées.");
+                    console.error("ART_DATA missing");
+                    loadingOverlay.innerHTML = '<div class="text-center p-8"><i data-lucide="alert-circle" class="w-12 h-12 text-red-500 mx-auto mb-4"></i><p class="text-red-400 font-bold">Données introuvables (data.js)</p><p class="text-xs opacity-50 mt-2">Assurez-vous que le fichier data.js est bien dans le dossier.</p></div>';
+                    if (typeof lucide !== 'undefined') lucide.createIcons();
+                    return;
                 }
+
                 rawData = window.ART_DATA;
-                // Grouping only once on load for performance
+                console.log(`Loading ${rawData.length} articles...`);
+
+                // Fast grouping
                 groupedData = groupArticlesByRef(rawData);
+                console.log(`Grouped into ${groupedData.length} unique references`);
 
-                populateFilter(fFournisseur, 'fournisseur');
-                populateFilter(fGamme, 'gamme');
-                populateFilter(fSerie, 'serie');
-                populateFilter(fType, 'type');
+                // Efficient filter population
+                const filters = {
+                    fournisseur: new Set(),
+                    gamme: new Set(),
+                    serie: new Set(),
+                    type: new Set()
+                };
 
-                applyFilters();
-                updateFavCount();
+                rawData.forEach(item => {
+                    if (item.fournisseur) filters.fournisseur.add(item.fournisseur);
+                    if (item.gamme) filters.gamme.add(item.gamme);
+                    if (item.serie) filters.serie.add(item.serie);
+                    if (item.type) filters.type.add(item.type);
+                });
+
+                updateSelectOptionsRaw(fFournisseur, [...filters.fournisseur].sort(), "Fournisseur");
+                updateSelectOptionsRaw(fGamme, [...filters.gamme].sort(), "Gamme");
+                updateSelectOptionsRaw(fSerie, [...filters.serie].sort(), "Série");
+                updateSelectOptionsRaw(fType, [...filters.type].sort(), "Type");
+
                 loadingOverlay.classList.add('hidden');
+
+                // Yield to browser for a frame before heavy rendering
+                setTimeout(() => {
+                    applyFilters();
+                    updateFavCount();
+                }, 10);
+
             } catch (err) {
-                console.error('Failed to load data:', err);
-                loadingOverlay.innerHTML = '<p class="text-red-400">Erreur lors du chargement des données. Assurez-vous que data.js est généré.</p>';
+                console.error('Critical loading error:', err);
+                loadingOverlay.innerHTML = `<div class="text-center p-8"><p class="text-red-400 font-bold">Erreur de chargement</p><p class="text-xs opacity-50 mt-2">${err.message}</p></div>`;
             }
         }
 
-        function populateFilter(select, field) {
-            const values = [...new Set(rawData.map(item => item[field]).filter(Boolean))].sort();
+        function updateSelectOptionsRaw(select, values, label) {
+            select.innerHTML = `<option value="">${label}</option>`;
             values.forEach(val => {
                 const opt = document.createElement('option');
                 opt.value = val;
@@ -1094,9 +1134,17 @@
         window.switchView = (viewName) => {
             currentViewName = viewName;
 
-            // UI Toggle
+            // UI Toggle Views
             catalogueView.classList.toggle('hidden', viewName !== 'catalogue');
             needsListView.classList.toggle('hidden', viewName !== 'needs');
+
+            // Toggle Header Elements
+            document.getElementById('filterContainer').classList.toggle('hidden', viewName !== 'catalogue');
+            document.getElementById('matchCountIndicator').classList.toggle('hidden', viewName !== 'catalogue');
+
+            document.querySelectorAll('.catalog-only').forEach(el => {
+                el.classList.toggle('hidden', viewName !== 'catalogue');
+            });
 
             tabCatalogue.classList.toggle('active', viewName === 'catalogue');
             tabNeeds.classList.toggle('active', viewName === 'needs');
