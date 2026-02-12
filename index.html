@@ -217,6 +217,140 @@
             color: white;
         }
 
+        /* Tabs Navigation */
+        .header-tabs {
+            display: flex;
+            gap: 1.5rem;
+            margin-left: 2rem;
+            height: 100%;
+        }
+
+        .tab-btn {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            padding: 0 0.5rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .tab-btn:hover {
+            color: var(--text);
+        }
+
+        .tab-btn.active {
+            color: var(--indigo);
+            border-bottom-color: var(--indigo);
+        }
+
+        /* Needs Table Styling */
+        .needs-table-container {
+            flex: 1;
+            overflow: auto;
+            padding: 1.5rem;
+            background: var(--canvas);
+        }
+
+        .needs-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            font-size: 0.85rem;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 0.75rem;
+            overflow: hidden;
+        }
+
+        .needs-table th {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 0.75rem 1rem;
+            text-align: left;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .needs-table td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border);
+            vertical-align: middle;
+        }
+
+        .needs-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .table-input {
+            width: 80px;
+            background: rgba(0, 0, 0, 0.2) !important;
+            border: 1px solid var(--border) !important;
+            border-radius: 4px;
+            padding: 4px 8px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-align: center;
+            color: var(--text);
+        }
+
+        .light-mode .table-input {
+            background: #fff !important;
+        }
+
+        .result-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 40px;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-weight: 800;
+            font-size: 0.85rem;
+        }
+
+        /* Needs Action Buttons */
+        .need-action-btn {
+            position: absolute;
+            top: 8px;
+            right: 42px;
+            /* Next to favorite button */
+            z-index: 10;
+            padding: 6px;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.3);
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .need-action-btn:hover {
+            transform: scale(1.1);
+            background: rgba(79, 70, 229, 0.2);
+            color: var(--indigo);
+        }
+
+        .need-action-btn.active {
+            color: var(--indigo);
+            background: rgba(79, 70, 229, 0.1);
+            border-color: rgba(79, 70, 229, 0.4);
+        }
+
+        .view-list .need-action-btn {
+            position: static;
+            background: transparent;
+            border: none;
+            backdrop-filter: none;
+        }
+
         .mono {
             font-family: 'JetBrains Mono', monospace;
         }
@@ -402,6 +536,16 @@
                 class="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-500/20">
                 <i data-lucide="home" class="w-6 h-6 text-white"></i>
             </div>
+            <nav class="header-tabs">
+                <div class="tab-btn active" onclick="switchView('catalogue')" id="tabCatalogue">
+                    <i data-lucide="book-open" class="w-4 h-4 mr-2"></i>
+                    Catalogue
+                </div>
+                <div class="tab-btn" onclick="switchView('needs')" id="tabNeeds">
+                    <i data-lucide="clipboard-list" class="w-4 h-4 mr-2"></i>
+                    Liste de besoin
+                </div>
+            </nav>
         </div>
 
         <!-- SEARCH + FILTERS COMBINED -->
@@ -474,41 +618,36 @@
 
         <!-- CONTENT AREA FULL WIDTH -->
         <main class="flex-1 flex flex-col bg-zinc-900/20 relative">
-            <div id="loadingOverlay" class="absolute inset-0 flex items-center justify-center bg-zinc-950/80 z-40">
-                <div class="flex flex-col items-center gap-4">
-                    <div class="w-10 h-10 border-4 border-indigo-500/20 border-t-indigo-500 rounded-full animate-spin">
+            <!-- CATALOGUE VIEW -->
+            <div id="catalogueView" class="flex flex-1 flex-col overflow-hidden">
+                <div id="loadingOverlay" class="absolute inset-0 flex items-center justify-center bg-zinc-950/80 z-40">
+                    <div class="flex flex-col items-center gap-4">
+                        <div
+                            class="w-10 h-10 border-4 border-indigo-500/20 border-t-indigo-500 rounded-full animate-spin">
+                        </div>
+                        <p class="text-zinc-400 font-medium animate-pulse">Initialisation du catalogue...</p>
                     </div>
-                    <p class="text-sm text-zinc-400 font-medium">Chargement du catalogue...</p>
-                </div>
-            </div>
-
-            <!-- IMAGE MODAL -->
-            <div id="imageModal"
-                class="fixed inset-0 z-[100] bg-black/90 flex items-center justify-center p-4 cursor-zoom-out hidden">
-                <button class="absolute top-6 right-6 p-2 text-white/50 hover:text-white transition-colors">
-                    <i data-lucide="x" class="w-8 h-8"></i>
-                </button>
-                <img id="modalImage" src="" alt="Enlarged profile"
-                    class="max-w-full max-h-full object-contain shadow-2xl rounded-lg">
-            </div>
-
-            <main class="flex-1 overflow-y-auto custom-scrollbar p-6 bg-zinc-950/50">
-                <div id="itemsGrid" class="grid-layout view-grid">
-                    <!-- Cards injection -->
                 </div>
 
-                <div id="emptyState" class="hidden flex-col items-center justify-center h-64 text-zinc-500 gap-4">
-                    <i data-lucide="search-x" class="w-12 h-12 opacity-20"></i>
-                    <p>Aucun article ne correspond à votre recherche</p>
+                <div id="itemsGrid" class="grid-layout flex-1 overflow-y-auto p-6 scroll-smooth view-compact">
+                    <!-- Cards injected here -->
                 </div>
 
-                <div id="loadMoreContainer" class="hidden py-12 flex justify-center">
+                <div id="emptyState"
+                    class="hidden flex-1 flex-col items-center justify-center p-20 text-center opacity-40">
+                    <i data-lucide="package-search" class="w-16 h-16 mb-4"></i>
+                    <h3 class="text-lg font-bold">Aucun article trouvé</h3>
+                    <p class="text-xs">Modifiez vos filtres ou affinez votre recherche.</p>
+                </div>
+
+                <div id="loadMoreContainer"
+                    class="p-8 flex justify-center border-t border-white/5 bg-zinc-900/40 hidden">
                     <button id="loadMoreBtn"
                         class="px-8 py-3 bg-white/5 border border-white/10 rounded-full text-sm font-semibold hover:bg-white/10 transition-all scale-100 active:scale-95">
                         Charger plus d'articles
                     </button>
                 </div>
-            </main>
+        </main>
         </main>
     </div>
 
@@ -521,12 +660,20 @@
         let currentView = 'compact';
         let favorites = JSON.parse(localStorage.getItem('art-favs') || '[]');
         let showOnlyFavs = false;
+        let needs = JSON.parse(localStorage.getItem('art-needs') || '[]');
+        let currentViewName = 'catalogue';
         let isDarkMode = localStorage.getItem('theme') !== 'light';
 
         // Apply theme early
         if (!isDarkMode) document.body.classList.add('light-mode');
 
         // UI Elements
+        const catalogueView = document.getElementById('catalogueView');
+        const needsListView = document.getElementById('needsListView');
+        const tabCatalogue = document.getElementById('tabCatalogue');
+        const tabNeeds = document.getElementById('tabNeeds');
+        const needsTableBody = document.getElementById('needsTableBody');
+
         const grid = document.getElementById('itemsGrid');
         const searchInput = document.getElementById('globalSearch');
         const loadMoreBtn = document.getElementById('loadMoreBtn');
@@ -714,6 +861,7 @@
             itemsToDisplay.forEach((item, idx) => {
                 const id = `${item.reference}_${item.fournisseur || item.fabricant || ''}`.toLowerCase();
                 const isFav = favorites.includes(id);
+                const isInNeeds = needs.some(n => n.id === id);
 
                 const card = document.createElement('div');
                 card.className = 'item-card glass rounded-xl animate-fade overflow-hidden group p-4 relative';
@@ -750,6 +898,14 @@
                     </button>
                 `;
 
+                const needBtnHtml = `
+                    <button class="need-action-btn ${isInNeeds ? 'active' : ''}" 
+                            title="${isInNeeds ? 'Retirer du besoin' : 'Ajouter au besoin'}" 
+                            onclick="toggleNeed(event, ${idx})">
+                        <i data-lucide="${isInNeeds ? 'clipboard-check' : 'clipboard-list'}" class="w-4 h-4"></i>
+                    </button>
+                `;
+
                 // Image HTML with dynamic classes based on view
                 const imgHtml = item.image
                     ? `<div class="img-container cursor-zoom-in group/img" onclick="openVisualizer('${item.image}')">
@@ -773,11 +929,12 @@
                                 <div class="flex flex-col"><span class="text-[9px] opacity-50 font-bold uppercase">Remisé</span><span class="text-sm font-black text-emerald-400">${pxRemise}</span></div>
                             </div>
                             ${favBtnHtml}
+                            ${needBtnHtml}
                         </div>
                     `;
                 } else {
                     card.innerHTML = `
-                        <div class="flex justify-between items-start mb-1 pr-8">
+                        <div class="flex justify-between items-start mb-1 pr-16">
                             <span class="mono text-xs font-bold px-2 py-1 rounded select-all">${item.reference || '-'}</span>
                             <span class="badge">${item.type || item.fabricant || 'Standard'}</span>
                         </div>
@@ -796,6 +953,7 @@
                             <div class="flex flex-col items-end"><span class="text-[8px] opacity-50 uppercase font-bold">Remisé</span><span class="text-sm font-black text-emerald-400">${pxRemise}</span></div>
                         </div>
                         ${favBtnHtml}
+                        ${needBtnHtml}
                     `;
                 }
                 grid.appendChild(card);
@@ -887,6 +1045,111 @@
                 moon.classList.remove('hidden');
             }
         }
+
+        // --- NAVIGATION LOGIC ---
+        window.switchView = (viewName) => {
+            currentViewName = viewName;
+
+            // UI Toggle
+            catalogueView.classList.toggle('hidden', viewName !== 'catalogue');
+            needsListView.classList.toggle('hidden', viewName !== 'needs');
+
+            tabCatalogue.classList.toggle('active', viewName === 'catalogue');
+            tabNeeds.classList.toggle('active', viewName === 'needs');
+
+            if (viewName === 'needs') renderNeeds();
+            lucide.createIcons();
+        };
+
+        // --- NEEDS LIST LOGIC ---
+        window.toggleNeed = (e, idx) => {
+            if (e) e.stopPropagation();
+            const item = filteredData[idx];
+            const id = `${item.reference}_${item.fournisseur || item.fabricant || ''}`.toLowerCase();
+
+            const existingIdx = needs.findIndex(n => n.id === id);
+            if (existingIdx > -1) {
+                needs.splice(existingIdx, 1);
+            } else {
+                needs.push({
+                    id,
+                    reference: item.reference,
+                    designation: item.designation,
+                    fournisseur: item.fournisseur || item.fabricant || 'Catalogue',
+                    ral: item.decor || '-',
+                    longueur: item.condit || 1,
+                    unit_condit: item.unit_condit || 'M',
+                    need: 0,
+                    stock: 0
+                });
+            }
+
+            localStorage.setItem('art-needs', JSON.stringify(needs));
+            render();
+        };
+
+        window.renderNeeds = () => {
+            needsTableBody.innerHTML = '';
+            if (needs.length === 0) {
+                needsTableBody.innerHTML = '<tr><td colspan="9" class="p-12 text-center opacity-40">Votre liste de besoins est vide. Ajoutez des articles depuis le catalogue.</td></tr>';
+                return;
+            }
+
+            needs.forEach((item, idx) => {
+                const toCmd = Math.max(0, item.need - item.stock);
+                const row = document.createElement('tr');
+                row.className = 'hover:bg-white/5 transition-colors';
+                row.innerHTML = `
+                    <td class="font-medium text-zinc-400">${item.fournisseur}</td>
+                    <td><span class="mono px-2 py-0.5 rounded text-[11px] font-bold">${item.reference}</span></td>
+                    <td class="font-bold">${item.designation}</td>
+                    <td><span class="badge">${item.ral}</span></td>
+                    <td class="text-xs opacity-70">${item.longueur} ${item.unit_condit}</td>
+                    <td class="text-center">
+                        <input type="number" class="table-input" value="${item.need}" 
+                               onchange="updateNeedField(${idx}, 'need', this.value)">
+                    </td>
+                    <td class="text-center">
+                        <input type="number" class="table-input" value="${item.stock}" 
+                               onchange="updateNeedField(${idx}, 'stock', this.value)">
+                    </td>
+                    <td class="text-center">
+                        <span class="result-badge ${toCmd > 0 ? 'bg-orange-500/20 text-orange-500' : 'bg-zinc-500/10 text-zinc-500'}">
+                            ${toCmd}
+                        </span>
+                    </td>
+                    <td class="text-center">
+                        <button onclick="removeNeed(${idx})" class="p-2 text-red-400 hover:text-red-500 transition-all">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        </button>
+                    </td>
+                `;
+                needsTableBody.appendChild(row);
+            });
+            lucide.createIcons();
+        };
+
+        window.updateNeedField = (idx, field, value) => {
+            needs[idx][field] = parseInt(value) || 0;
+            localStorage.setItem('art-needs', JSON.stringify(needs));
+            renderNeeds();
+        };
+
+        window.removeNeed = (idx) => {
+            needs.splice(idx, 1);
+            localStorage.setItem('art-needs', JSON.stringify(needs));
+            renderNeeds();
+            render(); // Update catalogue buttons
+        };
+
+        window.clearNeeds = () => {
+            if (confirm('Voulez-vous vraiment vider toute la liste ?')) {
+                needs = [];
+                localStorage.setItem('art-needs', JSON.stringify(needs));
+                renderNeeds();
+                render();
+            }
+        };
 
         // Init icons
         updateThemeIcons();
