@@ -2,8 +2,8 @@ import pandas as pd
 import json
 import os
 import re
+import shutil
 from datetime import datetime
-import os
 
 def handler(obj):
     if isinstance(obj, (datetime, pd.Timestamp)):
@@ -33,11 +33,6 @@ def clean_column_name(col):
         col = col.replace(old, new)
     return col.lower()
 
-import os
-import pandas as pd
-import json
-import re
-import shutil
 
 def get_image_map(base_dirs, local_copy_dir):
     image_map = {}
@@ -65,8 +60,8 @@ def get_image_map(base_dirs, local_copy_dir):
                     else:
                         # Case for Installux which is already inside the web folder
                         try:
-                            rel_path = os.path.relpath(os.path.join(root, file), r'c:\Antigravity\Matthieu\Liste de besoin')
-                        except:
+                            rel_path = os.path.relpath(os.path.join(root, file), BASE_DIR)
+                        except Exception:
                             rel_path = os.path.join(root, file)
                     
                     if base_ref not in image_map:
@@ -115,11 +110,11 @@ def find_best_image(ref, img_map):
     return None
 
 # Config
-BASE_DIR = r'c:\Antigravity\Matthieu\Liste de besoin'
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 EXCEL_FILE = 'BDD Arts Alu 2026 - Complétée.xlsx'
 IMAGE_DIRS = [
     os.path.join(BASE_DIR, 'Installux'),
-    r'C:\Users\utopi\Desktop\Logiciel Arts alu\img arcelor'
+    os.path.join(os.path.expanduser('~'), 'Desktop', 'Logiciel Arts alu', 'img arcelor')
 ]
 LOCAL_COPY_DIR = os.path.join(BASE_DIR, 'img_arcellor')
 OUTPUT_PATH = os.path.join(BASE_DIR, 'data.js')
