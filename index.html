@@ -186,7 +186,7 @@
         }
 
         .view-mini .item-card {
-            min-height: 160px;
+            min-height: 200px;
             border-radius: 18px;
         }
 
@@ -300,10 +300,8 @@
         }
 
         .view-mini .img-container {
-            height: 70px;
-            /* Réduit de 80px */
-            padding: 0.25rem;
-            /* Réduit de 0.5rem */
+            height: 80px;
+            padding: 0.5rem;
         }
 
         .img-container img {
@@ -327,10 +325,8 @@
         }
 
         .view-mini .card-content {
-            padding: 0.5rem;
-            /* Réduit de 0.75rem */
-            gap: 0.15rem;
-            /* Réduit de 0.25rem */
+            padding: 0.75rem;
+            gap: 0.25rem;
         }
 
         .mono {
@@ -969,10 +965,6 @@
         document.getElementById('loadMoreBtn').addEventListener('click', () => { displayCount += INCREMENT; render(); });
 
         init();
-
-        // Version Indicator
-        v.textContent = 'v29';
-        document.body.appendChild(v);
     </script>
 </body>
 
