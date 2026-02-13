@@ -119,6 +119,8 @@
             gap: 24px;
             padding: 32px;
             width: 100%;
+            align-items: start;
+            /* Empêche les cartes de s'étirer verticalement */
         }
 
         .view-grid {
@@ -182,11 +184,11 @@
         }
 
         .view-compact .item-card {
-            min-height: 220px;
+            /* min-height removed */
         }
 
         .view-mini .item-card {
-            min-height: 160px;
+            /* min-height removed */
             border-radius: 18px;
         }
 
@@ -969,7 +971,7 @@
         // Version Indicator
         const v = document.createElement('div');
         v.className = 'fixed bottom-2 right-2 text-[10px] text-zinc-600 font-mono opacity-50 pointer-events-none z-50';
-        v.textContent = 'v24.2';
+        v.textContent = 'v24.3';
         document.body.appendChild(v);
     </script>
 </body>
