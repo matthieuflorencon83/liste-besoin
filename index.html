@@ -119,8 +119,6 @@
             gap: 24px;
             padding: 32px;
             width: 100%;
-            align-items: start;
-            /* Empêche les cartes de s'étirer verticalement */
         }
 
         .view-grid {
@@ -179,16 +177,16 @@
             position: relative;
             overflow: hidden;
             padding: 0;
-            /* min-height removed */
+            min-height: 440px;
             box-shadow: var(--shadow);
         }
 
         .view-compact .item-card {
-            /* min-height removed */
+            min-height: 300px;
         }
 
         .view-mini .item-card {
-            /* min-height removed */
+            min-height: 200px;
             border-radius: 18px;
         }
 
@@ -285,7 +283,7 @@
         /* IMMERSIVE IMAGE CONCEPT */
         .img-container {
             flex: none;
-            height: 110px;
+            height: 200px;
             background: transparent;
             display: flex;
             align-items: center;
@@ -293,7 +291,7 @@
             overflow: hidden;
             position: relative;
             transition: 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
-            padding: 1rem;
+            padding: 1.5rem;
         }
 
         .view-compact .img-container {
@@ -320,7 +318,7 @@
         }
 
         .card-content {
-            padding: 1rem;
+            padding: 1.5rem;
             display: flex;
             flex-direction: column;
             gap: 0.5rem;
@@ -971,7 +969,7 @@
         // Version Indicator
         const v = document.createElement('div');
         v.className = 'fixed bottom-2 right-2 text-[10px] text-zinc-600 font-mono opacity-50 pointer-events-none z-50';
-        v.textContent = 'v24.3';
+        v.textContent = 'v25';
         document.body.appendChild(v);
     </script>
 </body>
