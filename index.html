@@ -138,8 +138,6 @@
             grid-template-columns: 1fr;
         }
 
-
-
         .item-card {
             background: var(--card);
             border: 1px solid var(--border);
@@ -150,7 +148,7 @@
             position: relative;
             overflow: hidden;
             padding: 0;
-            min-height: 440px;
+            min-height: 380px;
             box-shadow: var(--shadow);
         }
 
@@ -256,7 +254,7 @@
         /* IMMERSIVE IMAGE CONCEPT */
         .img-container {
             flex: none;
-            height: 200px;
+            height: 150px;
             background: transparent;
             display: flex;
             align-items: center;
@@ -268,7 +266,7 @@
         }
 
         .view-compact .img-container {
-            height: 140px;
+            height: 100px;
             padding: 1rem;
         }
 
@@ -469,7 +467,7 @@
                 </nav>
             </div>
 
-            <div class="flex items-center gap-4" id="catalogueToolbar">
+            <div class="flex items-center gap-4">
                 <div class="flex items-center p-1.5 bg-white/[0.02] rounded-2xl border border-white/[0.05]">
                     <button onclick="changeViewMode('grid')" class="action-btn !bg-transparent !border-0"
                         title="Grille"><i data-lucide="layout-grid" class="w-4 h-4"></i></button>
@@ -497,7 +495,7 @@
             </div>
         </div>
 
-        <div id="filterBar" class="h-16 flex items-center px-10 gap-6 bg-white/[0.01]">
+        <div class="h-16 flex items-center px-10 gap-6 bg-white/[0.01]">
             <div class="relative flex-1 group">
                 <i data-lucide="search"
                     class="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-600 group-focus-within:text-indigo-500 transition-colors"></i>
@@ -846,8 +844,6 @@
             document.getElementById('needsListView').classList.toggle('hidden', v !== 'needs');
             document.getElementById('tabCatalogue').classList.toggle('active', v === 'catalogue');
             document.getElementById('tabNeeds').classList.toggle('active', v === 'needs');
-            document.getElementById('filterBar').classList.toggle('hidden', v !== 'catalogue');
-            document.getElementById('catalogueToolbar').classList.toggle('hidden', v !== 'catalogue');
             if (v === 'needs') renderNeeds();
         };
 
