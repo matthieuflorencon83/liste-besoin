@@ -186,9 +186,9 @@
         }
 
         .view-mini .item-card {
-            min-height: auto;
-            /* Laisse le contenu décider, plus de bulle forcée */
+            min-height: 180px;
             border-radius: 18px;
+            justify-content: space-between;
         }
 
         .item-card:hover {
@@ -970,7 +970,7 @@
         // Version Indicator
         const v = document.createElement('div');
         v.className = 'fixed bottom-2 right-2 text-[10px] text-zinc-600 font-mono opacity-50 pointer-events-none z-50';
-        v.textContent = 'v26';
+        v.textContent = 'v26.1';
         document.body.appendChild(v);
     </script>
 </body>
