@@ -132,6 +132,7 @@
         .view-mini {
             grid-template-columns: repeat(auto-fill, minmax(145px, 1fr));
             gap: 16px;
+            align-items: start !important;
         }
 
         .view-list {
@@ -186,7 +187,8 @@
         }
 
         .view-mini .item-card {
-            min-height: 150px;
+            min-height: auto !important;
+            height: fit-content !important;
             border-radius: 18px;
         }
 
@@ -967,9 +969,7 @@
         init();
 
         // Version Indicator
-        const v = document.createElement('div');
-        v.className = 'fixed bottom-2 right-2 text-[10px] text-zinc-600 font-mono opacity-50 pointer-events-none z-50';
-        v.textContent = 'v27.1';
+        v.textContent = 'v28';
         document.body.appendChild(v);
     </script>
 </body>
