@@ -138,6 +138,33 @@
             grid-template-columns: 1fr;
         }
 
+        .table-input {
+            width: 80px;
+            background: rgba(0, 0, 0, 0.2) !important;
+            border: 1px solid var(--border) !important;
+            border-radius: 4px;
+            padding: 4px 8px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-align: center;
+            color: var(--text-main);
+        }
+
+        .light-mode .table-input {
+            background: #fff !important;
+        }
+
+        .result-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 40px;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-weight: 800;
+            font-size: 0.85rem;
+        }
+
 
 
         .item-card {
@@ -566,12 +593,14 @@
                         <thead
                             class="bg-white/5 text-[9px] uppercase font-black text-indigo-400/70 tracking-[0.2em] border-b border-white/[0.03]">
                             <tr>
-                                <th class="p-8">Origine</th>
-                                <th>Réf. Article</th>
-                                <th>Description Produit</th>
+                                <th class="p-8">Fournisseur</th>
+                                <th>Référence</th>
+                                <th>Désignation</th>
+                                <th>RAL</th>
+                                <th>Longueur</th>
                                 <th class="text-center">Besoin</th>
-                                <th class="text-center">En Stock</th>
-                                <th class="text-center">Manquant</th>
+                                <th class="text-center">Stock</th>
+                                <th class="text-center">À Commander</th>
                                 <th class="text-center">Action</th>
                             </tr>
                         </thead>
@@ -831,8 +860,24 @@
         };
 
         window.toggleN = (e, id, idx) => {
-            e.stopPropagation(); const it = filteredData[idx]; const i = needs.findIndex(n => n.id === id);
-            if (i > -1) needs.splice(i, 1); else needs.push({ id, reference: it.reference, designation: it.designation, fournisseur: it.fournisseur, need: 0, stock: 0 });
+            e.stopPropagation();
+            const it = filteredData[idx];
+            const i = needs.findIndex(n => n.id === id);
+            if (i > -1) {
+                needs.splice(i, 1);
+            } else {
+                needs.push({
+                    id,
+                    reference: it.reference,
+                    designation: it.designation,
+                    fournisseur: it.fournisseur || it.fabricant || 'Catalogue',
+                    ral: it.decor || '-',
+                    longueur: it.condit || 1,
+                    unit_condit: it.unit_condit || 'M',
+                    need: 0,
+                    stock: 0
+                });
+            }
             localStorage.setItem('art-needs', JSON.stringify(needs));
             render();
         };
@@ -853,18 +898,41 @@
 
         window.renderNeeds = () => {
             const b = document.getElementById('needsTableBody');
-            b.innerHTML = needs.length ? '' : '<tr><td colspan="7" class="p-24 text-center opacity-20 font-black uppercase tracking-widest">Le panier est vide.</td></tr>';
-            needs.forEach((n, idx) => {
-                const tr = document.createElement('tr'); const diff = Math.max(0, n.need - n.stock);
-                tr.innerHTML = `
-                    <td class="p-8 font-black uppercase text-indigo-500/50 tracking-widest">${n.fournisseur || '-'}</td>
-                    <td><span class="mono text-zinc-400">${n.reference}</span></td>
-                    <td class="font-black text-white leading-tight max-w-sm">${n.designation}</td>
-                    <td class="text-center"><input type="number" class="w-24 text-center py-3 rounded-2xl font-black bg-zinc-800" value="${n.need}" onchange="updateNeedV(${idx}, 'need', this.value)"></td>
-                    <td class="text-center"><input type="number" class="w-24 text-center py-3 rounded-2xl font-black bg-zinc-800" value="${n.stock}" onchange="updateNeedV(${idx}, 'stock', this.value)"></td>
-                    <td class="text-center"><span class="badge ${diff > 0 ? 'bg-indigo-600 text-white shadow-xl shadow-indigo-600/30 scale-110' : ''}">${diff}</span></td>
-                    <td class="p-8 text-center"><button onclick="removeN(${idx})" class="p-3 text-red-500/20 hover:text-red-500 hover:bg-red-500/10 rounded-xl transition-all"><i data-lucide="trash-2" class="w-5 h-5"></i></button></td>`;
-                b.appendChild(tr);
+            if (needs.length === 0) {
+                b.innerHTML = '<tr><td colspan="9" class="p-12 text-center opacity-40">Votre liste de besoins est vide. Ajoutez des articles depuis le catalogue.</td></tr>';
+                return;
+            }
+            b.innerHTML = '';
+            needs.forEach((item, idx) => {
+                const toCmd = Math.max(0, item.need - item.stock);
+                const row = document.createElement('tr');
+                row.className = 'hover:bg-white/5 transition-colors';
+                row.innerHTML = `
+                    <td class="font-medium text-zinc-400">${item.fournisseur}</td>
+                    <td><span class="mono px-2 py-0.5 rounded text-[11px] font-bold">${item.reference}</span></td>
+                    <td class="font-bold">${item.designation}</td>
+                    <td><span class="badge">${item.ral || '-'}</span></td>
+                    <td class="text-xs opacity-70">${item.longueur || 1} ${item.unit_condit || 'M'}</td>
+                    <td class="text-center">
+                        <input type="number" class="table-input" value="${item.need}" 
+                               onchange="updateNeedV(${idx}, 'need', this.value)">
+                    </td>
+                    <td class="text-center">
+                        <input type="number" class="table-input" value="${item.stock}" 
+                               onchange="updateNeedV(${idx}, 'stock', this.value)">
+                    </td>
+                    <td class="text-center">
+                        <span class="result-badge ${toCmd > 0 ? 'bg-orange-500/20 text-orange-500' : 'bg-zinc-500/10 text-zinc-500'}">
+                            ${toCmd}
+                        </span>
+                    </td>
+                    <td class="text-center">
+                        <button onclick="removeN(${idx})" class="p-2 text-red-400 hover:text-red-500 transition-all">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        </button>
+                    </td>
+                `;
+                b.appendChild(row);
             });
             if (typeof lucide !== 'undefined') lucide.createIcons();
         };

@@ -1,0 +1,1179 @@
+﻿<!DOCTYPE html>
+<html lang="fr" class="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catalogue Arts Alu 2026</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="data.js"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Ubuntu+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            /* DARK MODE (DEFAULT) */
+            --canvas: #09090b;
+            --card: #18181b;
+            --card-hover: #212124;
+            --text: #fafafa;
+            --text-muted: #a1a1aa;
+            --border: rgba(255, 255, 255, 0.08);
+            --glass: rgba(24, 24, 27, 0.8);
+            --price-bg: #10b98115;
+            --indigo: #6366f1;
+            --accent-bg: rgba(99, 102, 241, 0.1);
+            --img-bg: rgba(30, 30, 35, 0.4);
+        }
+
+        .light-mode {
+            --canvas: #f1f5f9;
+            --card: #ffffff;
+            --card-hover: #ffffff;
+            --text: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --glass: rgba(255, 255, 255, 0.9);
+            --price-bg: #f8fafc;
+            --indigo: #4338ca;
+            --accent-bg: #eef2ff;
+            --img-bg: #f8fafc;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--canvas);
+            color: var(--text);
+            overflow-x: hidden;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .glass {
+            background: var(--glass);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 10px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .grid-layout {
+            display: grid;
+            gap: 16px;
+        }
+
+        /* View Modes */
+        .view-grid {
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        }
+
+        .view-compact {
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        }
+
+        .view-list {
+            grid-template-columns: 1fr;
+        }
+
+        .item-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .view-list .item-card {
+            flex-direction: row;
+            align-items: center;
+            height: 80px;
+            padding: 8px 16px;
+        }
+
+        .item-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--indigo);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            background: var(--card-hover);
+        }
+
+        .light-mode .item-card:hover {
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05);
+        }
+
+        .img-container {
+            background: var(--img-bg);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--border);
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .view-grid .img-container {
+            width: 100%;
+            height: 128px;
+            margin-bottom: 8px;
+        }
+
+        .view-compact .img-container {
+            width: 100%;
+            height: 80px;
+            margin-bottom: 4px;
+        }
+
+        .view-list .img-container {
+            width: 60px;
+            height: 60px;
+            margin-right: 16px;
+            margin-bottom: 0;
+        }
+
+        .view-compact .item-card h3 {
+            font-size: 13px;
+        }
+
+        .view-compact .badge {
+            display: none;
+        }
+
+        .view-compact .price-grid {
+            border: none;
+            padding-top: 0;
+            margin-top: 4px;
+        }
+
+        .view-list .item-card .details-box {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .view-list h3 {
+            width: 300px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-bottom: 0;
+        }
+
+        .view-list .price-grid {
+            border: none;
+            padding-top: 0;
+            margin-top: 0;
+            display: flex;
+            gap: 24px;
+        }
+
+        .view-list .badge {
+            width: 100px;
+            text-align: center;
+        }
+
+        .badge {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 2px 8px;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+        }
+
+        .view-toggle-btn {
+            padding: 6px;
+            border-radius: 6px;
+            color: var(--text-muted);
+            transition: all 0.2s;
+        }
+
+        .view-toggle-btn.active {
+            background: var(--indigo);
+            color: white;
+        }
+
+        /* Tabs Navigation */
+        .header-tabs {
+            display: flex;
+            gap: 1.5rem;
+            margin-left: 2rem;
+            height: 100%;
+        }
+
+        .tab-btn {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            padding: 0 0.5rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .tab-btn:hover {
+            color: var(--text);
+        }
+
+        .tab-btn.active {
+            color: var(--indigo);
+            border-bottom-color: var(--indigo);
+        }
+
+        /* Needs Table Styling */
+        .needs-table-container {
+            flex: 1;
+            overflow: auto;
+            padding: 1.5rem;
+            background: var(--canvas);
+        }
+
+        .needs-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            font-size: 0.85rem;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 0.75rem;
+            overflow: hidden;
+        }
+
+        .needs-table th {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 0.75rem 1rem;
+            text-align: left;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .needs-table td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border);
+            vertical-align: middle;
+        }
+
+        .needs-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .table-input {
+            width: 80px;
+            background: rgba(0, 0, 0, 0.2) !important;
+            border: 1px solid var(--border) !important;
+            border-radius: 4px;
+            padding: 4px 8px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-align: center;
+            color: var(--text);
+        }
+
+        .light-mode .table-input {
+            background: #fff !important;
+        }
+
+        .result-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 40px;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-weight: 800;
+            font-size: 0.85rem;
+        }
+
+        /* Needs Action Buttons */
+        .need-action-btn {
+            position: absolute;
+            top: 8px;
+            right: 42px;
+            /* Next to favorite button */
+            z-index: 10;
+            padding: 6px;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.3);
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .need-action-btn:hover {
+            transform: scale(1.1);
+            background: rgba(79, 70, 229, 0.2);
+            color: var(--indigo);
+        }
+
+        .need-action-btn.active {
+            color: var(--indigo);
+            background: rgba(79, 70, 229, 0.1);
+            border-color: rgba(79, 70, 229, 0.4);
+        }
+
+        .view-list .need-action-btn {
+            position: static;
+            background: transparent;
+            border: none;
+            backdrop-filter: none;
+        }
+
+        .mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fade {
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+
+        /* Favorites */
+        .fav-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            z-index: 10;
+            padding: 6px;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.3);
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .fav-btn:hover {
+            transform: scale(1.1);
+            background: rgba(0, 0, 0, 0.6);
+            color: #fbbf24;
+        }
+
+        .fav-btn.active {
+            color: #fbbf24;
+            background: rgba(251, 191, 36, 0.1);
+            border-color: rgba(251, 191, 36, 0.4);
+        }
+
+        .view-list .fav-btn {
+            position: static;
+            margin-left: auto;
+            background: transparent;
+            border: none;
+            backdrop-filter: none;
+        }
+
+        select,
+        input {
+            background-color: var(--card) !important;
+            color: var(--text) !important;
+            border-color: var(--border) !important;
+        }
+
+        .mono {
+            font-family: 'Ubuntu Mono', monospace;
+            background: var(--accent-bg);
+            color: var(--text);
+            border: 1px solid var(--border);
+            font-weight: 700;
+            font-size: 1.1rem !important;
+            letter-spacing: 0.02em;
+        }
+
+        .light-mode .mono {
+            color: #000;
+            background: #e2e8f0;
+            border-color: #cbd5e1;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            background: var(--accent-bg);
+            border: 1px solid var(--border);
+            color: var(--indigo);
+        }
+
+        .light-mode .badge {
+            color: var(--indigo);
+            border-color: rgba(67, 56, 202, 0.1);
+        }
+
+        .toggle-fav-filter {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            transition: all 0.2s;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+        }
+
+        .toggle-fav-filter.active {
+            background: #fbbf24;
+            color: #000;
+            border-color: #fbbf24;
+        }
+
+        .fav-badge {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            background: #ef4444;
+            color: white;
+            font-size: 9px;
+            font-weight: 800;
+            min-width: 16px;
+            height: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 999px;
+            border: 2px solid var(--canvas);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            transition: border-color 0.3s ease;
+        }
+
+        .mode-toggle-btn {
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            transition: color 0.2s, background-color 0.2s;
+            color: #71717a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .mode-toggle-btn:hover {
+            color: white;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .light-mode .mode-toggle-btn {
+            color: #64748b;
+        }
+
+        .light-mode .mode-toggle-btn:hover {
+            color: #0f172a;
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        /* Modal Visualizer */
+        #imageModal {
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        #imageModal.hidden {
+            opacity: 0;
+            visibility: hidden;
+            display: flex !important;
+        }
+    </style>
+</head>
+
+<body class="flex flex-col h-screen">
+
+    <!-- TOP NAV -->
+    <header class="h-16 flex items-center justify-between px-6 border-b border-white/5 glass z-50 gap-6">
+        <div class="flex items-center gap-3 shrink-0">
+            <div
+                class="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-500/20">
+                <i data-lucide="home" class="w-6 h-6 text-white"></i>
+            </div>
+            <nav class="header-tabs">
+                <div class="tab-btn active" onclick="switchView('catalogue')" id="tabCatalogue">
+                    <i data-lucide="book-open" class="w-4 h-4 mr-2"></i>
+                    Catalogue
+                </div>
+                <div class="tab-btn" onclick="switchView('needs')" id="tabNeeds">
+                    <i data-lucide="clipboard-list" class="w-4 h-4 mr-2"></i>
+                    Liste de besoin
+                </div>
+            </nav>
+        </div>
+
+        <!-- SEARCH + FILTERS COMBINED -->
+        <div class="flex-1 flex items-center gap-2">
+            <div class="relative w-64 mr-2">
+                <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500"></i>
+                <input type="text" id="globalSearch" placeholder="Rechercher un profil..."
+                    class="w-full bg-zinc-900/50 light-mode:bg-white border border-white/10 light-mode:border-slate-200 rounded-full py-2 pl-10 pr-4 text-xs outline-none focus:border-indigo-500 transition-all focus:bg-zinc-900 light-mode:focus:bg-white">
+            </div>
+            <div class="flex items-center gap-2 overflow-x-auto no-scrollbar py-2">
+                <select id="filterFournisseur"
+                    class="bg-zinc-900 light-mode:bg-white border border-white/10 light-mode:border-slate-200 rounded-md px-2 py-1.5 text-xs outline-none focus:border-indigo-500 min-w-[120px]">
+                    <option value="">Fournisseur</option>
+                </select>
+                <select id="filterGamme"
+                    class="bg-zinc-900 light-mode:bg-white border border-white/10 light-mode:border-slate-200 rounded-md px-2 py-1.5 text-xs outline-none focus:border-indigo-500 min-w-[120px]">
+                    <option value="">Gamme</option>
+                </select>
+                <select id="filterSerie"
+                    class="bg-zinc-900 light-mode:bg-white border border-white/10 light-mode:border-slate-200 rounded-md px-2 py-1.5 text-xs outline-none focus:border-indigo-500 min-w-[120px]">
+                    <option value="">S├®rie</option>
+                </select>
+                <select id="filterType"
+                    class="bg-zinc-900 light-mode:bg-white border border-white/10 light-mode:border-slate-200 rounded-md px-2 py-1.5 text-xs outline-none focus:border-indigo-500 min-w-[120px]">
+                    <option value="">Type</option>
+                </select>
+                <button id="resetFilters"
+                    class="p-2 text-zinc-500 hover:text-white light-mode:text-slate-500 light-mode:hover:text-slate-900 transition-colors"
+                    title="Tout r├®initialiser">
+                    <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-2 border-l border-white/5 pl-4 shrink-0">
+            <button id="toggleFavFilter" class="toggle-fav-filter relative">
+                <i data-lucide="star" class="w-4 h-4"></i>
+                <span class="hidden md:inline">Favoris</span>
+                <span id="favCountBadge" class="fav-badge hidden">0</span>
+            </button>
+            <button id="modeToggle" class="p-2 text-zinc-500 hover:text-white transition-colors"
+                title="Changer de mode">
+                <i data-lucide="sun" class="w-5 h-5 block dark-icon"></i>
+                <i data-lucide="moon" class="w-5 h-5 hidden light-icon"></i>
+            </button>
+            <button id="fullscreenToggle" class="p-2 text-zinc-500 hover:text-white transition-colors"
+                title="Plein ├®cran">
+                <i data-lucide="maximize" class="w-5 h-5 block max-icon"></i>
+                <i data-lucide="minimize" class="w-5 h-5 hidden min-icon"></i>
+            </button>
+            <div class="h-8 w-px bg-white/5 mx-2"></div>
+            <button class="view-toggle-btn" data-view="grid" title="Grille">
+                <i data-lucide="layout-grid" class="w-4 h-4"></i>
+            </button>
+            <button class="view-toggle-btn active" data-view="compact" title="Compact">
+                <i data-lucide="grid-2x2" class="w-4 h-4"></i>
+            </button>
+            <button class="view-toggle-btn" data-view="list" title="Liste">
+                <i data-lucide="list" class="w-4 h-4"></i>
+            </button>
+        </div>
+
+        <div id="matchCountIndicator" class="text-[10px] text-zinc-500 font-mono whitespace-nowrap hidden lg:block">
+            <span id="matchCount" class="text-indigo-400 font-bold">0</span> articles
+        </div>
+    </header>
+
+    <div class="flex flex-1 overflow-hidden">
+        <!-- SIDEBAR DELETED (AS REQUESTED) -->
+
+        <!-- CONTENT AREA FULL WIDTH -->
+        <main class="flex-1 flex flex-col bg-zinc-900/20 relative">
+            <!-- CATALOGUE VIEW -->
+            <div id="catalogueView" class="flex flex-1 flex-col overflow-hidden">
+                <div id="loadingOverlay" class="absolute inset-0 flex items-center justify-center bg-zinc-950/80 z-40">
+                    <div class="flex flex-col items-center gap-4">
+                        <div
+                            class="w-10 h-10 border-4 border-indigo-500/20 border-t-indigo-500 rounded-full animate-spin">
+                        </div>
+                        <p class="text-zinc-400 font-medium animate-pulse">Initialisation du catalogue...</p>
+                    </div>
+                </div>
+
+                <div id="itemsGrid" class="grid-layout flex-1 overflow-y-auto p-6 scroll-smooth view-compact">
+                    <!-- Cards injected here -->
+                </div>
+
+                <div id="emptyState"
+                    class="hidden flex-1 flex-col items-center justify-center p-20 text-center opacity-40">
+                    <i data-lucide="package-search" class="w-16 h-16 mb-4"></i>
+                    <h3 class="text-lg font-bold">Aucun article trouv├®</h3>
+                    <p class="text-xs">Modifiez vos filtres ou affinez votre recherche.</p>
+                </div>
+
+                <div id="loadMoreContainer"
+                    class="p-8 flex justify-center border-t border-white/5 bg-zinc-900/40 hidden">
+                    <button id="loadMoreBtn"
+                        class="px-8 py-3 bg-white/5 border border-white/10 rounded-full text-sm font-semibold hover:bg-white/10 transition-all scale-100 active:scale-95">
+                        Charger plus d'articles
+                    </button>
+                </div>
+        </main>
+        </main>
+    </div>
+
+    <script>
+        const INCREMENT = 50;
+        let rawData = [];
+        let groupedData = [];
+        let filteredData = [];
+        let displayCount = INCREMENT;
+        let currentView = 'compact';
+        let favorites = JSON.parse(localStorage.getItem('art-favs') || '[]');
+        let showOnlyFavs = false;
+        let needs = JSON.parse(localStorage.getItem('art-needs') || '[]');
+        let currentViewName = 'catalogue';
+        let isDarkMode = localStorage.getItem('theme') !== 'light';
+
+        // Apply theme early
+        if (!isDarkMode) document.body.classList.add('light-mode');
+
+        // UI Elements
+        const catalogueView = document.getElementById('catalogueView');
+        const needsListView = document.getElementById('needsListView');
+        const tabCatalogue = document.getElementById('tabCatalogue');
+        const tabNeeds = document.getElementById('tabNeeds');
+        const needsTableBody = document.getElementById('needsTableBody');
+
+        const grid = document.getElementById('itemsGrid');
+        const searchInput = document.getElementById('globalSearch');
+        const loadMoreBtn = document.getElementById('loadMoreBtn');
+        const loadMoreContainer = document.getElementById('loadMoreContainer');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const emptyState = document.getElementById('emptyState');
+        const imageModal = document.getElementById('imageModal');
+        const modalImage = document.getElementById('modalImage');
+        const toggleFavFilterBtn = document.getElementById('toggleFavFilter');
+
+        // Filters
+        const fFournisseur = document.getElementById('filterFournisseur');
+        const fGamme = document.getElementById('filterGamme');
+        const fSerie = document.getElementById('filterSerie');
+        const fType = document.getElementById('filterType');
+
+        // Pre-grouping logic with priority
+        function groupArticlesByRef(data) {
+            const groups = {};
+            data.forEach(item => {
+                // Unique key: Ref + Fabricant/Fournisseur + Designation
+                const key = `${item.reference || ''}_${item.fournisseur || item.fabricant || ''}_${item.designation || ''}`.toLowerCase();
+                const existing = groups[key];
+
+                if (!existing) {
+                    groups[key] = item;
+                } else {
+                    const existingDecor = String(existing.decor || '').toUpperCase();
+                    const newDecor = String(item.decor || '').toUpperCase();
+
+                    // Priority: 9010 > (BRUT/BT) > Current
+                    if (newDecor === '9010') {
+                        groups[key] = item;
+                    } else if ((newDecor.includes('BRUT') || newDecor === 'BT') && existingDecor !== '9010') {
+                        groups[key] = item;
+                    }
+                }
+            });
+            return Object.values(groups);
+        }
+
+        async function loadData() {
+            lucide.createIcons();
+            try {
+                if (!window.ART_DATA) {
+                    throw new Error("Donn├®es ART_DATA non trouv├®es.");
+                }
+                rawData = window.ART_DATA;
+                // Grouping only once on load for performance
+                groupedData = groupArticlesByRef(rawData);
+
+                populateFilter(fFournisseur, 'fournisseur');
+                populateFilter(fGamme, 'gamme');
+                populateFilter(fSerie, 'serie');
+                populateFilter(fType, 'type');
+
+                applyFilters();
+                updateFavCount();
+                loadingOverlay.classList.add('hidden');
+            } catch (err) {
+                console.error('Failed to load data:', err);
+                loadingOverlay.innerHTML = '<p class="text-red-400">Erreur lors du chargement des donn├®es. Assurez-vous que data.js est g├®n├®r├®.</p>';
+            }
+        }
+
+        function populateFilter(select, field) {
+            const values = [...new Set(rawData.map(item => item[field]).filter(Boolean))].sort();
+            values.forEach(val => {
+                const opt = document.createElement('option');
+                opt.value = val;
+                opt.textContent = val;
+                select.appendChild(opt);
+            });
+        }
+
+        function handleFilterChange() {
+            const fournisseur = fFournisseur.value;
+            const gamme = fGamme.value;
+
+            // Update Gamme options based on selected Fournisseur
+            const dataForGamme = rawData.filter(item => !fournisseur || item.fournisseur === fournisseur);
+            const uniqueGammes = [...new Set(dataForGamme.map(item => item.gamme).filter(Boolean))].sort();
+            updateSelectOptions(fGamme, uniqueGammes, "Gamme");
+
+            // Update Serie options based on selected Fournisseur and Gamme
+            const dataForSerie = dataForGamme.filter(item => !gamme || item.gamme === gamme);
+            const uniqueSeries = [...new Set(dataForSerie.map(item => item.serie).filter(Boolean))].sort();
+            updateSelectOptions(fSerie, uniqueSeries, "S├®rie");
+
+            // Update Type options based on selected Fournisseur, Gamme, and Serie
+            const dataForType = dataForSerie.filter(item => !fSerie.value || item.serie === fSerie.value);
+            const uniqueTypes = [...new Set(dataForType.map(item => item.type).filter(Boolean))].sort();
+            updateSelectOptions(fType, uniqueTypes, "Type");
+
+            applyFilters();
+        }
+
+        function updateSelectOptions(select, values, label) {
+            const currentVal = select.value;
+            select.innerHTML = `<option value="">${label}</option>`;
+            values.forEach(val => {
+                const opt = document.createElement('option');
+                opt.value = val;
+                opt.textContent = val;
+                if (val === currentVal) opt.selected = true;
+                select.appendChild(opt);
+            });
+            // If current value is no longer in options, reset to default
+            if (!values.includes(currentVal)) {
+                select.value = "";
+            }
+        }
+
+        function updateFavCount() {
+            const badge = document.getElementById('favCountBadge');
+            badge.textContent = favorites.length;
+            badge.classList.toggle('hidden', favorites.length === 0);
+        }
+
+        function applyFilters() {
+            const query = searchInput.value.toLowerCase().trim();
+            const four = fFournisseur.value;
+            const gamme = fGamme.value;
+            const serie = fSerie.value;
+            const type = fType.value;
+
+            filteredData = groupedData.filter(item => {
+                const id = `${item.reference}_${item.fournisseur || item.fabricant || ''}`.toLowerCase();
+                const isFav = favorites.includes(id);
+                if (showOnlyFavs && !isFav) return false;
+
+                const matchesSearch = !query ||
+                    (item.reference && String(item.reference).toLowerCase().includes(query)) ||
+                    (item.designation && item.designation.toLowerCase().includes(query));
+
+                const matchesFou = !four || item.fournisseur === four;
+                const matchesGamme = !gamme || item.gamme === gamme;
+                const matchesSerie = !serie || item.serie === serie;
+                const matchesType = !type || item.type === type;
+
+                return matchesSearch && matchesFou && matchesGamme && matchesSerie && matchesType;
+            });
+
+            document.getElementById('matchCount').textContent = filteredData.length;
+            displayCount = INCREMENT;
+            render();
+        }
+
+        function toggleFav(e, ref, fou) {
+            e.stopPropagation();
+            const id = `${ref}_${fou || ''}`.toLowerCase();
+            const index = favorites.indexOf(id);
+            if (index > -1) {
+                favorites.splice(index, 1);
+            } else {
+                favorites.push(id);
+            }
+            localStorage.setItem('art-favs', JSON.stringify(favorites));
+            updateFavCount();
+            render();
+            if (showOnlyFavs) applyFilters();
+        }
+
+        function setView(view) {
+            currentView = view;
+            grid.className = `grid-layout view-${view}`;
+            document.querySelectorAll('.view-toggle-btn').forEach(b => {
+                b.classList.toggle('active', b.dataset.view === view);
+            });
+            render();
+        }
+
+        function render() {
+            grid.innerHTML = '';
+            const itemsToDisplay = filteredData.slice(0, displayCount);
+
+            if (itemsToDisplay.length === 0) {
+                emptyState.classList.remove('hidden');
+                loadMoreContainer.classList.add('hidden');
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+
+            itemsToDisplay.forEach((item, idx) => {
+                const id = `${item.reference}_${item.fournisseur || item.fabricant || ''}`.toLowerCase();
+                const isFav = favorites.includes(id);
+                const isInNeeds = needs.some(n => n.id === id);
+
+                const card = document.createElement('div');
+                card.className = 'item-card glass rounded-xl animate-fade overflow-hidden group p-4 relative';
+                if (currentView === 'grid') card.classList.add('gap-3');
+
+                card.style.animationDelay = `${(idx % 20) * 15}ms`;
+
+                const conditVal = Number(item.condit || item.conditionnement || 1);
+                const unitVente = String(item.unit_vente || '').toUpperCase();
+                const unitCondit = String(item.unit_condit || 'U').toUpperCase();
+
+                // Logic: if unit_vente is M or PC, we multiply price by condit
+                const multiplier = (unitVente === 'M' || unitVente === 'PC') ? conditVal : 1;
+
+                const basePxPublic = Number(item.px_public || 0);
+                const basePxRemise = Number(item.px_remise || 0);
+
+                const finalPxPublic = (basePxPublic * multiplier).toFixed(2);
+                const finalPxRemise = (basePxRemise * multiplier).toFixed(2);
+
+                const pxPublic = basePxPublic > 0 ? finalPxPublic + ' Ôé¼' : '-';
+                const pxRemise = basePxRemise > 0 ? finalPxRemise + ' Ôé¼' : '-';
+
+                const conditHtml = multiplier > 1 ? `
+                    <div class="flex items-center gap-1 text-[10px] opacity-70 mt-1 mb-1">
+                        <i data-lucide="package" class="w-3 h-3"></i>
+                        <span>Conditionnement : <strong>${conditVal} ${unitCondit}</strong></span>
+                    </div>
+                ` : '';
+
+                const favBtnHtml = `
+                    <button class="fav-btn ${isFav ? 'active' : ''}" onclick="toggleFav(event, '${item.reference}', '${item.fournisseur || item.fabricant || ''}')">
+                        <i data-lucide="star" class="w-4 h-4 ${isFav ? 'fill-current' : ''}"></i>
+                    </button>
+                `;
+
+                const needBtnHtml = `
+                    <button class="need-action-btn ${isInNeeds ? 'active' : ''}" 
+                            title="${isInNeeds ? 'Retirer du besoin' : 'Ajouter au besoin'}" 
+                            onclick="toggleNeed(event, ${idx})">
+                        <i data-lucide="${isInNeeds ? 'clipboard-check' : 'clipboard-list'}" class="w-4 h-4"></i>
+                    </button>
+                `;
+
+                // Image HTML with dynamic classes based on view
+                const imgHtml = item.image
+                    ? `<div class="img-container cursor-zoom-in group/img" onclick="openVisualizer('${item.image}')">
+                         <img src="${item.image}" alt="Profile" class="h-full w-auto object-contain transition-transform duration-500 group-hover:scale-110 group-hover/img:brightness-110"
+                              onerror="this.parentElement.style.display='none'">
+                       </div>`
+                    : `<div class="img-container opacity-20"><i data-lucide="image" class="w-6 h-6"></i></div>`;
+
+                if (currentView === 'list') {
+                    card.innerHTML = `
+                        ${imgHtml}
+                        <div class="details-box">
+                            <span class="mono text-xs font-bold px-2 py-1 rounded select-all min-w-[80px] text-center">${item.reference || '-'}</span>
+                            <div class="flex-1 flex flex-col">
+                                <h3 class="font-bold text-sm leading-tight">${item.designation || 'Sans d├®signation'}</h3>
+                                ${conditHtml}
+                            </div>
+                            <span class="badge">${item.type || item.fabricant || 'Standard'}</span>
+                            <div class="price-grid flex gap-6">
+                                <div class="flex flex-col"><span class="text-[9px] opacity-50 font-bold uppercase">Public</span><span class="text-xs font-semibold">${pxPublic}</span></div>
+                                <div class="flex flex-col"><span class="text-[9px] opacity-50 font-bold uppercase">Remis├®</span><span class="text-sm font-black text-emerald-400">${pxRemise}</span></div>
+                            </div>
+                            ${favBtnHtml}
+                            ${needBtnHtml}
+                        </div>
+                    `;
+                } else {
+                    card.innerHTML = `
+                        <div class="flex justify-between items-start mb-1 pr-16">
+                            <span class="mono text-xs font-bold px-2 py-1 rounded select-all">${item.reference || '-'}</span>
+                            <span class="badge">${item.type || item.fabricant || 'Standard'}</span>
+                        </div>
+                        ${imgHtml}
+                        <div class="flex-1">
+                            <h3 class="font-bold text-sm leading-tight mb-1">${item.designation || 'Sans d├®signation'}</h3>
+                            ${conditHtml}
+                            ${currentView === 'grid' ? `
+                                <p class="text-[10px] opacity-50 flex items-center gap-1">
+                                    <i data-lucide="building-2" class="w-3 h-3"></i> ${item.fournisseur || item.fabricant || 'Catalogue'}
+                                </p>
+                            ` : ''}
+                        </div>
+                        <div class="price-grid grid grid-cols-2 gap-2 pt-2 border-t border-white/5 relative">
+                            <div class="flex flex-col"><span class="text-[8px] opacity-50 uppercase font-bold">Public</span><span class="text-xs font-semibold">${pxPublic}</span></div>
+                            <div class="flex flex-col items-end"><span class="text-[8px] opacity-50 uppercase font-bold">Remis├®</span><span class="text-sm font-black text-emerald-400">${pxRemise}</span></div>
+                        </div>
+                        ${favBtnHtml}
+                        ${needBtnHtml}
+                    `;
+                }
+                grid.appendChild(card);
+            });
+
+            lucide.createIcons();
+            loadMoreContainer.classList.toggle('hidden', displayCount >= filteredData.length);
+        }
+
+
+        // Events
+        searchInput.addEventListener('input', applyFilters);
+        [fFournisseur, fGamme, fSerie, fType].forEach(el => el.addEventListener('change', handleFilterChange));
+
+        loadMoreBtn.addEventListener('click', () => {
+            displayCount += INCREMENT;
+            render();
+        });
+
+        // Favorites logic...
+        document.getElementById('resetFilters').addEventListener('click', () => {
+            [fFournisseur, fGamme, fSerie, fType].forEach(el => el.value = "");
+            searchInput.value = "";
+            showOnlyFavs = false;
+            toggleFavFilterBtn.classList.remove('active');
+            handleFilterChange();
+        });
+
+        toggleFavFilterBtn.addEventListener('click', () => {
+            showOnlyFavs = !showOnlyFavs;
+            toggleFavFilterBtn.classList.toggle('active', showOnlyFavs);
+            applyFilters();
+        });
+
+        document.querySelectorAll('.view-toggle-btn').forEach(btn => {
+            btn.addEventListener('click', () => setView(btn.dataset.view));
+        });
+
+        document.getElementById('modeToggle').addEventListener('click', () => {
+            isDarkMode = !isDarkMode;
+            document.body.classList.toggle('light-mode', !isDarkMode);
+            localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
+            updateThemeIcons();
+        });
+
+        // Fullscreen Logic
+        const fullscreenToggle = document.getElementById('fullscreenToggle');
+        fullscreenToggle.addEventListener('click', () => {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.error(`Error attempting to enable full-screen mode: ${err.message}`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        });
+
+        document.addEventListener('fullscreenchange', () => {
+            const maxIcon = document.querySelector('.max-icon');
+            const minIcon = document.querySelector('.min-icon');
+            if (document.fullscreenElement) {
+                maxIcon.classList.add('hidden');
+                minIcon.classList.remove('hidden');
+            } else {
+                maxIcon.classList.remove('hidden');
+                minIcon.classList.add('hidden');
+            }
+        });
+
+        // Auto-fullscreen on first click
+        const firstClickFullscreen = () => {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(() => { });
+            }
+            document.removeEventListener('click', firstClickFullscreen);
+        };
+        document.addEventListener('click', firstClickFullscreen);
+
+        function updateThemeIcons() {
+            const sun = document.querySelector('.dark-icon');
+            const moon = document.querySelector('.light-icon');
+            if (isDarkMode) {
+                sun.classList.remove('hidden');
+                moon.classList.add('hidden');
+            } else {
+                sun.classList.add('hidden');
+                moon.classList.remove('hidden');
+            }
+        }
+
+        // --- NAVIGATION LOGIC ---
+        window.switchView = (viewName) => {
+            currentViewName = viewName;
+
+            // UI Toggle
+            catalogueView.classList.toggle('hidden', viewName !== 'catalogue');
+            needsListView.classList.toggle('hidden', viewName !== 'needs');
+
+            tabCatalogue.classList.toggle('active', viewName === 'catalogue');
+            tabNeeds.classList.toggle('active', viewName === 'needs');
+
+            if (viewName === 'needs') renderNeeds();
+            lucide.createIcons();
+        };
+
+        // --- NEEDS LIST LOGIC ---
+        window.toggleNeed = (e, idx) => {
+            if (e) e.stopPropagation();
+            const item = filteredData[idx];
+            const id = `${item.reference}_${item.fournisseur || item.fabricant || ''}`.toLowerCase();
+
+            const existingIdx = needs.findIndex(n => n.id === id);
+            if (existingIdx > -1) {
+                needs.splice(existingIdx, 1);
+            } else {
+                needs.push({
+                    id,
+                    reference: item.reference,
+                    designation: item.designation,
+                    fournisseur: item.fournisseur || item.fabricant || 'Catalogue',
+                    ral: item.decor || '-',
+                    longueur: item.condit || 1,
+                    unit_condit: item.unit_condit || 'M',
+                    need: 0,
+                    stock: 0
+                });
+            }
+
+            localStorage.setItem('art-needs', JSON.stringify(needs));
+            render();
+        };
+
+        window.renderNeeds = () => {
+            needsTableBody.innerHTML = '';
+            if (needs.length === 0) {
+                needsTableBody.innerHTML = '<tr><td colspan="9" class="p-12 text-center opacity-40">Votre liste de besoins est vide. Ajoutez des articles depuis le catalogue.</td></tr>';
+                return;
+            }
+
+            needs.forEach((item, idx) => {
+                const toCmd = Math.max(0, item.need - item.stock);
+                const row = document.createElement('tr');
+                row.className = 'hover:bg-white/5 transition-colors';
+                row.innerHTML = `
+                    <td class="font-medium text-zinc-400">${item.fournisseur}</td>
+                    <td><span class="mono px-2 py-0.5 rounded text-[11px] font-bold">${item.reference}</span></td>
+                    <td class="font-bold">${item.designation}</td>
+                    <td><span class="badge">${item.ral}</span></td>
+                    <td class="text-xs opacity-70">${item.longueur} ${item.unit_condit}</td>
+                    <td class="text-center">
+                        <input type="number" class="table-input" value="${item.need}" 
+                               onchange="updateNeedField(${idx}, 'need', this.value)">
+                    </td>
+                    <td class="text-center">
+                        <input type="number" class="table-input" value="${item.stock}" 
+                               onchange="updateNeedField(${idx}, 'stock', this.value)">
+                    </td>
+                    <td class="text-center">
+                        <span class="result-badge ${toCmd > 0 ? 'bg-orange-500/20 text-orange-500' : 'bg-zinc-500/10 text-zinc-500'}">
+                            ${toCmd}
+                        </span>
+                    </td>
+                    <td class="text-center">
+                        <button onclick="removeNeed(${idx})" class="p-2 text-red-400 hover:text-red-500 transition-all">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        </button>
+                    </td>
+                `;
+                needsTableBody.appendChild(row);
+            });
+            lucide.createIcons();
+        };
+
+        window.updateNeedField = (idx, field, value) => {
+            needs[idx][field] = parseInt(value) || 0;
+            localStorage.setItem('art-needs', JSON.stringify(needs));
+            renderNeeds();
+        };
+
+        window.removeNeed = (idx) => {
+            needs.splice(idx, 1);
+            localStorage.setItem('art-needs', JSON.stringify(needs));
+            renderNeeds();
+            render(); // Update catalogue buttons
+        };
+
+        window.clearNeeds = () => {
+            if (confirm('Voulez-vous vraiment vider toute la liste ?')) {
+                needs = [];
+                localStorage.setItem('art-needs', JSON.stringify(needs));
+                renderNeeds();
+                render();
+            }
+        };
+
+        // Init icons
+        updateThemeIcons();
+
+        // VISUALIZER LOGIC
+        window.openVisualizer = (src) => {
+            modalImage.src = src;
+            imageModal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        };
+
+        const closeVisualizer = () => {
+            imageModal.classList.add('hidden');
+            document.body.style.overflow = '';
+        };
+
+        imageModal.addEventListener('click', closeVisualizer);
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeVisualizer();
+        });
+
+        // Init
+        loadData();
+    </script>
+</body>
+
+</html>
