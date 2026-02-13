@@ -965,6 +965,12 @@
         document.getElementById('loadMoreBtn').addEventListener('click', () => { displayCount += INCREMENT; render(); });
 
         init();
+
+        // Version Indicator
+        const v = document.createElement('div');
+        v.className = 'fixed bottom-2 right-2 text-[10px] text-zinc-600 font-mono opacity-50 pointer-events-none z-50';
+        v.textContent = 'v24.1';
+        document.body.appendChild(v);
     </script>
 </body>
 
