@@ -556,9 +556,6 @@
                 </button>
                 <button onclick="toggleFS()" class="action-btn h-10 w-10 rounded-2xl"><i data-lucide="maximize"
                         class="w-5 h-5"></i></button>
-                <button onclick="saveProject()" class="action-btn h-10 w-10 rounded-2xl" title="Enregistrer le projet">
-                    <i data-lucide="save" class="w-5 h-5"></i>
-                </button>
                 <button id="modeToggle" class="action-btn h-10 w-10 rounded-2xl"><i data-lucide="sparkles"
                         class="w-5 h-5"></i></button>
                 <div class="ml-6 pl-6 border-l border-white/5 text-right">
@@ -649,6 +646,10 @@
                         <button onclick="openRalManagement()"
                             class="px-6 py-3 bg-white hover:bg-zinc-50 text-zinc-900 rounded-lg text-xs font-bold transition-all border border-zinc-200 shadow-sm">GESTION
                             RAL</button>
+                        <button onclick="saveProject()"
+                            class="px-6 py-3 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-bold transition-all shadow-lg shadow-emerald-500/20 flex items-center gap-2">
+                            <i data-lucide="save" class="w-4 h-4"></i> ENREGISTRER
+                        </button>
                         <button onclick="exportToCSV()"
                             class="px-6 py-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-bold transition-all">EXPORTER</button>
                         <button onclick="clearNeeds()"
