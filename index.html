@@ -4,11 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy"
-        content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob:;">
     <title>Arts Alu | Catalogue Premium</title>
-    <script src="https://cdn.tailwindcss.com/3.4.1"></script>
-    <script src="https://unpkg.com/lucide@0.315.0"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
     <link
         href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap"
         rel="stylesheet">
@@ -592,10 +590,8 @@
     <script>
         const INCREMENT = 52;
         let groupedData = [], filteredData = [], displayCount = INCREMENT;
-        let favorites = [];
-        let needs = [];
-        try { favorites = JSON.parse(localStorage.getItem('art-favs') || '[]'); if (!Array.isArray(favorites)) favorites = []; } catch (e) { favorites = []; }
-        try { needs = JSON.parse(localStorage.getItem('art-needs') || '[]'); if (!Array.isArray(needs)) needs = []; } catch (e) { needs = []; }
+        let favorites = JSON.parse(localStorage.getItem('art-favs') || '[]');
+        let needs = JSON.parse(localStorage.getItem('art-needs') || '[]');
         let isDarkMode = localStorage.getItem('theme') !== 'light';
         let showOnlyFavs = false;
         let currentView = 'compact';
@@ -646,13 +642,6 @@
                 .replace(/\+/g, ' + ')
                 .replace(/\s+/g, ' ')
                 .trim();
-        }
-
-        function escapeHtml(str) {
-            if (str == null) return '';
-            const div = document.createElement('div');
-            div.textContent = String(str);
-            return div.innerHTML;
         }
 
         async function init() {
@@ -759,31 +748,24 @@
                 card.className = `item-card animate-fade ${currentView === 'list' ? 'flex-row items-center' : ''}`;
                 card.style.animationDelay = `${(idx % 40) * 15}ms`;
 
-                const safeImage = escapeHtml(it.image);
-                const safeRef = escapeHtml(it.reference);
-                const safeType = escapeHtml(it.type || 'Plein');
-                const safeFour = escapeHtml(it.fournisseur || '-');
-                const safeDes = escapeHtml(formatName(it.designation));
-                const safeUnit = escapeHtml(it.unit_condit || 'U');
-
                 const conditHtml = multiplier > 1 ? `
                     <div class="flex items-center gap-2 text-[8px] font-black text-indigo-500 underline underline-offset-4 decoration-indigo-500/20 mt-2 uppercase tracking-widest">
                         <i data-lucide="package" class="w-3 h-3 text-indigo-500"></i>
-                        <span>LOT DE ${conditVal} ${safeUnit}</span>
+                        <span>LOT DE ${conditVal} ${it.unit_condit || 'U'}</span>
                     </div>` : '';
 
                 const img = it.image ?
-                    `<div class="img-container" onclick="openVisualizer('${safeImage}')"><img src="${safeImage}" alt="${safeDes}" onerror="this.style.display='none'"></div>` :
+                    `<div class="img-container" onclick="openVisualizer('${it.image}')"><img src="${it.image}"></div>` :
                     `<div class="img-container opacity-5"><i data-lucide="image" class="w-6 h-6"></i></div>`;
 
                 if (currentView === 'list') {
                     card.innerHTML = `
                         <div class="flex items-center gap-6 w-full">
                             ${img}
-                            <span class="mono shrink-0">${safeRef}</span>
-                            ${currentView !== 'mini' ? `<span class="badge uppercase shrink-0">${safeType}</span>` : ''}
-                            <span class="text-[8px] font-black text-indigo-500/40 uppercase tracking-[0.2em] shrink-0 w-32 truncate">${safeFour}</span>
-                            <h3 class="truncate flex-1">${safeDes}</h3>
+                            <span class="mono shrink-0">${it.reference}</span>
+                            ${currentView !== 'mini' ? `<span class="badge uppercase shrink-0">${it.type || 'Plein'}</span>` : ''}
+                            <span class="text-[8px] font-black text-indigo-500/40 uppercase tracking-[0.2em] shrink-0 w-32 truncate">${it.fournisseur || '-'}</span>
+                            <h3 class="truncate flex-1">${formatName(it.designation)}</h3>
                             ${conditHtml}
                             <div class="price-grid">
                                 <div class="flex flex-col"><span class="price-label">Catalogue</span><span class="price-value">${pxP}€</span></div>
@@ -803,11 +785,11 @@
                         ${img}
                         <div class="card-content flex-1">
                             <div class="flex items-center gap-3 mb-2">
-                                <span class="mono">${safeRef}</span>
-                                ${currentView !== 'mini' ? `<span class="badge uppercase">${safeType}</span>` : ''}
+                                <span class="mono">${it.reference}</span>
+                                ${currentView !== 'mini' ? `<span class="badge uppercase">${it.type || 'Plein'}</span>` : ''}
                             </div>
-                            <div class="text-[8px] font-black text-indigo-500/40 uppercase tracking-[0.2em] mb-2">${safeFour}</div>
-                            <h3>${safeDes}</h3>
+                            <div class="text-[8px] font-black text-indigo-500/40 uppercase tracking-[0.2em] mb-2">${it.fournisseur || '-'}</div>
+                            <h3>${formatName(it.designation)}</h3>
                             ${conditHtml}
                             <div class="price-grid mt-auto">
                                 <div class="flex flex-col"><span class="price-label">Catalogue</span><span class="price-value">${pxP}€</span></div>
