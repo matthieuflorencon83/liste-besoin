@@ -140,14 +140,45 @@
 
         .table-input {
             width: 80px;
-            background: rgba(0, 0, 0, 0.2) !important;
-            border: 1px solid var(--border) !important;
+            background: #fff !important;
+            border: 1px solid #ccc !important;
             border-radius: 4px;
             padding: 4px 8px;
-            font-size: 0.85rem;
-            font-weight: 700;
+            font-size: 0.9rem;
+            font-weight: 500;
             text-align: center;
-            color: var(--text-main);
+            color: #000 !important;
+            height: 32px;
+        }
+
+        .table-header {
+            background-color: #18181b;
+            /* zinc-900 */
+            color: #a1a1aa;
+            /* zinc-400 */
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 2px solid #3f3f46;
+        }
+
+        .table-row {
+            border-bottom: 1px solid #27272a;
+            /* zinc-800 */
+            transition: background 0.2s;
+        }
+
+        .table-row:hover {
+            background: #27272a;
+        }
+
+        .table-cell {
+            padding: 0.75rem 1rem;
+            font-size: 0.9rem;
+            color: #e4e4e7;
+            /* zinc-200 */
         }
 
         .light-mode .table-input {
@@ -580,29 +611,28 @@
             <div class="max-w-6xl mx-auto w-full">
                 <div class="flex items-center justify-between mb-12">
                     <div>
-                        <h1 class="text-5xl font-black text-white tracking-tighter">Besoins</h1>
-                        <p class="text-zinc-500 font-bold mt-2 uppercase text-[10px] tracking-[0.3em]">Gestion de
-                            commande simplifiée</p>
+                        <h1 class="text-3xl font-bold text-white tracking-tight">Liste de Besoins</h1>
+                        <p class="text-zinc-500 text-sm mt-1">Gestion des commandes</p>
                     </div>
                     <button onclick="clearNeeds()"
                         class="px-8 py-4 bg-red-600/5 hover:bg-red-600 text-red-500 hover:text-white rounded-2xl text-[10px] font-black transition-all border border-red-500/10">VIDER
                         LA LISTE</button>
                 </div>
-                <div class="bg-zinc-900/30 rounded-[2rem] overflow-hidden border border-white/[0.03] shadow-2xl">
-                    <table class="w-full text-left">
-                        <thead
-                            class="bg-white/5 text-[9px] uppercase font-black text-indigo-400/70 tracking-[0.2em] border-b border-white/[0.03]">
+                <div class="bg-zinc-900 border border-zinc-800 rounded-lg shadow-sm overflow-hidden">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
                             <tr>
-                                <th class="p-8">Fournisseur</th>
-                                <th>Référence</th>
-                                <th>Désignation</th>
-                                <th>RAL</th>
-                                <th>Longueur</th>
-                                <th class="text-center">Besoin</th>
-                                <th class="text-center">Stock</th>
-                                <th class="text-center">À Commander</th>
-                                <th class="text-center">Action</th>
+                                <th class="table-header w-32">Fournisseur</th>
+                                <th class="table-header w-48">Référence</th>
+                                <th class="table-header">Désignation</th>
+                                <th class="table-header w-24">RAL</th>
+                                <th class="table-header w-32">Condit.</th>
+                                <th class="table-header text-center w-24">Besoin</th>
+                                <th class="table-header text-center w-24">Stock</th>
+                                <th class="table-header text-center w-24">Cde</th>
+                                <th class="table-header text-center w-16"></th>
                             </tr>
+
                         </thead>
                         <tbody id="needsTableBody" class="divide-y divide-white/[0.03] text-sm font-bold text-white/90">
                         </tbody>
@@ -906,28 +936,26 @@
             needs.forEach((item, idx) => {
                 const toCmd = Math.max(0, item.need - item.stock);
                 const row = document.createElement('tr');
-                row.className = 'hover:bg-white/5 transition-colors';
+                row.className = 'table-row';
                 row.innerHTML = `
-                    <td class="font-medium text-zinc-400">${item.fournisseur}</td>
-                    <td><span class="mono px-2 py-0.5 rounded text-[11px] font-bold">${item.reference}</span></td>
-                    <td class="font-bold">${item.designation}</td>
-                    <td><span class="badge">${item.ral || '-'}</span></td>
-                    <td class="text-xs opacity-70">${item.longueur || 1} ${item.unit_condit || 'M'}</td>
-                    <td class="text-center">
+                    <td class="table-cell text-zinc-400 font-bold text-xs uppercase tracking-wider">${item.fournisseur}</td>
+                    <td class="table-cell font-mono text-indigo-400 font-bold">${item.reference}</td>
+                    <td class="table-cell font-medium">${item.designation}</td>
+                    <td class="table-cell"><span class="px-2 py-1 bg-zinc-800 rounded text-xs font-mono">${item.ral || '-'}</span></td>
+                    <td class="table-cell text-zinc-500 text-sm">${item.longueur || 1} ${item.unit_condit || 'M'}</td>
+                    <td class="table-cell text-center">
                         <input type="number" class="table-input" value="${item.need}" 
                                onchange="updateNeedV(${idx}, 'need', this.value)">
                     </td>
-                    <td class="text-center">
+                    <td class="table-cell text-center">
                         <input type="number" class="table-input" value="${item.stock}" 
                                onchange="updateNeedV(${idx}, 'stock', this.value)">
                     </td>
-                    <td class="text-center">
-                        <span class="result-badge ${toCmd > 0 ? 'bg-orange-500/20 text-orange-500' : 'bg-zinc-500/10 text-zinc-500'}">
-                            ${toCmd}
-                        </span>
+                    <td class="table-cell text-center font-bold text-lg ${toCmd > 0 ? 'text-orange-500' : 'text-zinc-700'}">
+                        ${toCmd}
                     </td>
-                    <td class="text-center">
-                        <button onclick="removeN(${idx})" class="p-2 text-red-400 hover:text-red-500 transition-all">
+                    <td class="table-cell text-center">
+                        <button onclick="removeN(${idx})" class="text-zinc-600 hover:text-red-500 transition-colors">
                             <i data-lucide="trash-2" class="w-4 h-4"></i>
                         </button>
                     </td>
