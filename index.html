@@ -563,6 +563,23 @@
                     <span class="text-[7px] block font-black text-muted uppercase tracking-[0.2em] mt-1">Articles</span>
                 </div>
             </div>
+
+            <!-- NEEDS VIEW TOOLBAR -->
+            <div class="hidden flex items-center gap-4" id="needsToolbar">
+                <input type="file" id="projectFileInput" accept=".json" class="hidden" onchange="loadProject(this)">
+                <button onclick="document.getElementById('projectFileInput').click()"
+                    class="action-btn px-4 h-10 w-auto rounded-2xl gap-2 !bg-zinc-800 border !border-zinc-700 hover:!bg-zinc-700"
+                    title="Ouvrir un projet">
+                    <i data-lucide="folder-open" class="w-4 h-4 text-indigo-400"></i>
+                    <span class="text-[10px] font-black uppercase tracking-widest">OUVRIR</span>
+                </button>
+                <button onclick="saveProject()"
+                    class="action-btn px-4 h-10 w-auto rounded-2xl gap-2 !bg-emerald-600/10 border !border-emerald-500/30 hover:!bg-emerald-600/20"
+                    title="Enregistrer le projet">
+                    <i data-lucide="save" class="w-4 h-4 text-emerald-500"></i>
+                    <span class="text-[10px] font-black uppercase tracking-widest text-emerald-500">ENREGISTRER</span>
+                </button>
+            </div>
         </div>
 
         <div id="filterBar" class="h-16 flex items-center px-10 gap-6 bg-white/[0.01]">
@@ -646,10 +663,7 @@
                         <button onclick="openRalManagement()"
                             class="px-6 py-3 bg-white hover:bg-zinc-50 text-zinc-900 rounded-lg text-xs font-bold transition-all border border-zinc-200 shadow-sm">GESTION
                             RAL</button>
-                        <button onclick="saveProject()"
-                            class="px-6 py-3 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-bold transition-all shadow-lg shadow-emerald-500/20 flex items-center gap-2">
-                            <i data-lucide="save" class="w-4 h-4"></i> ENREGISTRER
-                        </button>
+
                         <button onclick="exportToCSV()"
                             class="px-6 py-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-bold transition-all">EXPORTER</button>
                         <button onclick="clearNeeds()"
@@ -761,6 +775,44 @@
             div.textContent = String(str);
             return div.innerHTML;
         }
+
+        window.loadProject = (input) => {
+            const file = input.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const data = JSON.parse(e.target.result);
+
+                    if (data.needs && Array.isArray(data.needs)) {
+                        needs = data.needs;
+                        localStorage.setItem('art-needs', JSON.stringify(needs));
+                    }
+
+                    if (data.favorites && Array.isArray(data.favorites)) {
+                        favorites = data.favorites;
+                        localStorage.setItem('art-favorites', JSON.stringify(favorites));
+                    }
+
+                    if (data.chantier) {
+                        localStorage.setItem('art-chantier', data.chantier);
+                        const chantierInput = document.getElementById('chantierRef');
+                        if (chantierInput) chantierInput.value = data.chantier;
+                    }
+
+                    // Refresh view
+                    renderNeeds();
+                    updateFavCount();
+                    alert("Projet chargé avec succès !");
+                } catch (err) {
+                    alert("Erreur lors de la lecture du fichier projet : " + err.message);
+                }
+            };
+            reader.readAsText(file);
+            // Reset input so same file can be selected again
+            input.value = '';
+        };
 
         async function init() {
             try {
@@ -980,6 +1032,7 @@
             document.getElementById('tabNeeds').classList.toggle('active', v === 'needs');
             document.getElementById('filterBar').classList.toggle('hidden', v !== 'catalogue');
             document.getElementById('catalogueToolbar').classList.toggle('hidden', v !== 'catalogue');
+            document.getElementById('needsToolbar').classList.toggle('hidden', v !== 'needs');
             if (v === 'needs') renderNeeds();
         };
 
