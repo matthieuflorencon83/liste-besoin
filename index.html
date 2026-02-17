@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Content-Security-Policy"
         content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob:;">
-    <title>Arts Alu | Catalogue Premium</title>
+    <title>Arts Alu | Catalogue Premium [V3.6]</title>
     <script src="https://cdn.tailwindcss.com/3.4.1"></script>
     <script src="https://unpkg.com/lucide@0.315.0"></script>
     <link
@@ -804,7 +804,7 @@
                         </div>
                     </div>
                     <div class="flex gap-4">
-                        <button id="ralModeBtn" onclick="handleRalButtonClick()"
+                        <button id="ralModeBtn" onclick="toggleFinitionMode()"
                             class="flex items-center gap-2 px-6 py-3 bg-white hover:bg-zinc-50 text-zinc-900 rounded-lg text-xs font-bold transition-all border border-zinc-200 shadow-sm">
                             <i data-lucide="palette" class="w-4 h-4 text-purple-600"></i>
                             <span id="ralBtnText">FINITIONS</span>
@@ -825,18 +825,14 @@
             <!-- SCROLLABLE TABLE AREA -->
             <div class="flex-1 overflow-y-auto min-h-0 px-10 pb-10">
                 <div class="bg-zinc-900 border border-zinc-800 rounded-lg shadow-sm">
-                    <table class="w-full text-left border-collapse">
+                    <table class="w-full text-left border-collapse table-fixed">
                         <thead class="sticky top-0 z-10 bg-zinc-900 shadow-md">
                             <tr>
-                                <th
-                                    class="table-header w-12 p-2 text-center opacity-0 pointer-events-none transition-opacity duration-200">
+                                <th class="hidden">
                                     <div class="flex items-center justify-center">
-                                        <input type="checkbox" id="selectAllCheckbox" onclick="toggleSelectAll()" <th
-                                            class="table-header w-0 p-0 overflow-hidden text-center opacity-0 transition-all duration-300">
-                                        <div class="flex items-center justify-center w-12 mx-auto">
-                                            <input type="checkbox" id="selectAllCheckbox" onclick="toggleSelectAll()"
-                                                class="w-4 h-4 rounded border-zinc-600 bg-zinc-700 text-indigo-600 focus:ring-0 focus:ring-offset-0 cursor-pointer accent-indigo-600">
-                                        </div>
+                                        <input type="checkbox" id="selectAllCheckbox" onclick="toggleSelectAll()"
+                                            class="w-4 h-4 rounded border-zinc-600 bg-zinc-700 text-indigo-600 focus:ring-0 focus:ring-offset-0 cursor-pointer accent-indigo-600">
+                                    </div>
                                 </th>
                                 <th class="table-header w-32 cursor-pointer hover:bg-zinc-800 transition-colors group"
                                     onclick="toggleSupplierSort()">
@@ -1004,8 +1000,8 @@
         </div>
     </div>
 
-    <script src="data.js"></script>
-    <script src="app.js"></script>
+    <script src="data.js?v=3"></script>
+    <script src="app.js?v=3"></script>
 </body>
 
 </html>

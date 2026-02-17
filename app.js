@@ -2,6 +2,8 @@ const INCREMENT = 52;
 let groupedData = [], filteredData = [], displayCount = INCREMENT;
 let favorites = [];
 let needs = [];
+let isRalSelectionMode = false;
+let selectedNeeds = new Set();
 try { favorites = JSON.parse(localStorage.getItem('art-favs') || '[]'); if (!Array.isArray(favorites)) favorites = []; } catch (e) { favorites = []; }
 try { needs = JSON.parse(localStorage.getItem('art-needs') || '[]'); if (!Array.isArray(needs)) needs = []; } catch (e) { needs = []; }
 let isDarkMode = localStorage.getItem('theme') !== 'light';
@@ -16,6 +18,8 @@ const favCountBadge = document.getElementById('favCountBadge');
 const fFour = document.getElementById('filterFournisseur');
 const fType = document.getElementById('filterType');
 const fSerie = document.getElementById('filterSerie');
+
+
 
 if (!isDarkMode) document.body.classList.add('light-mode');
 
@@ -1194,26 +1198,33 @@ function renderBDC(supplier, items, chantier) {
 
 /* --- BATCH RAL MANAGEMENT --- */
 
-let selectedNeeds = new Set();
-let isRalSelectionMode = false;
 let currentRalFamily = 'std';
 
-function handleRalButtonClick() {
-    // 1. If not in mode -> Enter mode
-    if (!isRalSelectionMode) {
-        toggleRalSelectionMode();
-        return;
-    }
+window.toggleFinitionMode = function () {
+    try {
+        console.log("Toggle Finition Mode. Current:", isRalSelectionMode);
 
-    // 2. If in mode
-    const count = selectedNeeds.size;
+        // 1. If not in mode -> Enter mode
+        if (!isRalSelectionMode) {
+            toggleRalSelectionMode();
+            // alert("Mode Finition ACTIVÉ");
+            return;
+        }
 
-    if (count > 0) {
-        // If items selected -> Apply (Open Modal)
-        openRalModal();
-    } else {
-        // If no items selected -> Cancel (Exit mode)
-        toggleRalSelectionMode();
+        // 2. If in mode
+        const count = selectedNeeds.size;
+
+        if (count > 0) {
+            // If items selected -> Apply (Open Modal)
+            openRalModal();
+        } else {
+            // If no items selected -> Cancel (Exit mode)
+            toggleRalSelectionMode();
+            // alert("Mode Finition DÉSACTIVÉ");
+        }
+    } catch (e) {
+        alert("Erreur Finition: " + e.message);
+        console.error(e);
     }
 }
 
@@ -1229,6 +1240,7 @@ function toggleRalSelectionMode() {
 
 
 function updateRalModeUI() {
+    console.log("Updating UI. Mode:", isRalSelectionMode);
     const btn = document.getElementById('ralModeBtn');
     const btnText = document.getElementById('ralBtnText');
     const selectAllCheckbox = document.getElementById('selectAllCheckbox');
@@ -1252,7 +1264,11 @@ function updateRalModeUI() {
         }
 
         // Show Select All Checkbox header
-        if (selectAllCheckbox) selectAllCheckbox.parentElement.parentElement.classList.remove('opacity-0', 'pointer-events-none');
+        if (selectAllCheckbox) {
+            const th = selectAllCheckbox.parentElement.parentElement;
+            th.classList.remove('hidden');
+            th.classList.add('table-header', 'w-12', 'p-2', 'text-center');
+        }
 
     } else {
         // Mode: Default (Inactive)
@@ -1267,7 +1283,11 @@ function updateRalModeUI() {
         }
 
         // Hide Select All Checkbox header
-        if (selectAllCheckbox) selectAllCheckbox.parentElement.parentElement.classList.add('opacity-0', 'pointer-events-none');
+        if (selectAllCheckbox) {
+            const th = selectAllCheckbox.parentElement.parentElement;
+            th.classList.add('hidden');
+            th.classList.remove('table-header', 'w-12', 'p-2', 'text-center');
+        }
     }
 
     // Sync Select All checkbox state
@@ -1308,8 +1328,13 @@ function toggleSelection(idx) {
 function handleRowClick(e, idx) {
     if (isRalSelectionMode) {
         // If in mode, clicking anywhere toggles selection (unless clicking delete or edit specific inputs)
-        if (e.target.closest('button') || e.target.closest('input[type="number"]')) return;
+        // Also ignore checkbox to prevent double toggle (onchange handles it)
+        if (e.target.closest('button') ||
+            e.target.closest('input[type="number"]') ||
+            e.target.closest('input[type="checkbox"]')) return;
+
         toggleSelection(idx);
+        return; // Stop further processing (like expansion) if in selection mode
     }
     // ... existing logic for expanding row ...
 }
@@ -1405,11 +1430,11 @@ function renderNeeds() {
     if (selectAllCheckbox) {
         const th = selectAllCheckbox.parentElement.parentElement;
         if (isRalSelectionMode) {
-            th.classList.remove('w-0', 'p-0', 'opacity-0', 'overflow-hidden');
-            th.classList.add('w-12', 'p-2', 'opacity-100');
+            th.classList.remove('hidden');
+            th.classList.add('table-header', 'w-12', 'p-2', 'text-center');
         } else {
-            th.classList.remove('w-12', 'p-2', 'opacity-100');
-            th.classList.add('w-0', 'p-0', 'opacity-0', 'overflow-hidden');
+            th.classList.add('hidden');
+            th.classList.remove('table-header', 'w-12', 'p-2', 'text-center');
         }
     }
 
@@ -1418,8 +1443,7 @@ function renderNeeds() {
         const ref = item.reference || '-';
         const des = item.designation || '-';
 
-        // Display RAL info
-
+        let ralDisplay = '<span class="text-zinc-500">-</span>';
         if (item.ral) {
             ralDisplay = `<div class="flex flex-col">
                 <span class="font-bold text-white">${item.ral}</span>
@@ -1436,15 +1460,15 @@ function renderNeeds() {
 
         // Checkbox column cell
         const checkboxCellClass = isRalSelectionMode
-            ? 'p-2 w-12 opacity-100'
-            : 'p-0 w-0 opacity-0 overflow-hidden';
+            ? 'p-2 w-12 text-center'
+            : 'hidden';
 
         return `
         <tr onclick="handleRowClick(event, ${index})" 
             class="group transition-all cursor-pointer ${rowBg}">
             
             <!-- CHECKBOX -->
-            <td class="text-center transition-all duration-300 ${checkboxCellClass}">
+            <td class="text-center ${checkboxCellClass}">
                 <div class="flex items-center justify-center w-12 mx-auto">
                     <input type="checkbox" 
                         onchange="toggleSelection(${index})" 
@@ -1454,7 +1478,7 @@ function renderNeeds() {
             </td>
 
             <!-- SUPPLIER -->
-            <td class="p-4">
+            <td class="p-4 w-32">
                 <div class="flex items-center gap-2">
                     <div class="w-1 h-8 rounded-full bg-indigo-500/50"></div>
                     <span class="font-bold text-xs uppercase tracking-wider text-zinc-400">${item.fournisseur || 'AUTRE'}</span>
@@ -1462,7 +1486,7 @@ function renderNeeds() {
             </td>
 
             <!-- REFERENCE -->
-            <td class="p-4 font-mono text-indigo-300 font-bold">${ref}</td>
+            <td class="p-4 w-48 font-mono text-indigo-300 font-bold">${ref}</td>
 
             <!-- DESIGNATION -->
             <td class="p-4">
@@ -1470,34 +1494,34 @@ function renderNeeds() {
             </td>
 
             <!-- RAL / FINISH -->
-            <td class="p-4">
+            <td class="p-4 w-24">
                 ${ralDisplay}
             </td>
 
             <!-- CONDIT -->
-            <td class="p-4">
+            <td class="p-4 w-32">
                <div class="text-xs text-zinc-500">${item.conditionnement || '-'}</div>
             </td>
 
             <!-- NEED -->
-            <td class="p-4 text-center">
+            <td class="p-4 w-24 text-center">
                 <div class="inline-flex items-center justify-center min-w-[30px] h-8 px-2 bg-zinc-800 rounded-lg text-white font-bold border border-zinc-700">
                     ${item.need || 0}
                 </div>
             </td>
 
             <!-- STOCK -->
-            <td class="p-4 text-center">
+            <td class="p-4 w-24 text-center">
                  <span class="text-zinc-500 font-mono">${item.stock || 0}</span>
             </td>
 
             <!-- ORDER -->
-            <td class="p-4 text-center">
+            <td class="p-4 w-24 text-center">
                 <span class="text-emerald-500 font-bold font-mono">${Math.max(0, (parseFloat(item.need) || 0) - (parseFloat(item.stock) || 0))}</span>
             </td>
 
             <!-- ACTIONS -->
-            <td class="p-4 text-right">
+            <td class="p-4 w-16 text-right">
                 <button onclick="deleteNeed(${index})" class="p-2 text-zinc-600 hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-colors" title="Supprimer">
                     <i data-lucide="trash-2" class="w-4 h-4"></i>
                 </button>
