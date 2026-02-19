@@ -845,6 +845,7 @@
                                 <th class="table-header w-48">Référence</th>
                                 <th class="table-header">Désignation</th>
                                 <th class="table-header w-24">RAL</th>
+                                <th class="table-header w-24 text-right">P.U. HT</th>
                                 <th class="table-header w-32">Condit.</th>
                                 <th class="table-header text-center w-24">Besoin</th>
                                 <th class="table-header text-center w-24">Stock</th>
@@ -924,72 +925,48 @@
                         class="text-indigo-400 font-bold">0</span> éléments sélectionnés</p>
             </div>
 
-            <div class="p-8 space-y-8">
-                <!-- FAMILLE -->
-                <div class="space-y-3">
-                    <label class="text-xs font-bold text-zinc-500 uppercase tracking-widest">Famille de Prix</label>
-                    <div class="grid grid-cols-2 gap-3">
-                        <button onclick="selectRalFamily('std')"
-                            class="ral-family-btn active group relative p-4 bg-zinc-800/50 border border-zinc-700 rounded-xl hover:border-indigo-500 hover:bg-zinc-800 transition-all text-left">
-                            <div class="font-bold mb-1">Standard</div>
-                            <div class="text-xs text-zinc-400">9010, 7016, 2100...</div>
-                            <div
-                                class="absolute top-3 right-3 w-4 h-4 rounded-full border border-zinc-600 group-[.active]:bg-indigo-500 group-[.active]:border-indigo-500">
-                            </div>
-                        </button>
-                        <button onclick="selectRalFamily('ral')"
-                            class="ral-family-btn group relative p-4 bg-zinc-800/50 border border-zinc-700 rounded-xl hover:border-indigo-500 hover:bg-zinc-800 transition-all text-left">
-                            <div class="font-bold mb-1">Autre RAL</div>
-                            <div class="text-xs text-zinc-400">Teintes sur demande</div>
-                            <div
-                                class="absolute top-3 right-3 w-4 h-4 rounded-full border border-zinc-600 group-[.active]:bg-indigo-500 group-[.active]:border-indigo-500">
-                            </div>
-                        </button>
-                        <button onclick="selectRalFamily('anod')"
-                            class="ral-family-btn group relative p-4 bg-zinc-800/50 border border-zinc-700 rounded-xl hover:border-indigo-500 hover:bg-zinc-800 transition-all text-left">
-                            <div class="font-bold mb-1">Anodisation</div>
-                            <div class="text-xs text-zinc-400">Naturel, Champagne...</div>
-                            <div
-                                class="absolute top-3 right-3 w-4 h-4 rounded-full border border-zinc-600 group-[.active]:bg-indigo-500 group-[.active]:border-indigo-500">
-                            </div>
-                        </button>
-                        <button onclick="selectRalFamily('wood')"
-                            class="ral-family-btn group relative p-4 bg-zinc-800/50 border border-zinc-700 rounded-xl hover:border-indigo-500 hover:bg-zinc-800 transition-all text-left">
-                            <div class="font-bold mb-1">Ton Bois</div>
-                            <div class="text-xs text-zinc-400">Chêne, Golden...</div>
-                            <div
-                                class="absolute top-3 right-3 w-4 h-4 rounded-full border border-zinc-600 group-[.active]:bg-indigo-500 group-[.active]:border-indigo-500">
-                            </div>
-                        </button>
+            <!-- CODE TEINTE / RAL et VIGNETTE -->
+            <div class="flex items-start gap-6 mb-6">
+                <div class="flex-1 space-y-3">
+                    <label class="text-xs font-bold text-zinc-500 uppercase tracking-widest">Code Teinte /
+                        RAL</label>
+                    <div
+                        class="flex items-center bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-3 focus-within:border-indigo-500 focus-within:ring-1 focus-within:ring-indigo-500/50">
+                        <i data-lucide="hash" class="w-4 h-4 text-zinc-500 mr-3"></i>
+                        <input type="text" id="ralCodeInput" placeholder="Ex: 9010"
+                            class="bg-transparent border-0 p-0 text-sm font-bold placeholder:text-zinc-600 focus:ring-0 w-full uppercase"
+                            oninput="updateRalPreview(this.value)">
                     </div>
-                    <input type="hidden" id="selectedRalFamily" value="std">
                 </div>
 
-                <!-- TEINTE & FINITION -->
-                <div class="grid grid-cols-2 gap-6">
-                    <div class="space-y-3">
-                        <label class="text-xs font-bold text-zinc-500 uppercase tracking-widest">Code Teinte /
-                            RAL</label>
-                        <div
-                            class="flex items-center bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-3 focus-within:border-indigo-500 focus-within:ring-1 focus-within:ring-indigo-500/50">
-                            <i data-lucide="hash" class="w-4 h-4 text-zinc-500 mr-3"></i>
-                            <input type="text" id="ralCodeInput" placeholder="Ex: 7016"
-                                class="bg-transparent border-0 p-0 text-sm font-bold placeholder:text-zinc-600 focus:ring-0 w-full uppercase">
-                        </div>
-                    </div>
-                    <div class="space-y-3">
-                        <label class="text-xs font-bold text-zinc-500 uppercase tracking-widest">Finition</label>
-                        <select id="ralFinishSelect"
-                            class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-3 text-sm font-bold focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/50 outline-none appearance-none">
-                            <option value="Brillant">Brillant (Std)</option>
-                            <option value="Satiné">Satiné</option>
-                            <option value="Mat">Mat</option>
-                            <option value="Givré">Givré / Texturé</option>
-                            <option value="Sablé">Sablé</option>
-                        </select>
+                <!-- VIGNETTE PREVIEW -->
+                <div class="space-y-3">
+                    <label class="text-xs font-bold text-zinc-500 uppercase tracking-widest">Aperçu</label>
+                    <div id="ralPreview"
+                        class="w-[50px] h-[50px] rounded-xl border border-zinc-700 shadow-inner bg-zinc-800 transition-colors duration-300 flex items-center justify-center">
+                        <!-- Initial state: Empty or Question mark -->
+                        <span class="text-xs text-zinc-600 font-mono">?</span>
                     </div>
                 </div>
             </div>
+
+            <!-- FINITION -->
+            <div class="space-y-3 mb-8">
+                <label class="text-xs font-bold text-zinc-500 uppercase tracking-widest">Finition</label>
+                <select id="ralFinishSelect"
+                    class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-3 text-sm font-bold focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/50 outline-none appearance-none">
+                    <option value="Brillant">Brillant (Std)</option>
+                    <option value="Satiné">Satiné</option>
+                    <option value="Mat">Mat</option>
+                    <option value="EM">EM (En Mat)</option>
+                    <option value="MG">MG (Mat Givré)</option>
+                    <option value="Givré">Givré / Texturé</option>
+                    <option value="Sablé">Sablé</option>
+                </select>
+            </div>
+
+            <!-- Hidden Family Input (Managed by JS) -->
+            <input type="hidden" id="selectedRalFamily" value="std">
 
             <div class="p-6 border-t border-zinc-800 bg-zinc-900/50 flex justify-end gap-3">
                 <button onclick="closeRalModal()"
@@ -1000,8 +977,8 @@
         </div>
     </div>
 
-    <script src="data.js?v=105"></script>
-    <script src="app.js?v=105"></script>
+    <script src="data.js?v=108"></script>
+    <script src="app.js?v=108"></script>
 </body>
 
 </html>

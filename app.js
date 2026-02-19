@@ -301,12 +301,13 @@ window.toggleN = (e, id, idx) => {
             reference: it.reference,
             designation: it.designation,
             fournisseur: it.fournisseur || it.fabricant || 'Catalogue',
-            ral: it.decor || '-',
+            ral: '-', // Was: it.decor || '-' => User requested to not default to 9010/Decor
             longueur: it.condit || 1,
             unit_condit: it.unit_condit || 'M',
             type: it.type || (isProfil ? 'Profilé' : 'Accessoire'),
             need: 0,
-            stock: 0
+            stock: 0,
+            px_public: it.px_public || 0 // Store initial public price
         });
     }
     localStorage.setItem('art-needs', JSON.stringify(needs));
@@ -331,7 +332,7 @@ window.switchView = (v) => {
 window.renderNeeds = () => {
     const b = document.getElementById('needsTableBody');
     if (needs.length === 0) {
-        b.innerHTML = '<tr><td colspan="9" class="p-12 text-center opacity-40">Votre liste de besoins est vide. Ajoutez des articles depuis le catalogue.</td></tr>';
+        b.innerHTML = '<tr><td colspan="10" class="p-12 text-center opacity-40">Votre liste de besoins est vide. Ajoutez des articles depuis le catalogue.</td></tr>';
         return;
     }
     b.innerHTML = '';
@@ -366,6 +367,7 @@ window.renderNeeds = () => {
                     <span class="text-[10px] text-zinc-500 uppercase">${item.ral_finish || ''}</span>
                 </div>
             </td>
+            <td class="table-cell text-right font-mono text-xs">${(item.px_public || 0).toFixed(2)}€</td>
             <td class="table-cell text-zinc-500 text-sm">${item.longueur || 1} ${item.unit_condit || 'M'}</td>
             <td class="table-cell text-center">
                 <input type="number" class="table-input" value="${item.need}" 
@@ -669,7 +671,7 @@ const CalpinageSystem = {
             const cleanRef = this.getCleanRoot(item.reference);
 
             // Match by root and normalize RAL for comparison
-            const group = groups.find(g => {
+            let group = groups.find(g => {
                 const rootMatch = (g.rootRef === cleanRef || g.displayRef === item.reference);
                 const fourMatch = (g.fournisseur === item.fournisseur);
                 const ralA = (g.decor || '-');
@@ -677,8 +679,17 @@ const CalpinageSystem = {
                 return rootMatch && fourMatch && ralA === ralB;
             });
 
+            // Fallback: If strict match fails, try finding ANY profile with same Ref + Supplier (ignore RAL)
             if (!group) {
-                alert("Profil non trouvé ou non compatible pour le calpinage. (Ref: " + item.reference + " / RAL: " + (item.ral || '-') + ")");
+                group = groups.find(g => {
+                    const rootMatch = (g.rootRef === cleanRef || g.displayRef === item.reference);
+                    const fourMatch = (g.fournisseur === item.fournisseur);
+                    return rootMatch && fourMatch;
+                });
+            }
+
+            if (!group) {
+                alert("Profil non trouvé ou non compatible pour le calpinage. (Ref: " + item.reference + ")");
                 return;
             }
 
@@ -921,61 +932,89 @@ const CalpinageSystem = {
 
             // 2. Add/Update items in needs
             // We remove the original generic row and replace it with specific bars
-            needs.splice(idx, 1);
+            const itemsToAdd = [];
 
             for (const [vRef, qty] of Object.entries(barsToOrder)) {
-                const itData = window.ART_DATA.find(it => {
+                let itData = window.ART_DATA.find(it => {
                     const refMatch = String(it.reference) === String(vRef);
                     const fourMatch = (it.fournisseur === originalItem.fournisseur);
                     const ralMatch = ((it.decor || '-') === (originalItem.ral || '-'));
-                    const gammeA = (it.gamme || '').trim().toUpperCase();
-                    const gammeB = (originalItem.gamme || '').trim().toUpperCase();
-                    return refMatch && fourMatch && ralMatch && (gammeA === gammeB || !gammeB);
+                    // Gamme check might be too strict if data is messy, let's prioritize Ref+Four+Ral
+                    return refMatch && fourMatch && ralMatch;
                 });
 
+                // FALLBACK: If strict match fails, look for Ref + Supplier only (ignore RAL)
+                if (!itData) {
+                    itData = window.ART_DATA.find(it => {
+                        const refMatch = String(it.reference) === String(vRef);
+                        const fourMatch = (it.fournisseur === originalItem.fournisseur);
+                        return refMatch && fourMatch;
+                    });
+                }
+
                 if (itData) {
-                    const newId = `${itData.reference}_${itData.fournisseur || itData.fabricant || ''}`.toLowerCase();
-                    const existingIdx = needs.findIndex(n => n.id === newId && n.ral === originalItem.ral);
+                    const newId = `${itData.reference}_${itData.fournisseur || itData.fabricant || ''}_${originalItem.ral || ''}`.toLowerCase().replace(/[^a-z0-9]/g, '');
 
-                    // FILTER DATA FOR THIS SPECIFIC VARIANT
-                    const specificSolution = solution.filter(bar => String(bar.stockVariant.ref) === String(vRef));
-                    const specificCuts = [];
-                    specificSolution.forEach(bar => {
-                        bar.cuts.forEach(c => specificCuts.push({ length: c, quantity: 1 }));
+                    // We construct the new item, preserving the ORIGINAL User RAL
+                    itemsToAdd.push({
+                        id: newId,
+                        reference: itData.reference,
+                        designation: itData.designation,
+                        fournisseur: itData.fournisseur || itData.fabricant || 'Catalogue',
+                        ral: originalItem.ral || '-', // KEEP USER RAL
+                        ral_finish: originalItem.ral_finish || '', // Keep finish
+                        longueur: itData.condit || itData.longueur || 1, // Use the STOCK length
+                        unit_condit: itData.unit_condit || 'M',
+                        type: itData.type || 'Profilé',
+                        need: qty,
+                        stock: 0,
+                        px_public: itData.px_public || 0,
+                        calpinageData: null // Will be set below
                     });
-                    // Merge identical cuts for cleaner display
-                    const mergedCuts = [];
-                    specificCuts.forEach(c => {
-                        const exist = mergedCuts.find(mc => Math.abs(mc.length - c.length) < 0.0001);
-                        if (exist) exist.quantity++; else mergedCuts.push(c);
+                } else {
+                    // Critical Fallback: Use original item data if DB lookup completely fails
+                    itemsToAdd.push({
+                        ...originalItem,
+                        need: qty,
+                        // Update length if we can guess it from vRef, otherwise keep original
+                        id: originalItem.id + '_calc'
                     });
-                    mergedCuts.sort((a, b) => b.length - a.length);
-
-                    const newCalpData = {
-                        cuts: mergedCuts,
-                        lastSolution: specificSolution
-                    };
-
-                    if (existingIdx > -1) {
-                        needs[existingIdx].need += qty;
-                        needs[existingIdx].calpinageData = newCalpData;
-                    } else {
-                        needs.push({
-                            id: newId,
-                            reference: itData.reference,
-                            designation: itData.designation,
-                            fournisseur: itData.fournisseur || itData.fabricant || 'Catalogue',
-                            ral: itData.decor || originalItem.ral || '-',
-                            longueur: itData.condit || itData.conditionnement || 1,
-                            unit_condit: itData.unit_condit || 'M',
-                            type: itData.type || 'Profilé',
-                            need: qty,
-                            stock: 0,
-                            calpinageData: newCalpData
-                        });
-                    }
                 }
             }
+
+            // Remove original
+            needs.splice(idx, 1);
+
+            // Insert new items
+            itemsToAdd.forEach(newItem => {
+                // Check if existing to merge
+                const existing = needs.find(n => n.id === newItem.id);
+                // Calculate Cuts for this specific variant
+                const specificSolution = solution.filter(bar => String(bar.stockVariant.ref) === String(newItem.reference));
+                // ... (Reconstruct cuts logic)
+                const mergedCuts = [];
+                specificSolution.forEach(bar => {
+                    bar.cuts.forEach(c => {
+                        const ex = mergedCuts.find(mc => Math.abs(mc.length - c) < 0.0001);
+                        if (ex) ex.quantity++; else mergedCuts.push({ length: c, quantity: 1 });
+                    });
+                });
+                mergedCuts.sort((a, b) => b.length - a.length);
+
+                newItem.calpinageData = {
+                    cuts: mergedCuts,
+                    lastSolution: specificSolution
+                };
+
+                if (existing) {
+                    existing.need += newItem.need;
+                    // Merge calpinage data? Complex. For now overwrite or append? 
+                    // Let's just overwrite for simplicity in this specific flow
+                    existing.calpinageData = newItem.calpinageData;
+                } else {
+                    needs.push(newItem);
+                }
+            });
 
             localStorage.setItem('art-needs', JSON.stringify(needs));
             activeCalpinageId = null;
@@ -1359,10 +1398,15 @@ function toggleSelectAll() {
 function toggleSelection(idx) {
     if (!isRalSelectionMode) return;
 
-    if (selectedNeeds.has(idx)) {
-        selectedNeeds.delete(idx);
+    // Fix: Use ID instead of Index to match applyRalToSelection expectation
+    const item = needs[idx];
+    if (!item) return;
+    const id = String(item.id);
+
+    if (selectedNeeds.has(id)) {
+        selectedNeeds.delete(id);
     } else {
-        selectedNeeds.add(idx);
+        selectedNeeds.add(id);
     }
     renderNeeds();
     updateRalModeUI();
@@ -1386,54 +1430,73 @@ function handleRowClick(e, idx) {
 
 /* --- RAL MODAL --- */
 
+// --- RAL COLORS MAPPING ---
+const RAL_COLORS = {
+    '1013': '#e3d9c6', '1015': '#e6d2b5', '2100': '#5e605d', '3004': '#6b3531',
+    '7012': '#595f61', '7015': '#51565c', '7016': '#383e42', '7021': '#2f3234',
+    '7022': '#4d4d4b', '7035': '#d7d7d7', '7039': '#6c6960', '8014': '#49392d',
+    '8019': '#3d3635', '9005': '#0a0a0a', '9006': '#a5a5a5', '9007': '#8f8f8f',
+    '9010': '#f3f1e9', '9016': '#f6f9f6', '9016EM': '#f6f9f6', '9010EM': '#f3f1e9'
+};
+
+window.updateRalPreview = (val) => {
+    const code = val.trim().toUpperCase();
+    const preview = document.getElementById('ralPreview');
+    if (!preview) return;
+
+    if (RAL_COLORS[code]) {
+        preview.style.backgroundColor = RAL_COLORS[code];
+        preview.innerHTML = '';
+        // Add light/dark text contrast logic if needed, but for now simple block
+    } else {
+        preview.style.backgroundColor = '#27272a'; // Zinc-800
+        preview.innerHTML = '<span class="text-xs text-zinc-600 font-mono">?</span>';
+    }
+};
+
+window.inferFamilyFromRal = (ral) => {
+    const r = ral.toUpperCase();
+    if (['9010', '9016', '7016', '9005', '9010EM', '9016EM', '2100'].includes(r)) return 'std';
+    if (r.startsWith('AN') || r.includes('NATUEL') || r.includes('INOX')) return 'anod';
+    if (r.startsWith('CHENE') || r.includes('BOIS')) return 'wood';
+    return 'other';
+};
+
 function openRalModal() {
     if (selectedNeeds.size === 0) return;
 
     document.getElementById('ralModalCount').textContent = selectedNeeds.size;
     document.getElementById('ralModal').classList.remove('hidden');
 
-    // Reset inputs
-    selectRalFamily('std');
-    document.getElementById('ralCodeInput').value = '';
-    document.getElementById('ralFinishSelect').value = 'Brillant';
+    // Reset inputs directly without using selectRalFamily
+    const ralInput = document.getElementById('ralCodeInput');
+    if (ralInput) {
+        ralInput.value = '';
+        updateRalPreview('');
+    } else {
+        console.warn('ralCodeInput not found');
+    }
+
+    const finishSelect = document.getElementById('ralFinishSelect');
+    if (finishSelect) {
+        finishSelect.value = 'Brillant';
+    }
 }
 
 function closeRalModal() {
     document.getElementById('ralModal').classList.add('hidden');
 }
 
-function selectRalFamily(family) {
-    currentRalFamily = family;
-    document.getElementById('selectedRalFamily').value = family;
+// selectRalFamily removed as requested
 
-    // Update UI
-    document.querySelectorAll('.ral-family-btn').forEach(btn => btn.classList.remove('active'));
-    // Find button by onclick attribute (simple way)
-    const btn = document.querySelector(`button[onclick="selectRalFamily('${family}')"]`);
-    if (btn) btn.classList.add('active');
-
-    // Auto-fill defaults based on family
-    const ralInput = document.getElementById('ralCodeInput');
-    const finishSelect = document.getElementById('ralFinishSelect');
-
-    if (family === 'std') {
-        ralInput.placeholder = "Ex: 9010";
-        finishSelect.value = "Brillant";
-    } else if (family === 'anod') {
-        ralInput.value = "NATUREL";
-        finishSelect.value = "Satiné";
-    } else if (family === 'wood') {
-        alert("Erreur lors de l'application : " + e.message);
-    }
-}
 
 
 
 window.applyRalToSelection = () => {
     try {
-        const family = document.getElementById('selectedRalFamily').value;
         const ralCode = document.getElementById('ralCodeInput').value.trim() || '-';
         const finish = document.getElementById('ralFinishSelect').value;
+        const family = inferFamilyFromRal(ralCode);
 
         if (selectedNeeds.size === 0) return;
 
@@ -1443,6 +1506,15 @@ window.applyRalToSelection = () => {
             if (selectedNeeds.has(String(item.id)) || selectedNeeds.has(item.id)) {
                 item.ral = ralCode;
                 item.ral_finish = finish;
+
+                // --- Auto-Pricing Logic ---
+                // We need to find the best price match for this new finish
+                // We pass the RAW ralCode logic (entered by user), the chosen finish (EM, MG, etc), and family info
+                const newPrice = findVariantPrice(item, ralCode, finish, family);
+                if (newPrice !== null) {
+                    item.px_public = newPrice;
+                }
+
                 count++;
             }
         });
@@ -1453,17 +1525,92 @@ window.applyRalToSelection = () => {
         selectedNeeds.clear();
         isRalSelectionMode = false;
         closeRalModal();
-        updateRalModeUI();
         renderNeeds();
-
-        // Feedback
-        // alert(`Finition ${ralCode} (${finish}) appliquée sur ${count} articles.`);
-
+        alert(`${count} articles mis à jour avec la finition ${ralCode} (${finish}) et prix recalculés.`);
     } catch (e) {
-        alert("Erreur lors de l'application : " + e.message);
         console.error(e);
+        alert("Erreur: " + e.message);
     }
 };
+
+/**
+ * Finds the best price for an item based on the selected finish.
+ * Strategy: Exact Match > Family Match > Fallback Markup
+ */
+window.findVariantPrice = (item, ralCode, finish, family) => {
+    if (!window.ART_DATA) return null;
+
+    // 1. Identify the 'Root' reference (remove suffixes like TH if needed, though data.js usually has specific refs)
+    // Actually, data.js has 'reference' like '7637TH'. We should look for other items with SAME reference
+    // but DIVERGENT 'decor'.
+
+    // Filter all variants of this article (same reference, same supplier)
+    const variants = window.ART_DATA.filter(it =>
+        String(it.reference) === String(item.reference) &&
+        (it.fournisseur === item.fournisseur || it.fabricant === item.fournisseur)
+    );
+
+    if (variants.length === 0) return null;
+
+    // 2. Exact Match (e.g. User typed "9010", data has decor="9010")
+    // We treat 'ralCode' as the target decor.
+    const exactMatch = variants.find(v => String(v.decor || '').toUpperCase() === String(ralCode).toUpperCase());
+    if (exactMatch) return Number(exactMatch.px_public || 0);
+
+    // 2b. Composite Match (RAL + Finish, e.g. "9016" + "EM" -> "9016EM")
+    if (finish) {
+        // Try strict concatenation (e.g. 9016EM)
+        const compositeCode = (String(ralCode) + String(finish)).toUpperCase();
+        const compositeMatch = variants.find(v => String(v.decor || '').toUpperCase() === compositeCode);
+        if (compositeMatch) return Number(compositeMatch.px_public || 0);
+
+        // Try with MG prefix if it's MG (e.g. MG7016) because sometimes it's reversed
+        if (finish === 'MG') {
+            const mgPrefixCode = ('MG' + String(ralCode)).toUpperCase();
+            const mgMatch = variants.find(v => String(v.decor || '').toUpperCase() === mgPrefixCode);
+            if (mgMatch) return Number(mgMatch.px_public || 0);
+        }
+    }
+
+    // 3. Family Mapping (Standard -> Look for 9010, etc)
+    let targetDecor = null;
+    if (family === 'std') targetDecor = '9010'; // Standard often priced as 9010
+    else if (family === 'anod') targetDecor = 'AN0001'; // Anodisé often priced as AN0001 or AS20
+    else if (family === 'other') targetDecor = '9016EM'; // 'Other' often priced like Laqué Plus (9016EM)
+
+    if (targetDecor) {
+        const familyMatch = variants.find(v => String(v.decor || '').toUpperCase() === targetDecor);
+        if (familyMatch) return Number(familyMatch.px_public || 0);
+
+        // Try fallback for Anodisé (AS20) if AN0001 failed
+        if (family === 'anod') {
+            const altAnod = variants.find(v => String(v.decor || '').toUpperCase() === 'AS20');
+            if (altAnod) return Number(altAnod.px_public || 0);
+        }
+        // Try fallback for Other (SPECIFIQ) if 9016EM failed
+        if (family === 'other') {
+            const altSpec = variants.find(v => String(v.decor || '').toUpperCase() === 'SPECIFIQ');
+            if (altSpec) return Number(altSpec.px_public || 0);
+        }
+    }
+
+    // 4. If no variant found (Article Unique ?), apply Markup on Base Price
+    // We assume the current price in 'variants' might be one of them.
+    // Let's try to find a "Brut" or "BT" variant to use as base, otherwise use the item's current price (risky if already laqué).
+
+    const brutVariant = variants.find(v => ['BT', 'BRUT', 'SANS'].includes(String(v.decor || '').toUpperCase())) || variants[0];
+    const basePrice = Number(brutVariant.px_public || 0);
+
+    if (basePrice > 0) {
+        if (family === 'std') return basePrice * 1.05; // +5%
+        if (family === 'other') return basePrice * 1.15; // +15%
+        if (family === 'anod') return basePrice * 1.25; // +25%
+        if (family === 'wood') return basePrice * 1.40; // +40%
+    }
+
+    return item.px_public; // No change if we can't calculate
+};
+
 
 /* --- RENDER NEEDS UPDATE --- */
 
@@ -1736,14 +1883,16 @@ function renderBDCV2(title, items, chantier, type) {
         `;
     } else {
         // Standard BDC or Full List
+        const isBdc = type === 'bdc';
+
         const rows = items.map(item => `
             <tr>
                 <td>${item.reference}</td>
                 <td>${item.designation}</td>
                 <td>${item.ral || '-'}</td>
-                <td>${item.conditionnement || '-'}</td>
-                <td style="text-align: center;">${item.need}</td>
-                <td style="text-align: center;">${item.stock}</td>
+                <td>${item.longueur || '-'} ${item.unit_condit || ''}</td>
+                ${!isBdc ? `<td style="text-align: center;">${item.need}</td>` : ''}
+                ${!isBdc ? `<td style="text-align: center;">${item.stock}</td>` : ''}
                 <td style="text-align: center; font-weight: bold; color: ${item.toOrder > 0 ? '#000' : '#ccc'};">
                     ${item.toOrder}
                 </td>
@@ -1758,9 +1907,9 @@ function renderBDCV2(title, items, chantier, type) {
                         <th>DÉSIGNATION</th>
                         <th style="width: 10%;">RAL</th>
                         <th style="width: 15%;">CONDIT.</th>
-                        <th style="width: 8%; text-align: center;">BESOIN</th>
-                        <th style="width: 8%; text-align: center;">STOCK</th>
-                        <th style="width: 8%; text-align: center;">CDE</th>
+                        ${!isBdc ? `<th style="width: 8%; text-align: center;">BESOIN</th>` : ''}
+                        ${!isBdc ? `<th style="width: 8%; text-align: center;">STOCK</th>` : ''}
+                        <th style="width: 8%; text-align: center;">${isBdc ? 'QUANTITÉ' : 'CDE'}</th>
                     </tr>
                 </thead>
                 <tbody>${rows}</tbody>
