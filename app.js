@@ -339,11 +339,33 @@ window.renderNeeds = () => {
         const toCmd = Math.max(0, item.need - item.stock);
         const row = document.createElement('tr');
         row.className = 'table-row';
+        // Checkbox logic
+        let checkboxCell = '';
+        if (isRalSelectionMode) {
+            const isSelected = selectedNeeds.has(item.id);
+            checkboxCell = `
+                <td class="table-cell w-12 p-2 text-center border-r border-zinc-800/50">
+                    <div class="flex items-center justify-center h-full">
+                        <input type="checkbox" 
+                               onchange="toggleNeedSelection('${item.id}', this.checked)"
+                               ${isSelected ? 'checked' : ''}
+                               class="w-4 h-4 rounded border-zinc-600 bg-zinc-700 text-indigo-600 focus:ring-0 focus:ring-offset-0 cursor-pointer accent-indigo-600">
+                    </div>
+                </td>
+            `;
+        }
+
         row.innerHTML = `
+            ${checkboxCell}
             <td class="table-cell text-zinc-400 font-bold text-xs uppercase tracking-wider">${item.fournisseur}</td>
             <td class="table-cell font-mono text-indigo-400 font-bold">${item.reference}</td>
             <td class="table-cell font-medium">${item.designation}</td>
-            <td class="table-cell"><span class="px-2 py-1 bg-zinc-800 rounded text-xs font-mono">${item.ral || '-'}</span></td>
+            <td class="table-cell">
+                <div class="flex flex-col">
+                    <span class="px-2 py-1 bg-zinc-800 rounded text-xs font-mono mb-1">${item.ral || '-'}</span>
+                    <span class="text-[10px] text-zinc-500 uppercase">${item.ral_finish || ''}</span>
+                </div>
+            </td>
             <td class="table-cell text-zinc-500 text-sm">${item.longueur || 1} ${item.unit_condit || 'M'}</td>
             <td class="table-cell text-center">
                 <input type="number" class="table-input" value="${item.need}" 
@@ -384,7 +406,7 @@ window.renderNeeds = () => {
         if (isExpanded) {
             const detailRow = document.createElement('tr');
             detailRow.innerHTML = `
-                <td colspan="9" class="p-0 border-b border-indigo-900/50 relative">
+                <td colspan="${isRalSelectionMode ? 10 : 9}" class="p-0 border-b border-indigo-900/50 relative">
                     <div class="absolute inset-y-0 left-0 w-1 bg-indigo-500"></div>
                     <div id="calpContainer_${idx}" class="p-4 bg-black/40 min-h-[200px]">
                         <!-- Calpinage UI injected here -->
@@ -410,7 +432,9 @@ window.renderNeeds = () => {
 
 window.updateNeedV = (i, f, v) => { needs[i][f] = parseInt(v) || 0; localStorage.setItem('art-needs', JSON.stringify(needs)); renderNeeds(); };
 window.removeN = (i) => { needs.splice(i, 1); localStorage.setItem('art-needs', JSON.stringify(needs)); renderNeeds(); };
+window.deleteNeed = window.removeN; // Fix for generated HTML calling deleteNeed
 window.clearNeeds = () => { if (confirm("Supprimer toute la sélection ?")) { needs = []; localStorage.setItem('art-needs', "[]"); renderNeeds(); } };
+
 
 window.toggleSupplierSort = () => {
     if (supplierSortOrder === 'asc') {
@@ -1298,6 +1322,26 @@ function updateRalModeUI() {
     }
 }
 
+// NEW FUNCTION
+window.toggleNeedSelection = function (id, isChecked) {
+    if (!isRalSelectionMode) return;
+
+    // Ensure ID is string to match Map/Set keys
+    const safeId = String(id);
+
+    if (isChecked) {
+        selectedNeeds.add(safeId);
+    } else {
+        selectedNeeds.delete(safeId);
+    }
+
+    // Update UI (Button text)
+    updateRalModeUI();
+
+    // Optional: Log for debug
+    console.log("Selection updated:", selectedNeeds.size, selectedNeeds);
+}
+
 function toggleSelectAll() {
     if (!isRalSelectionMode) return; // Only work in mode
 
@@ -1305,7 +1349,7 @@ function toggleSelectAll() {
     selectedNeeds.clear();
 
     if (!allSelected) {
-        needs.forEach((_, idx) => selectedNeeds.add(idx));
+        needs.forEach((item) => selectedNeeds.add(String(item.id)));
     }
 
     renderNeeds();
@@ -1379,45 +1423,47 @@ function selectRalFamily(family) {
         ralInput.value = "NATUREL";
         finishSelect.value = "Satiné";
     } else if (family === 'wood') {
-        ralInput.value = "CHENE";
-        finishSelect.value = "Satiné";
+        alert("Erreur lors de l'application : " + e.message);
     }
 }
 
-function applyRalToSelection() {
-    const family = currentRalFamily;
-    const code = document.getElementById('ralCodeInput').value.trim().toUpperCase();
-    const finish = document.getElementById('ralFinishSelect').value;
 
-    if (!code && family !== 'std') { // Allow empty for standard if just setting finish? No, require code.
-        // Actually for 'std' maybe we want to just set finish if code is empty? 
-        // Let's require code for now or default to "STD"
+
+window.applyRalToSelection = () => {
+    try {
+        const family = document.getElementById('selectedRalFamily').value;
+        const ralCode = document.getElementById('ralCodeInput').value.trim() || '-';
+        const finish = document.getElementById('ralFinishSelect').value;
+
+        if (selectedNeeds.size === 0) return;
+
+        let count = 0;
+        needs.forEach(item => {
+            // Ensure ID comparison is safe (String vs Number)
+            if (selectedNeeds.has(String(item.id)) || selectedNeeds.has(item.id)) {
+                item.ral = ralCode;
+                item.ral_finish = finish;
+                count++;
+            }
+        });
+
+        localStorage.setItem('art-needs', JSON.stringify(needs));
+
+        // Reset Logic
+        selectedNeeds.clear();
+        isRalSelectionMode = false;
+        closeRalModal();
+        updateRalModeUI();
+        renderNeeds();
+
+        // Feedback
+        // alert(`Finition ${ralCode} (${finish}) appliquée sur ${count} articles.`);
+
+    } catch (e) {
+        alert("Erreur lors de l'application : " + e.message);
+        console.error(e);
     }
-
-    const finalCode = code || (family === 'std' ? '9010' : 'UNDEFINED');
-
-    // Apply to selected items
-    selectedNeeds.forEach(idx => {
-        if (needs[idx]) {
-            needs[idx].ral = finalCode;
-            needs[idx].ral_finish = finish;
-            needs[idx].ral_family = family;
-        }
-    });
-
-    saveNeeds();
-    renderNeeds();
-    closeRalModal();
-
-    // Optional: Clear selection after apply?
-    // selectedNeeds.clear();
-    // updateBatchRalButton();
-    // renderNeeds();
-
-    // Show confirmation
-    // TODO: Toast notification
-}
-
+};
 
 /* --- RENDER NEEDS UPDATE --- */
 

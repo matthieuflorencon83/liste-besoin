@@ -140,6 +140,44 @@ try:
     cleaned_data = []
     for row in data:
         cleaned_row = {k: (v if pd.notnull(v) else None) for k, v in row.items()}
+        
+        # --- DATA REPAIR ---
+        # Detect shift: Designation is RAL-like (digits) AND Reference is Text-like AND Supplier has content
+        ref = str(cleaned_row.get('reference', '') or '')
+        des = str(cleaned_row.get('designation', '') or '').strip()
+        dec = str(cleaned_row.get('decor', '') or '').strip()
+        sup = str(cleaned_row.get('fournisseur', '') or '')
+
+        # Heuristic: Des is 4 digits (RAL) OR Des is empty, AND Ref has spaces, AND Decor has 'M'
+        is_ral = re.match(r'^\d{4}$', des) or des in ['-', '']
+        is_ref_text = ' ' in ref and len(ref) > 5
+        is_decor_condit = 'M' in dec.upper()
+
+        if is_ral and is_ref_text and is_decor_condit:
+            # Shift detected!
+            # New Des <- Old Ref
+            # New RAL <- Old Des
+            # New Condit <- Old Decor
+            # New Ref <- Extract from Supplier?
+            
+            cleaned_row['designation'] = ref
+            cleaned_row['ral'] = des # Map to new RAL field if exists, or decor? 
+            # Note: app.js uses 'ral' or 'decor'. We should put RAL in 'decor' to be safe, or both.
+            cleaned_row['decor'] = des 
+            cleaned_row['conditionnement'] = dec
+            
+            # Extract Ref from Supplier: "ARCELOR (BERTON 760TH SICARD)" -> "760TH"
+            # Regex: After BERTON, take first word.
+            match = re.search(r'BERTON\s+([^\s]+)', sup, re.IGNORECASE)
+            if match:
+                cleaned_row['reference'] = match.group(1)
+            else:
+                # Fallback: maybe Ref is lost? Keep old ref (Des) to avoid empty? No, better to have specific marker.
+                # cleaned_row['reference'] = "REF_UNKNOWN"
+                pass 
+
+        # --- END REPAIR ---
+
         # ADD IMAGE MAPPING
         cleaned_row['image'] = find_best_image(cleaned_row.get('reference'), img_map)
         cleaned_data.append(cleaned_row)
