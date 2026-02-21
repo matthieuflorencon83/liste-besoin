@@ -68,9 +68,13 @@ class MyHandler(http.server.SimpleHTTPRequestHandler):
             des = form_data.get('designation')
             four = form_data.get('fournisseur')
             fam = form_data.get('famille')
-            fin = form_data.get('finition')
-            dim = form_data.get('dimensions') # Might need validation/default
+            sous_famille = form_data.get('sous_famille')
+            type_art = form_data.get('type')
+            ral = form_data.get('ral')
+            longueur = form_data.get('longueur')
+            unite = form_data.get('unite')
             prix = form_data.get('prix')
+            poids = form_data.get('poids')
 
             if not ref or not four:
                 self.send_response(400)
@@ -117,9 +121,13 @@ class MyHandler(http.server.SimpleHTTPRequestHandler):
                 "designation": des,
                 "fournisseur": four,
                 "famille": fam,
-                "finition": fin,
-                "dimensions": dim,
+                "sous_famille": sous_famille,
+                "type": type_art,
+                "ral": ral,
+                "longueur": longueur,
+                "unite": unite,
                 "prix": prix,
+                "poids": poids,
                 "image_name": image_name
             }
 

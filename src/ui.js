@@ -9,8 +9,8 @@ window.saveProject = () => {
     const data = {
         timestamp: new Date().toISOString(),
         chantier: chantierVal,
-        window.needs: window.needs,
-        window.favorites: window.favorites
+        needs: window.needs,
+        favorites: window.favorites
     };
 
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
@@ -30,7 +30,7 @@ window.saveChantier = (v) => {
 };
 
 // Initialisation supprimée car le bouton est supprimé
-init();
+// window.init();
 
 // Initialize main button state
 if (window.isCalpinageMode) {
@@ -198,7 +198,7 @@ function toggleRalSelectionMode() {
         window.selectedNeeds.clear();
     }
     updateRalModeUI();
-    renderNeeds();
+    window.renderNeeds();
 }
 
 
@@ -228,9 +228,8 @@ function updateRalModeUI() {
 
         // Show Select All Checkbox header
         if (selectAllCheckbox) {
-            const th = selectAllCheckbox.parentElement.parentElement;
-            th.classList.remove('hidden');
-            th.classList.add('table-header', 'w-12', 'p-2', 'text-center');
+            const th = document.getElementById('thSelectAllCheck') || selectAllCheckbox.parentElement.parentElement;
+            th.classList.remove('opacity-0', 'pointer-events-none');
         }
 
     } else {
@@ -247,9 +246,8 @@ function updateRalModeUI() {
 
         // Hide Select All Checkbox header
         if (selectAllCheckbox) {
-            const th = selectAllCheckbox.parentElement.parentElement;
-            th.classList.add('hidden');
-            th.classList.remove('table-header', 'w-12', 'p-2', 'text-center');
+            const th = document.getElementById('thSelectAllCheck') || selectAllCheckbox.parentElement.parentElement;
+            th.classList.add('opacity-0', 'pointer-events-none');
         }
     }
 
@@ -281,7 +279,7 @@ window.toggleNeedSelection = function (id, isChecked) {
     console.log("Selection updated:", window.selectedNeeds.size, window.selectedNeeds);
 }
 
-function toggleSelectAll() {
+window.toggleSelectAll = function () {
     if (!window.isRalSelectionMode) return; // Only work in mode
 
     const allSelected = window.selectedNeeds.size === window.needs.length && window.needs.length > 0;
@@ -291,11 +289,11 @@ function toggleSelectAll() {
         window.needs.forEach((item) => window.selectedNeeds.add(String(item.id)));
     }
 
-    renderNeeds();
+    window.renderNeeds();
     updateRalModeUI();
 }
 
-function toggleSelection(idx) {
+window.toggleSelection = function (idx) {
     if (!window.isRalSelectionMode) return;
 
     // Fix: Use ID instead of Index to match applyRalToSelection expectation
@@ -308,12 +306,11 @@ function toggleSelection(idx) {
     } else {
         window.selectedNeeds.add(id);
     }
-    renderNeeds();
+    window.renderNeeds();
     updateRalModeUI();
 }
 
-// Reuse toggleSelection for row click if clicking checkbox OR row in mode
-function handleRowClick(e, idx) {
+window.handleRowClick = function (e, idx) {
     if (window.isRalSelectionMode) {
         // If in mode, clicking anywhere toggles selection (unless clicking delete or edit specific inputs)
         // Also ignore checkbox to prevent double toggle (onchange handles it)
@@ -321,11 +318,18 @@ function handleRowClick(e, idx) {
             e.target.closest('input[type="number"]') ||
             e.target.closest('input[type="checkbox"]')) return;
 
-        toggleSelection(idx);
+        window.toggleSelection(idx);
         return; // Stop further processing (like expansion) if in selection mode
     }
-    // ... existing logic for expanding row ...
-}
+
+    // Normal mode: Expand row for Calpinage (only if it's a profile)
+    if (e.target.closest('button') || e.target.closest('input')) return;
+
+    const item = window.needs[idx];
+    if (item && window.getIsProfil && window.getIsProfil(item)) {
+        window.toggleCalpinageRow(item.id);
+    }
+};
 
 
 /* --- RAL MODAL --- */
@@ -383,7 +387,7 @@ function openRalModal() {
     }
 }
 
-function closeRalModal() {
+window.closeRalModal = function () {
     document.getElementById('ralModal').classList.add('hidden');
 }
 
@@ -419,13 +423,13 @@ window.applyRalToSelection = () => {
             }
         });
 
-        localStorage.setItem('art-window.needs', JSON.stringify(window.needs));
+        localStorage.setItem('art-needs', JSON.stringify(window.needs));
 
         // Reset Logic
         window.selectedNeeds.clear();
         window.isRalSelectionMode = false;
         closeRalModal();
-        renderNeeds();
+        window.renderNeeds();
         alert(`${count} articles mis à jour avec la finition ${ralCode} (${finish}) et prix recalculés.`);
     } catch (e) {
         console.error(e);
@@ -512,119 +516,7 @@ window.findVariantPrice = (item, ralCode, finish, family) => {
 };
 
 
-/* --- RENDER NEEDS UPDATE --- */
-
-function renderNeeds() {
-    const tbody = document.getElementById('needsTableBody');
-    if (!tbody) return;
-
-    // Handle header checkbox visibility and width
-    const selectAllCheckbox = document.getElementById('selectAllCheckbox');
-    if (selectAllCheckbox) {
-        const th = selectAllCheckbox.parentElement.parentElement;
-        if (window.isRalSelectionMode) {
-            th.classList.remove('hidden');
-            th.classList.add('table-header', 'w-12', 'p-2', 'text-center');
-        } else {
-            th.classList.add('hidden');
-            th.classList.remove('table-header', 'w-12', 'p-2', 'text-center');
-        }
-    }
-
-    tbody.innerHTML = window.needs.map((item, index) => {
-        const isSelected = window.selectedNeeds.has(index);
-        const ref = item.reference || '-';
-        const des = item.designation || '-';
-
-        let ralDisplay = '<span class="text-zinc-500">-</span>';
-        if (item.ral) {
-            const finishLabel = item.ral_finish ? ` <span class="text-[9px] text-zinc-500 font-normal">${item.ral_finish}</span>` : '';
-            ralDisplay = `<span class="font-bold text-white text-xs">${item.ral}</span>${finishLabel}`;
-        } else if (item.decor) {
-            ralDisplay = `<span class="text-zinc-400">${item.decor}</span>`;
-        }
-
-        // Dynamic classes
-        const rowBg = isSelected
-            ? 'bg-indigo-500/20 border-l-2 border-l-indigo-500'
-            : 'hover:bg-white/[0.02] border-b border-white/[0.03] last:border-0 border-l-2 border-l-transparent';
-
-        // Checkbox column cell
-        const checkboxCellClass = window.isRalSelectionMode
-            ? 'p-2 w-12 text-center'
-            : 'hidden';
-
-        return `
-        <tr onclick="handleRowClick(event, ${index})" 
-            class="group transition-all cursor-pointer ${rowBg}">
-            
-            <!-- CHECKBOX -->
-            <td class="text-center ${checkboxCellClass}">
-                <div class="flex items-center justify-center w-12 mx-auto">
-                    <input type="checkbox" 
-                        onchange="toggleSelection(${index})" 
-                        ${isSelected ? 'checked' : ''} 
-                        class="w-4 h-4 rounded border-zinc-600 bg-zinc-700 text-indigo-600 focus:ring-0 focus:ring-offset-0 cursor-pointer accent-indigo-600">
-                </div>
-            </td>
-
-            <!-- SUPPLIER -->
-            <td class="p-4 w-32">
-                <div class="flex items-center gap-2">
-                    <div class="w-1 h-8 rounded-full bg-indigo-500/50"></div>
-                    <span class="font-bold text-xs uppercase tracking-wider text-zinc-400">${item.fournisseur || 'AUTRE'}</span>
-                </div>
-            </td>
-
-            <!-- REFERENCE -->
-            <td class="p-4 w-48 font-mono text-indigo-300 font-bold">${ref}</td>
-
-            <!-- DESIGNATION -->
-            <td class="p-4">
-                <div class="text-sm font-medium text-zinc-300 line-clamp-2">${des}</div>
-            </td>
-
-            <!-- RAL / FINISH -->
-            <td class="p-4 w-24">
-                ${ralDisplay}
-            </td>
-
-            <!-- CONDIT -->
-            <td class="p-4 w-32">
-               <div class="text-xs text-zinc-500">${item.conditionnement || '-'}</div>
-            </td>
-
-            <!-- NEED -->
-            <td class="p-4 w-24 text-center">
-                <div class="inline-flex items-center justify-center min-w-[30px] h-8 px-2 bg-zinc-800 rounded-lg text-white font-bold border border-zinc-700">
-                    ${item.need || 0}
-                </div>
-            </td>
-
-            <!-- STOCK -->
-            <td class="p-4 w-24 text-center">
-                 <span class="text-zinc-500 font-mono">${item.stock || 0}</span>
-            </td>
-
-            <!-- ORDER -->
-            <td class="p-4 w-24 text-center">
-                <span class="text-emerald-500 font-bold font-mono">${Math.max(0, (parseFloat(item.need) || 0) - (parseFloat(item.stock) || 0))}</span>
-            </td>
-
-            <!-- ACTIONS -->
-            <td class="p-4 w-16 text-right">
-                <button onclick="deleteNeed(${index})" class="p-2 text-zinc-600 hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-colors" title="Supprimer">
-                    <i data-lucide="trash-2" class="w-4 h-4"></i>
-                </button>
-            </td>
-        </tr>
-        `;
-    }).join('');
-
-    // Re-init icons
-    if (typeof lucide !== 'undefined') lucide.createIcons();
-    updateRalModeUI();
-}
+// Supprimé : fonction en double (la bonne est dans state.js)
 
 // ... existing export functions ...
 
@@ -658,7 +550,7 @@ function openExportModalV2() {
         }
 
         // Add to Calpinage list if it has cuts or is a profile
-        if (getIsProfil(item)) {
+        if (window.getIsProfil(item)) {
             calpinageItems.push({ ...item, toOrder });
         }
     });
@@ -951,4 +843,149 @@ window.submitManualArticle = async () => {
     }
 };
 
+
+
+
+window.renderNeeds = function () {
+    const tbody = document.getElementById('needsTableBody');
+    if (!tbody) return;
+
+    // Handle header checkbox visibility and width
+    const selectAllCheckbox = document.getElementById('selectAllCheckbox');
+    if (selectAllCheckbox) {
+        const th = document.getElementById('thSelectAllCheck') || selectAllCheckbox.parentElement.parentElement;
+        if (window.isRalSelectionMode) {
+            th.classList.remove('opacity-0', 'pointer-events-none');
+        } else {
+            th.classList.add('opacity-0', 'pointer-events-none');
+        }
+    }
+
+    tbody.innerHTML = window.needs.map((item, index) => {
+        const isSelected = window.selectedNeeds.has(String(item.id));
+        const ref = item.reference || '-';
+        const des = item.designation || '-';
+
+        let ralDisplay = '<span class="text-zinc-500">-</span>';
+        if (item.ral) {
+            const finishLabel = item.ral_finish ? ` <span class="text-[9px] text-zinc-500 font-normal">${item.ral_finish}</span>` : '';
+            ralDisplay = `<span class="font-bold text-white text-xs">${item.ral}</span>${finishLabel}`;
+        } else if (item.decor) {
+            ralDisplay = `<span class="text-zinc-400">${item.decor}</span>`;
+        }
+
+        // Dynamic classes
+        const rowBg = isSelected
+            ? 'bg-indigo-500/20 border-l-2 border-l-indigo-500'
+            : 'hover:bg-white/[0.02] border-b border-white/[0.03] last:border-0 border-l-2 border-l-transparent';
+
+        // Checkbox column cell
+        const checkboxCellClass = window.isRalSelectionMode
+            ? 'opacity-100'
+            : 'opacity-0 pointer-events-none';
+
+        return `
+        <tr onclick="window.handleRowClick(event, ${index})" 
+            class="group transition-all cursor-pointer ${rowBg}">
+            
+            <!-- CHECKBOX -->
+            <td class="text-center p-2 w-12 transition-opacity ${checkboxCellClass}">
+                <div class="flex items-center justify-center w-12 mx-auto">
+                    <input type="checkbox" 
+                        onchange="window.toggleSelection(${index})" 
+                        ${isSelected ? 'checked' : ''} 
+                        class="w-4 h-4 rounded border-zinc-600 bg-zinc-700 text-indigo-600 focus:ring-0 focus:ring-offset-0 cursor-pointer accent-indigo-600">
+                </div>
+            </td>
+
+            <!-- SUPPLIER -->
+            <td class="p-4 w-32">
+                <div class="flex items-center gap-2">
+                    <div class="w-1 h-8 rounded-full bg-indigo-500/50"></div>
+                    <span class="font-bold text-xs uppercase tracking-wider text-zinc-400">${item.fournisseur || 'AUTRE'}</span>
+                </div>
+            </td>
+
+            <!-- REFERENCE -->
+            <td class="p-4 w-48 font-mono text-indigo-300 font-bold">${ref}</td>
+
+            <!-- DESIGNATION -->
+            <td class="p-4">
+                <div class="text-sm font-medium text-zinc-300 line-clamp-2">${des}</div>
+            </td>
+
+            <!-- RAL / FINISH -->
+            <td class="p-4 w-24">
+                ${ralDisplay}
+            </td>
+
+            <!-- P.U. HT -->
+            <td class="p-4 w-24 text-right">
+                <span class="font-mono text-zinc-300">${(parseFloat(item.px_public) || 0).toFixed(2)}€</span>
+            </td>
+
+            <!-- CONDIT -->
+            <td class="p-4 w-32">
+               <div class="text-xs text-zinc-500">${item.conditionnement || '-'}</div>
+            </td>
+
+            <!-- NEED -->
+            <td class="p-4 w-24 text-center">
+                <div class="inline-flex items-center justify-center min-w-[30px] h-8 px-2 bg-zinc-800 rounded-lg text-white font-bold border border-zinc-700">
+                    <input type="number" 
+                        min="0" 
+                        value="${item.need || 0}" 
+                        onclick="event.stopPropagation()"
+                        onchange="window.updateNeedV(${index}, 'need', this.value)"
+                        class="w-full bg-transparent border-none text-center font-bold focus:ring-0 p-0 text-white">
+                </div>
+            </td>
+
+            <!-- STOCK -->
+            <td class="p-4 w-24 text-center">
+                 <input type="number" 
+                    min="0" 
+                    value="${item.stock || 0}" 
+                    onclick="event.stopPropagation()"
+                    onchange="window.updateNeedV(${index}, 'stock', this.value)"
+                    class="w-full bg-transparent border-none text-center font-mono text-zinc-500 focus:ring-0 p-0 hover:text-white transition-colors">
+            </td>
+
+            <!-- ORDER -->
+            <td class="p-4 w-24 text-center">
+                <span class="text-emerald-500 font-bold font-mono">${Math.max(0, (parseFloat(item.need) || 0) - (parseFloat(item.stock) || 0))}</span>
+            </td>
+
+            <!-- TOTAL HT -->
+            <td class="p-4 w-20 text-right">
+                ${(() => {
+                const toOrder = Math.max(0, (parseFloat(item.need) || 0) - (parseFloat(item.stock) || 0));
+                const pu = parseFloat(item.px_public) || 0;
+                const total = toOrder * pu;
+                return total > 0
+                    ? `<span class="font-mono font-bold text-amber-400">${total.toFixed(2)} €</span>`
+                    : `<span class="text-zinc-700 font-mono text-xs">—</span>`;
+            })()}
+            </td>
+
+            <!-- ACTIONS -->
+            <td class="p-4 w-16 text-right">
+                <button onclick="window.deleteNeed(${index})" class="p-2 text-zinc-600 hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-colors" title="Supprimer">
+                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                </button>
+        </tr>
+
+        <!-- EXPANSION ROW FOR CALPINAGE -->
+        <tr id="calpRow_${index}" class="${window.activeCalpinageId === String(item.id) ? '' : 'hidden'} bg-zinc-950/50 border-b border-white/[0.03]">
+            <td colspan="11" class="p-0">
+                <div id="calpContainer_${index}" class="p-4 border-l-2 border-orange-500"></div>
+            </td>
+        </tr>
+        `;
+    }).join('');
+
+    // Re-init icons
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+    updateRalModeUI();
+}
 

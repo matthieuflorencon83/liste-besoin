@@ -7,9 +7,8 @@ currentDir = CreateObject("Scripting.FileSystemObject").GetParentFolderName(WScr
 oLink.TargetPath = currentDir & "\start_app.bat"
 oLink.WorkingDirectory = currentDir
 oLink.WindowStyle = 1 ' Normal window
-oLink.Description = "Lancer Arts Alu Zen (Serveur)"
-
-' Icon - Try to find one, otherwise standard
-' We will set a generic one if specific one not found.
-' oLink.IconLocation = "shell32.dll, 1" 
+oLink.Description = "Lancer Arts Alu Zen (Outil V2)"
+oLink.IconLocation = currentDir & "\icon.ico"
 oLink.Save
+
+WScript.Echo "Raccourci cree sur le bureau !"

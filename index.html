@@ -12,7 +12,7 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=113">
 </head>
 
 <body class="flex flex-col h-screen overflow-hidden">
@@ -213,7 +213,8 @@
                     <table class="w-full text-left border-collapse table-fixed">
                         <thead class="sticky top-0 z-10 bg-zinc-900 shadow-md">
                             <tr>
-                                <th class="hidden">
+                                <th id="thSelectAllCheck"
+                                    class="w-12 p-2 text-center transition-opacity opacity-0 pointer-events-none">
                                     <div class="flex items-center justify-center">
                                         <input type="checkbox" id="selectAllCheckbox" onclick="toggleSelectAll()"
                                             class="w-4 h-4 rounded border-zinc-600 bg-zinc-700 text-indigo-600 focus:ring-0 focus:ring-offset-0 cursor-pointer accent-indigo-600">
@@ -235,6 +236,7 @@
                                 <th class="table-header text-center w-24">Besoin</th>
                                 <th class="table-header text-center w-24">Stock</th>
                                 <th class="table-header text-center w-24">Cde</th>
+                                <th class="table-header text-right w-20">Total HT</th>
                                 <th class="table-header text-center w-16"></th>
                             </tr>
 
@@ -467,7 +469,7 @@
         </div>
     </div>
 
-    <script type="module" src="src/main.js?v=112"></script>
+    <script type="module" src="src/main.js?v=129"></script>
 </body>
 
 </html>

@@ -7,7 +7,7 @@ window.needs = [];
 window.isRalSelectionMode = false;
 window.selectedNeeds = new Set();
 try { window.favorites = JSON.parse(localStorage.getItem('art-favs') || '[]'); if (!Array.isArray(window.favorites)) window.favorites = []; } catch (e) { window.favorites = []; }
-try { window.needs = JSON.parse(localStorage.getItem('art-window.needs') || '[]'); if (!Array.isArray(window.needs)) window.needs = []; } catch (e) { window.needs = []; }
+try { window.needs = JSON.parse(localStorage.getItem('art-needs') || '[]'); if (!Array.isArray(window.needs)) window.needs = []; } catch (e) { window.needs = []; }
 window.isDarkMode = localStorage.getItem('theme') !== 'light';
 window.showOnlyFavs = false;
 window.currentView = 'compact';
@@ -15,8 +15,8 @@ window.supplierSortOrder = 'none'; // 'asc', 'desc', 'none'
 
 window.grid = document.getElementById('itemsGrid');
 window.searchInput = document.getElementById('globalSearch');
-window.loadingOverlay = document.getElementById('window.loadingOverlay');
-window.favCountBadge = document.getElementById('window.favCountBadge');
+window.loadingOverlay = document.getElementById('loadingOverlay');
+window.favCountBadge = document.getElementById('favCountBadge');
 window.fFour = document.getElementById('filterFournisseur');
 window.fType = document.getElementById('filterType');
 window.fSerie = document.getElementById('filterSerie');
@@ -25,8 +25,8 @@ window.fSerie = document.getElementById('filterSerie');
 
 if (!window.isDarkMode) document.body.classList.add('light-mode');
 
-function startApp() {
-    toggleFS();
+window.startApp = () => {
+    window.toggleFS();
     document.getElementById('startOverlay').style.transform = 'translateY(-100%)';
     setTimeout(() => document.getElementById('startOverlay').classList.add('hidden'), 1000);
 }
@@ -79,14 +79,14 @@ window.loadProject = (input) => {
         try {
             const data = JSON.parse(e.target.result);
 
-            if (data.window.needs && Array.isArray(data.window.needs)) {
-                window.needs = data.window.needs;
-                localStorage.setItem('art-window.needs', JSON.stringify(window.needs));
+            if (data.needs && Array.isArray(data.needs)) {
+                window.needs = data.needs;
+                localStorage.setItem('art-needs', JSON.stringify(window.needs));
             }
 
-            if (data.window.favorites && Array.isArray(data.window.favorites)) {
-                window.favorites = data.window.favorites;
-                localStorage.setItem('art-window.favorites', JSON.stringify(window.favorites));
+            if (data.favorites && Array.isArray(data.favorites)) {
+                window.favorites = data.favorites;
+                localStorage.setItem('art-favs', JSON.stringify(window.favorites));
             }
 
             if (data.chantier) {
@@ -96,7 +96,7 @@ window.loadProject = (input) => {
             }
 
             // Refresh view
-            renderNeeds();
+            window.renderNeeds();
             updateFavCount();
             alert("Projet chargé avec succès !");
         } catch (err) {
@@ -108,7 +108,7 @@ window.loadProject = (input) => {
     input.value = '';
 };
 
-async function init() {
+window.init = async function () {
     try {
         if (typeof lucide !== 'undefined') lucide.createIcons();
         let retries = 0;
@@ -122,10 +122,15 @@ async function init() {
         applyFilters();
 
         updateFavCount();
-        window.loadingOverlay.style.opacity = '0';
-        setTimeout(() => window.loadingOverlay.classList.add('hidden'), 700);
+        const lo = document.getElementById('loadingOverlay');
+        if (lo) {
+            lo.style.opacity = '0';
+            setTimeout(() => lo.classList.add('hidden'), 700);
+        }
     } catch (err) {
-        window.loadingOverlay.innerHTML = `<p class="text-red-500 font-black uppercase tracking-[0.2em]">${err.message}</p>`;
+        console.error("Critical error in init:", err);
+        const lo = document.getElementById('loadingOverlay');
+        if (lo) lo.innerHTML = `<p class="text-red-500 font-black uppercase tracking-[0.2em]">${err.message}</p>`;
     }
 }
 
@@ -183,8 +188,8 @@ function applyFilters(sourceElement) {
     render();
 }
 
-function changeViewMode(mode) {
-    const views = ['window.grid', 'compact', 'mini', 'list'];
+window.changeViewMode = function (mode) {
+    const views = ['grid', 'compact', 'mini', 'list'];
     views.forEach(v => window.grid.classList.remove(`view-${v}`));
     window.grid.classList.add(`view-${mode}`);
     window.currentView = mode;
@@ -298,12 +303,34 @@ window.toggleN = (e, id, idx) => {
             des.includes('TUBE') || des.includes('COULISSE') ||
             des.includes('TRAVERSE') || des.includes('MONTANT');
 
+        let ral = '-';
+        let pureDesignation = it.designation || '';
+
+        // Extraction automatique (spécialement pour Akraplast et similaires)
+        // 1. Détecter et retirer la longueur (ex: Lg7000, Lg 7000, L=3000)
+        const lgRegex = /(?:Lg|L)\s*=?\s*(\d{3,4})/i;
+        const lgMatch = pureDesignation.match(lgRegex);
+        if (lgMatch) {
+            pureDesignation = pureDesignation.replace(lgMatch[0], '').trim();
+        }
+
+        // 2. Détecter et retirer la finition RAL (ex: 9010, 7016, 7016EM)
+        const ralRegex = /\b(1013|1015|2100|3004|7012|7015|7016[A-Z]*|7021|7022|7035|7039|8014|8019|9005|9006|9007|9010[A-Z]*|9016[A-Z]*)\b/i;
+        const ralMatch = pureDesignation.match(ralRegex);
+        if (ralMatch) {
+            ral = ralMatch[1].toUpperCase();
+            pureDesignation = pureDesignation.replace(ralMatch[0], '').trim();
+        }
+
+        // Nettoyage final des doubles espaces éventuels
+        pureDesignation = pureDesignation.replace(/\s{2,}/g, ' ').trim();
+
         window.needs.push({
             id,
             reference: it.reference,
-            designation: it.designation,
+            designation: pureDesignation,
             fournisseur: it.fournisseur || it.fabricant || 'Catalogue',
-            ral: '-', // Was: it.decor || '-' => User requested to not default to 9010/Decor
+            ral: ral,
             longueur: it.condit || 1,
             unit_condit: it.unit_condit || 'M',
             type: it.type || (isProfil ? 'Profilé' : 'Accessoire'),
@@ -312,7 +339,7 @@ window.toggleN = (e, id, idx) => {
             px_public: it.px_public || 0 // Store initial public price
         });
     }
-    localStorage.setItem('art-window.needs', JSON.stringify(window.needs));
+    localStorage.setItem('art-needs', JSON.stringify(window.needs));
     render();
 };
 
@@ -322,122 +349,21 @@ function updateFavCount() {
 
 window.switchView = (v) => {
     document.getElementById('catalogueView').classList.toggle('hidden', v !== 'catalogue');
-    document.getElementById('needsListView').classList.toggle('hidden', v !== 'window.needs');
+    document.getElementById('needsListView').classList.toggle('hidden', v !== 'needs');
     document.getElementById('tabCatalogue').classList.toggle('active', v === 'catalogue');
-    document.getElementById('tabNeeds').classList.toggle('active', v === 'window.needs');
+    document.getElementById('tabNeeds').classList.toggle('active', v === 'needs');
     document.getElementById('filterBar').classList.toggle('hidden', v !== 'catalogue');
     document.getElementById('catalogueToolbar').classList.toggle('hidden', v !== 'catalogue');
-    document.getElementById('needsToolbar').classList.toggle('hidden', v !== 'window.needs');
-    if (v === 'window.needs') renderNeeds();
+    document.getElementById('needsToolbar').classList.toggle('hidden', v !== 'needs');
+    if (v === 'needs') window.renderNeeds();
 };
 
-window.renderNeeds = () => {
-    const b = document.getElementById('needsTableBody');
-    if (window.needs.length === 0) {
-        b.innerHTML = '<tr><td colspan="10" class="p-12 text-center opacity-40">Votre liste de besoins est vide. Ajoutez des articles depuis le catalogue.</td></tr>';
-        return;
-    }
-    b.innerHTML = '';
-    window.needs.forEach((item, idx) => {
-        const toCmd = Math.max(0, item.need - item.stock);
-        const row = document.createElement('tr');
-        row.className = 'table-row';
-        // Checkbox logic
-        let checkboxCell = '';
-        if (window.isRalSelectionMode) {
-            const isSelected = window.selectedNeeds.has(item.id);
-            checkboxCell = `
-                <td class="table-cell w-12 p-2 text-center border-r border-zinc-800/50">
-                    <div class="flex items-center justify-center h-full">
-                        <input type="checkbox" 
-                               onchange="toggleNeedSelection('${item.id}', this.checked)"
-                               ${isSelected ? 'checked' : ''}
-                               class="w-4 h-4 rounded border-zinc-600 bg-zinc-700 text-indigo-600 focus:ring-0 focus:ring-offset-0 cursor-pointer accent-indigo-600">
-                    </div>
-                </td>
-            `;
-        }
+// renderNeeds supprimé de state.js (la bonne version est dans ui.js)
 
-        row.innerHTML = `
-            ${checkboxCell}
-            <td class="table-cell text-zinc-400 font-bold text-xs uppercase tracking-wider">${item.fournisseur}</td>
-            <td class="table-cell font-mono text-indigo-400 font-bold">${item.reference}</td>
-            <td class="table-cell font-medium">${item.designation}</td>
-            <td class="table-cell">
-                <div class="flex flex-col">
-                    <span class="px-2 py-1 bg-zinc-800 rounded text-xs font-mono mb-1">${item.ral || '-'}</span>
-                    <span class="text-[10px] text-zinc-500 uppercase">${item.ral_finish || ''}</span>
-                </div>
-            </td>
-            <td class="table-cell text-right font-mono text-xs">${(item.px_public || 0).toFixed(2)}€</td>
-            <td class="table-cell text-zinc-500 text-sm">${item.longueur || 1} ${item.unit_condit || 'M'}</td>
-            <td class="table-cell text-center">
-                <input type="number" class="table-input" value="${item.need}" 
-                       onchange="updateNeedV(${idx}, 'need', this.value)">
-            </td>
-            <td class="table-cell text-center">
-                <input type="number" class="table-input" value="${item.stock}" 
-                       onchange="updateNeedV(${idx}, 'stock', this.value)">
-            </td>
-            <td class="table-cell text-center font-bold text-lg ${toCmd > 0 ? 'text-orange-500' : 'text-zinc-700'}">
-                ${toCmd}
-            </td>
-            <td class="table-cell text-center relative">
-                <button onclick="removeN(${idx})" class="text-zinc-600 hover:text-red-500 transition-colors z-10 relative">
-                    <i data-lucide="trash-2" class="w-4 h-4"></i>
-                </button>
-            </td>
-        `;
-
-        const isProfil = getIsProfil(item);
-        const isExpanded = (window.isCalpinageMode && isProfil) || (window.activeCalpinageId === item.id);
-
-        // Add click event for accordion if is detailed view
-        if (isProfil) {
-            row.style.cursor = 'pointer';
-            row.onclick = (e) => {
-                if (e.target.tagName === 'INPUT' || e.target.closest('button')) return;
-                toggleCalpinageRow(item.id);
-            };
-            row.classList.add('hover:bg-indigo-900/10');
-            if (isExpanded) {
-                row.classList.add('bg-indigo-900/20');
-            }
-        }
-
-        b.appendChild(row);
-
-        if (isExpanded) {
-            const detailRow = document.createElement('tr');
-            detailRow.innerHTML = `
-                <td colspan="${window.isRalSelectionMode ? 10 : 9}" class="p-0 border-b border-indigo-900/50 relative">
-                    <div class="absolute inset-y-0 left-0 w-1 bg-indigo-500"></div>
-                    <div id="calpContainer_${idx}" class="p-4 bg-black/40 min-h-[200px]">
-                        <!-- Calpinage UI injected here -->
-                        <div class="flex items-center justify-center h-full text-indigo-400 gap-2">
-                            <i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i> Chargement du module...
-                        </div>
-                    </div>
-                </td>
-            `;
-            b.appendChild(detailRow);
-        }
-    });
-    if (typeof lucide !== 'undefined') lucide.createIcons();
-
-    // Re-init ALL active calpinage rows
-    window.needs.forEach((item, idx) => {
-        const isExpanded = (window.isCalpinageMode && getIsProfil(item)) || (window.activeCalpinageId === item.id);
-        if (isExpanded) {
-            setTimeout(() => CalpinageSystem.initRow(idx), 50);
-        }
-    });
-};
-
-window.updateNeedV = (i, f, v) => { window.needs[i][f] = parseInt(v) || 0; localStorage.setItem('art-window.needs', JSON.stringify(window.needs)); renderNeeds(); };
-window.removeN = (i) => { window.needs.splice(i, 1); localStorage.setItem('art-window.needs', JSON.stringify(window.needs)); renderNeeds(); };
+window.updateNeedV = (i, f, v) => { window.needs[i][f] = parseInt(v) || 0; localStorage.setItem('art-needs', JSON.stringify(window.needs)); window.renderNeeds(); };
+window.removeN = (i) => { window.needs.splice(i, 1); localStorage.setItem('art-needs', JSON.stringify(window.needs)); window.renderNeeds(); };
 window.deleteNeed = window.removeN; // Fix for generated HTML calling deleteNeed
-window.clearNeeds = () => { if (confirm("Supprimer toute la sélection ?")) { window.needs = []; localStorage.setItem('art-window.needs', "[]"); renderNeeds(); } };
+window.clearNeeds = () => { if (confirm("Supprimer toute la sélection ?")) { window.needs = []; localStorage.setItem('art-needs', "[]"); window.renderNeeds(); } };
 
 
 window.toggleSupplierSort = () => {
@@ -448,7 +374,7 @@ window.toggleSupplierSort = () => {
         window.supplierSortOrder = 'asc';
         window.needs.sort((a, b) => a.fournisseur.localeCompare(b.fournisseur));
     }
-    renderNeeds();
+    window.renderNeeds();
 
     // Update icon rotation
     const icon = document.getElementById('sortIcon');

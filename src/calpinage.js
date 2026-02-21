@@ -2,7 +2,7 @@
 window.isCalpinageMode = localStorage.getItem('art-calpinage-mode') === 'true';
 window.activeCalpinageId = localStorage.getItem('art-active-calpinage-id') || null;
 
-function getIsProfil(item) {
+window.getIsProfil = function (item) {
     if (!item) return false;
     const des = (item.designation || '').toUpperCase();
     const type = (item.type || '').toUpperCase();
@@ -34,7 +34,7 @@ window.toggleCalpinageMode = () => {
             btn.classList.add('bg-white', 'text-zinc-900', 'border-zinc-200');
         }
     }
-    renderNeeds();
+    window.renderNeeds();
 };
 
 window.toggleCalpinageRow = (id) => {
@@ -59,7 +59,7 @@ window.toggleCalpinageRow = (id) => {
         }
         setTimeout(() => CalpinageSystem.initRow(idx), 50);
     }
-    renderNeeds();
+    window.renderNeeds();
 };
 
 const CalpinageSystem = {
@@ -151,7 +151,7 @@ const CalpinageSystem = {
             cuts.sort((a, b) => b.length - a.length);
             window.needs[idx].calpinageData.cuts = cuts;
 
-            localStorage.setItem('art-window.needs', JSON.stringify(window.needs));
+            localStorage.setItem('art-needs', JSON.stringify(window.needs));
 
             this.renderCutsTable(idx);
             lenInput.value = ""; qtyInput.value = "1"; lenInput.focus();
@@ -163,7 +163,7 @@ const CalpinageSystem = {
     removeCut(idx, cutIdx) {
         const cuts = window.needs[idx].calpinageData.cuts;
         cuts.splice(cutIdx, 1);
-        localStorage.setItem('art-window.needs', JSON.stringify(window.needs));
+        localStorage.setItem('art-needs', JSON.stringify(window.needs));
         this.renderCutsTable(idx);
     },
 
@@ -350,7 +350,7 @@ const CalpinageSystem = {
 
             // Save and Refresh
             window.needs[idx].calpinageData.cuts = cuts;
-            localStorage.setItem('art-window.needs', JSON.stringify(window.needs));
+            localStorage.setItem('art-needs', JSON.stringify(window.needs));
             this.renderCutsTable(idx);
             this.optimize(idx);
         }
@@ -381,7 +381,7 @@ const CalpinageSystem = {
         // Save solution to prevent disappearance upon re-opening
         if (!window.needs[idx].calpinageData) window.needs[idx].calpinageData = {};
         window.needs[idx].calpinageData.lastSolution = solution;
-        localStorage.setItem('art-window.needs', JSON.stringify(window.needs));
+        localStorage.setItem('art-needs', JSON.stringify(window.needs));
 
         const solJson = JSON.stringify(solution).replace(/"/g, '&quot;');
         html += `<button onclick="CalpinageSystem.applyToRow(${idx}, '${solJson}')" class="px-3 py-1 bg-emerald-600 hover:bg-emerald-500 text-white rounded text-xs font-bold transition-colors shadow-lg shadow-emerald-600/20">APPLIQUER</button>`;
@@ -532,10 +532,10 @@ const CalpinageSystem = {
                 }
             });
 
-            localStorage.setItem('art-window.needs', JSON.stringify(window.needs));
+            localStorage.setItem('art-needs', JSON.stringify(window.needs));
             window.activeCalpinageId = null;
             localStorage.removeItem('art-active-calpinage-id');
-            renderNeeds();
+            window.renderNeeds();
         } catch (e) {
             alert("Erreur lors de l'application : " + e.message);
         }
@@ -613,4 +613,4 @@ const CalpinageSystem = {
     }
 };
 
-
+window.CalpinageSystem = CalpinageSystem;
