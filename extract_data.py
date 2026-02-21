@@ -117,7 +117,7 @@ IMAGE_DIRS = [
     os.path.join(os.path.expanduser('~'), 'Desktop', 'Logiciel Arts alu', 'img arcelor')
 ]
 LOCAL_COPY_DIR = os.path.join(BASE_DIR, 'img_arcellor')
-OUTPUT_PATH = os.path.join(BASE_DIR, 'data.js')
+OUTPUT_PATH = os.path.join(BASE_DIR, 'data.json')
 
 excel_path = os.path.join(BASE_DIR, EXCEL_FILE)
 image_dirs = IMAGE_DIRS
@@ -216,9 +216,7 @@ try:
         cleaned_data.append(cleaned_row)
     
     with open(output_path, 'w', encoding='utf-8') as f:
-        f.write("window.ART_DATA = ")
         json.dump(cleaned_data, f, default=handler, ensure_ascii=False, indent=2)
-        f.write(";")
     
     print(f"Success: {len(cleaned_data)} records exported to {output_path} with image mapping.")
 except Exception as e:

@@ -11,7 +11,7 @@ def add_to_excel(json_path):
             data = json.load(f)
 
         base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        excel_path = os.path.join(base_dir, "BDD Arts Alu 2026.xlsx")
+        excel_path = os.path.join(base_dir, "BDD Arts Alu 2026 - Complétée.xlsx")
 
         print(f"Opening Excel: {excel_path}")
         
