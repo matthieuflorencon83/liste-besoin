@@ -725,6 +725,14 @@
                     <i data-lucide="save" class="w-4 h-4 text-emerald-500"></i>
                     <span class="text-[10px] font-black uppercase tracking-widest text-emerald-500">ENREGISTRER</span>
                 </button>
+
+                <!-- BOUTON AJOUT DATABASE -->
+                <button onclick="openManualAddModal()"
+                    class="action-btn px-4 h-10 w-auto rounded-2xl gap-2 !bg-indigo-600 border !border-indigo-500 hover:!bg-indigo-500 shadow-lg shadow-indigo-500/20"
+                    title="Ajouter au Catalogue">
+                    <i data-lucide="database" class="w-4 h-4 text-white"></i>
+                    <span class="text-[10px] font-black uppercase tracking-widest text-white">AJOUTER ARTICLE</span>
+                </button>
             </div>
         </div>
 
@@ -976,9 +984,114 @@
             </div>
         </div>
     </div>
+    <!-- MANUAL ADD ARTICLE MODAL -->
+    <div id="manualAddModal" class="hidden fixed inset-0 z-[200] flex items-center justify-center">
+        <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="closeManualAddModal()"></div>
+        <div
+            class="relative w-[600px] max-h-[90vh] overflow-y-auto bg-[#1a1a1e] text-white border border-zinc-800 rounded-2xl shadow-2xl">
+            <!-- Header -->
+            <div class="p-6 border-b border-zinc-800 flex items-center justify-between">
+                <div>
+                    <h2 class="text-xl font-bold">Ajouter un Article</h2>
+                    <p class="text-sm text-zinc-400 mt-1">Ajouter un article au catalogue (BDD locale)</p>
+                </div>
+                <button onclick="closeManualAddModal()"
+                    class="p-2 hover:bg-zinc-800 rounded-lg text-zinc-500 hover:text-white transition-all">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
 
-    <script src="data.js?v=108"></script>
-    <script src="app.js?v=108"></script>
+            <!-- Form -->
+            <form id="manualAddForm" class="p-6 space-y-5" onsubmit="return false;">
+
+                <!-- Reference + Designation -->
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="space-y-2">
+                        <label class="text-xs font-bold text-zinc-500 uppercase tracking-widest">Référence *</label>
+                        <input type="text" name="reference" required placeholder="Ex: ALU-001"
+                            class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-3 text-sm font-bold placeholder:text-zinc-600 focus:border-indigo-500 outline-none uppercase">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-xs font-bold text-zinc-500 uppercase tracking-widest">Désignation</label>
+                        <input type="text" name="designation" placeholder="Ex: Profil T 40x40"
+                            class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-3 text-sm placeholder:text-zinc-600 focus:border-indigo-500 outline-none">
+                    </div>
+                </div>
+
+                <!-- Fournisseur + Famille -->
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="space-y-2">
+                        <label class="text-xs font-bold text-zinc-500 uppercase tracking-widest">Fournisseur *</label>
+                        <input type="text" name="fournisseur" required list="suppliersList" placeholder="Ex: AKRAPLAST"
+                            class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-3 text-sm placeholder:text-zinc-600 focus:border-indigo-500 outline-none uppercase">
+                        <datalist id="suppliersList"></datalist>
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-xs font-bold text-zinc-500 uppercase tracking-widest">Famille</label>
+                        <input type="text" name="famille" list="familiesList" placeholder="Ex: PROFILÉ"
+                            class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-3 text-sm placeholder:text-zinc-600 focus:border-indigo-500 outline-none">
+                        <datalist id="familiesList"></datalist>
+                    </div>
+                </div>
+
+                <!-- Prix + Finition -->
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="space-y-2">
+                        <label class="text-xs font-bold text-zinc-500 uppercase tracking-widest">Prix (€)</label>
+                        <input type="number" name="prix" step="0.01" min="0" placeholder="0.00"
+                            class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-3 text-sm placeholder:text-zinc-600 focus:border-indigo-500 outline-none">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-xs font-bold text-zinc-500 uppercase tracking-widest">Finition / RAL</label>
+                        <input type="text" name="finition" placeholder="Ex: Anodisé, RAL 9010..."
+                            class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-3 text-sm placeholder:text-zinc-600 focus:border-indigo-500 outline-none">
+                    </div>
+                </div>
+
+                <!-- Dimensions -->
+                <div class="space-y-2">
+                    <label class="text-xs font-bold text-zinc-500 uppercase tracking-widest">Dimensions /
+                        Conditionnement</label>
+                    <input type="text" name="dimensions" placeholder="Ex: 6000mm, barre de 6m..."
+                        class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-3 text-sm placeholder:text-zinc-600 focus:border-indigo-500 outline-none">
+                </div>
+
+                <!-- Image Upload -->
+                <div class="space-y-2">
+                    <label class="text-xs font-bold text-zinc-500 uppercase tracking-widest">Photo (optionnelle)</label>
+                    <label class="block cursor-pointer">
+                        <input type="file" name="image" accept="image/*" class="hidden"
+                            onchange="previewManualImage(this)">
+                        <div id="manualImgPlaceholder"
+                            class="w-full h-24 border-2 border-dashed border-zinc-700 rounded-xl flex items-center justify-center text-zinc-500 hover:border-indigo-500 transition-all">
+                            <div class="text-center">
+                                <i data-lucide="image-plus" class="w-6 h-6 mx-auto mb-1"></i>
+                                <span class="text-xs">Cliquer pour ajouter une image</span>
+                            </div>
+                        </div>
+                    </label>
+                    <div id="manualImgPreview" class="hidden">
+                        <img src="" alt="Aperçu" class="max-h-40 rounded-xl border border-zinc-700">
+                    </div>
+                </div>
+
+            </form>
+
+            <!-- Footer -->
+            <div class="p-6 border-t border-zinc-800 flex justify-end gap-3">
+                <button onclick="closeManualAddModal()"
+                    class="px-6 py-3 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 rounded-xl text-xs font-bold transition-all">ANNULER</button>
+                <button id="submitManualBtn" onclick="submitManualArticle()"
+                    class="px-8 py-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold transition-all shadow-lg shadow-indigo-600/20 flex items-center gap-2">
+                    <i data-lucide="database" class="w-4 h-4"></i>
+                    ENREGISTRER
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="data.js?v=111"></script>
+    <script src="app.js?v=111"></script>
 </body>
 
 </html>

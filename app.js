@@ -1638,10 +1638,8 @@ function renderNeeds() {
 
         let ralDisplay = '<span class="text-zinc-500">-</span>';
         if (item.ral) {
-            ralDisplay = `<div class="flex flex-col">
-                <span class="font-bold text-white">${item.ral}</span>
-                ${item.ral_finish ? `<span class="text-[10px] text-zinc-400 capitalize">${item.ral_finish}</span>` : ''}
-            </div>`;
+            const finishLabel = item.ral_finish ? ` <span class="text-[9px] text-zinc-500 font-normal">${item.ral_finish}</span>` : '';
+            ralDisplay = `<span class="font-bold text-white text-xs">${item.ral}</span>${finishLabel}`;
         } else if (item.decor) {
             ralDisplay = `<span class="text-zinc-400">${item.decor}</span>`;
         }
@@ -1950,5 +1948,107 @@ function renderBDCV2(title, items, chantier, type) {
 
 // Map the new function to the export action
 window.exportToCSV = openExportModalV2;
+
+
+/* --- MANUAL ADD SYSTEM (DATABASE) --- */
+
+console.log("MANUAL ADD SYSTEM LOADED"); // Debug
+
+window.openManualAddModal = () => {
+    console.log("Opening Manual Add Modal"); // Debug
+    const modal = document.getElementById('manualAddModal');
+    if (!modal) {
+        alert("Erreur: La modale 'manualAddModal' est introuvable dans le HTML.");
+        return;
+    }
+    modal.classList.remove('hidden');
+
+    // Populate Datalists with unique values
+    try {
+        const allSuppliers = window.ART_DATA.map(i => i.fournisseur).filter(x => x && x.trim() !== '');
+        const uniqueSuppliers = [...new Set(allSuppliers)].sort();
+
+        const allFamilies = window.ART_DATA.map(i => i.famille).filter(x => x && x.trim() !== '');
+        const uniqueFamilies = [...new Set(allFamilies)].sort();
+
+        const supList = document.getElementById('suppliersList');
+        if (supList) supList.innerHTML = uniqueSuppliers.map(s => `<option value="${s}">`).join('');
+
+        const famList = document.getElementById('familiesList');
+        if (famList) famList.innerHTML = uniqueFamilies.map(f => `<option value="${f}">`).join('');
+    } catch (e) {
+        console.error("Error populating lists:", e);
+    }
+};
+
+window.closeManualAddModal = () => {
+    document.getElementById('manualAddModal').classList.add('hidden');
+    const form = document.getElementById('manualAddForm');
+    if (form) form.reset();
+
+    const preview = document.getElementById('manualImgPreview');
+    if (preview) preview.classList.add('hidden');
+
+    const placeholder = document.getElementById('manualImgPlaceholder');
+    if (placeholder) placeholder.classList.remove('hidden');
+};
+
+window.previewManualImage = (input) => {
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const img = document.querySelector('#manualImgPreview img');
+            if (img) img.src = e.target.result;
+
+            const preview = document.getElementById('manualImgPreview');
+            if (preview) preview.classList.remove('hidden');
+
+            const placeholder = document.getElementById('manualImgPlaceholder');
+            if (placeholder) placeholder.classList.add('hidden');
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+};
+
+window.submitManualArticle = async () => {
+    const form = document.getElementById('manualAddForm');
+    if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+    }
+
+    const btn = document.getElementById('submitManualBtn');
+    const originalText = btn.innerHTML;
+    btn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Enregistrement...`;
+    btn.disabled = true;
+
+    try {
+        const formData = new FormData(form);
+
+        // Use 8000 for Python Server. 
+        const apiUrl = '/api/add-article';
+
+        const response = await fetch(apiUrl, {
+            method: 'POST',
+            body: formData
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+            alert('Article ajouté avec succès ! La page va se recharger.');
+            window.location.reload();
+        } else {
+            throw new Error(result.message || 'Erreur inconnue');
+        }
+
+    } catch (e) {
+        console.error(e);
+        alert("Erreur lors de l'enregistrement : " + e.message + "\nAssurez-vous que le serveur Python (start_app.bat) est bien lancé.");
+    } finally {
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+    }
+};
 
 

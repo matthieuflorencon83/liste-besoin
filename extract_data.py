@@ -178,6 +178,39 @@ try:
 
         # --- END REPAIR ---
 
+        # --- CLEAN DESIGNATION (Remove polluted RAL/Length from designation) ---
+        d = str(cleaned_row.get('designation', '') or '')
+        current_decor = str(cleaned_row.get('decor', '') or '').strip()
+        current_condit = str(cleaned_row.get('condit', '') or '').strip()
+
+        # 1. Extract Lg+4-digit-or-more length (ex: Lg4500, Lg7000) and move to conditionnement if empty
+        lg_match = re.search(r'Lg(\d{3,})', d)
+        if lg_match:
+            extracted_length = lg_match.group(1)
+            length_str = f'{int(extracted_length)}MM' if len(extracted_length) <= 4 else f'{int(extracted_length)}MM'
+            if not current_condit or current_condit in ['-', 'nan', 'None']:
+                cleaned_row['conditionnement'] = length_str
+            d = re.sub(r'\s*Lg\d{3,}\b', '', d)
+
+        # 2. Extract isolated 4-digit RAL codes (ex: 9010) and move to decor if empty
+        # Only do this when decor is empty (to avoid contaminating valid data)
+        if not current_decor or current_decor in ['-', 'nan', 'None']:
+            ral_match = re.search(r'\b(\d{4})\b', d)
+            if ral_match:
+                extracted_ral = ral_match.group(1)
+                cleaned_row['decor'] = extracted_ral
+                d = re.sub(r'\s*\b\d{4}\b\s*', ' ', d)
+
+        # 3. Remove "RAL XXXX" explicit
+        d = re.sub(r'\bRAL\s*\d{4}\b', '', d, flags=re.IGNORECASE)
+        # 4. Remove isolated LG + small number (3-digit), only if NOT a physical dimension in name
+        # Strategy: only remove Lg followed by digits at END of string
+        d = re.sub(r'\s*\bLg\d+$', '', d.rstrip())
+        
+        cleaned_row['designation'] = re.sub(r'\s+', ' ', d).strip()
+        # --- END CLEAN ---
+
+
         # ADD IMAGE MAPPING
         cleaned_row['image'] = find_best_image(cleaned_row.get('reference'), img_map)
         cleaned_data.append(cleaned_row)
