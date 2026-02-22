@@ -994,7 +994,7 @@ window.renderNeeds = function () {
                 ${ralDisplay}
             </td>
 
-            <!-- P.U. HT — Éditable inline (Sprint 7) -->
+            <!-- P.U. HT — Éditable inline -->
             <td class="p-2 w-24 text-right" onclick="event.stopPropagation()">
                 <div class="inline-flex items-center justify-end gap-1 group cursor-text rounded-lg px-2 py-1 hover:bg-zinc-800 transition-colors">
                     <input type="number"
@@ -1002,16 +1002,25 @@ window.renderNeeds = function () {
                         value="${(parseFloat(item.px_public) || 0).toFixed(2)}"
                         onclick="event.stopPropagation(); this.select()"
                         onchange="window.saveNeedField(${realIndex}, 'px_public', parseFloat(this.value) || 0)"
-                        class="w-20 bg-transparent border-none text-right font-mono text-zinc-300 focus:text-white focus:outline-none focus:ring-0 p-0 cursor-text
+                        class="w-16 bg-transparent border-none text-right font-mono text-zinc-300 focus:text-white focus:outline-none focus:ring-0 p-0 cursor-text
                                [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none"
                         title="Cliquer pour modifier le prix">
-                    <span class="text-zinc-600 text-xs group-focus-within:text-zinc-400">€</span>
+                    <span class="text-zinc-600 text-[10px] uppercase font-bold group-focus-within:text-zinc-400">€ / ${item.unit_condit || item.unit_vente || 'U'}</span>
                 </div>
+                ${(() => {
+                const conditVal = parseFloat(item.longueur) || parseFloat(item.conditionnement) || 1;
+                const u = String(item.unit_condit || item.unit_vente || '').toUpperCase();
+                const mult = (u === 'M' || u === 'ML' || u === 'PC') ? conditVal : 1;
+                if (mult > 1) {
+                    return `<div class="text-[9px] text-zinc-500 mt-1 mr-2">1 pce = ${((parseFloat(item.px_public) || 0) * mult).toFixed(2)} €</div>`;
+                }
+                return '';
+            })()}
             </td>
 
             <!-- CONDIT -->
             <td class="p-4 w-32">
-               <div class="text-xs text-zinc-500">${item.conditionnement || '-'}</div>
+               <div class="text-xs text-zinc-500 font-mono font-bold">${item.longueur || item.conditionnement || 1} ${String(item.unit_condit || item.unit_vente || 'U').toUpperCase()}</div>
             </td>
 
             <!-- BESOIN — Éditable inline PREMIUM (Sprint 7) -->
@@ -1060,7 +1069,12 @@ window.renderNeeds = function () {
                 ${(() => {
                 const toOrder = Math.max(0, (parseFloat(item.need) || 0) - (parseFloat(item.stock) || 0));
                 const pu = parseFloat(item.px_public) || 0;
-                const total = toOrder * pu;
+
+                const conditVal = parseFloat(item.longueur) || parseFloat(item.conditionnement) || 1;
+                const u = String(item.unit_condit || item.unit_vente || '').toUpperCase();
+                const mult = (u === 'M' || u === 'ML' || u === 'PC') ? conditVal : 1;
+
+                const total = toOrder * pu * mult;
                 return total > 0
                     ? `<span class="font-mono font-bold text-amber-400">${total.toFixed(2)} €</span>`
                     : `<span class="text-zinc-700 font-mono text-xs">—</span>`;
@@ -1131,7 +1145,10 @@ window.renderNeeds = function () {
     const totalCde = window.needs.reduce((s, i) => s + Math.max(0, (parseFloat(i.need) || 0) - (parseFloat(i.stock) || 0)), 0);
     const totalHT = window.needs.reduce((s, i) => {
         const cde = Math.max(0, (parseFloat(i.need) || 0) - (parseFloat(i.stock) || 0));
-        return s + cde * (parseFloat(i.px_public) || 0);
+        const conditVal = parseFloat(i.longueur) || parseFloat(i.conditionnement) || 1;
+        const u = String(i.unit_condit || i.unit_vente || '').toUpperCase();
+        const mult = (u === 'M' || u === 'ML' || u === 'PC') ? conditVal : 1;
+        return s + cde * (parseFloat(i.px_public) || 0) * mult;
     }, 0);
 
     // Injecter ou mettre à jour la ligne de totaux sous le tableau
@@ -1546,24 +1563,31 @@ window.exportExcel = function () {
     const dateStr = now.toLocaleDateString('fr-FR');
 
     // --- Build rows ---
-    const headers = ['#', 'Fournisseur', 'Référence', 'Désignation', 'RAL / Finition', 'Conditionnement', 'P.U. HT (€)', 'Besoin', 'Stock', 'À commander', 'Total HT (€)', 'Note'];
+    const headers = ['#', 'Fournisseur', 'Référence', 'Désignation', 'RAL / Finition', 'Conditionnement', 'P.U. HT', 'PU Pièce HT', 'Besoin', 'Stock', 'À commander', 'Total HT (€)', 'Note'];
     const rows = window.needs.map((item, i) => {
         const need = parseFloat(item.need) || 0;
         const stock = parseFloat(item.stock) || 0;
         const toOrder = Math.max(0, need - stock);
         const pu = parseFloat(item.px_public) || 0;
+
+        const conditVal = parseFloat(item.longueur) || parseFloat(item.conditionnement) || 1;
+        const u = String(item.unit_condit || item.unit_vente || '').toUpperCase();
+        const mult = (u === 'M' || u === 'ML' || u === 'PC') ? conditVal : 1;
+        const puPiece = pu * mult;
+
         return [
             i + 1,
             item.fournisseur || '-',
             item.reference || '-',
             item.designation || '-',
             item.ral || '-',
-            `${item.longueur || 1} ${item.unit_condit || 'U'}`,
-            pu,
+            `${conditVal} ${u}`,
+            `${pu} € / ${u}`,
+            parseFloat(puPiece.toFixed(2)),
             need,
             stock,
             toOrder,
-            parseFloat((toOrder * pu).toFixed(2)),
+            parseFloat((toOrder * puPiece).toFixed(2)),
             item.note || ''
         ];
     });
@@ -1574,9 +1598,13 @@ window.exportExcel = function () {
     const totalCmd = window.needs.reduce((s, i) => s + Math.max(0, (parseFloat(i.need) || 0) - (parseFloat(i.stock) || 0)), 0);
     const totalHT = window.needs.reduce((s, i) => {
         const toOrder = Math.max(0, (parseFloat(i.need) || 0) - (parseFloat(i.stock) || 0));
-        return s + toOrder * (parseFloat(i.px_public) || 0);
+        const pu = parseFloat(i.px_public) || 0;
+        const conditVal = parseFloat(i.longueur) || parseFloat(i.conditionnement) || 1;
+        const u = String(i.unit_condit || i.unit_vente || '').toUpperCase();
+        const mult = (u === 'M' || u === 'ML' || u === 'PC') ? conditVal : 1;
+        return s + toOrder * pu * mult;
     }, 0);
-    rows.push(['', 'TOTAL', '', '', '', '', '', totalNeed, totalStock, totalCmd, parseFloat(totalHT.toFixed(2)), '']);
+    rows.push(['', 'TOTAL', '', '', '', '', '', '', totalNeed, totalStock, totalCmd, parseFloat(totalHT.toFixed(2)), '']);
 
     // --- Build workbook ---
     const wb = XLSX.utils.book_new();
@@ -1694,22 +1722,33 @@ window.exportPDF = async function () {
         yPos += 16;
 
         // — Tableau articles —
-        const totalHT = items.reduce((s, it) => s + it.toOrder * (parseFloat(it.px_public) || 0), 0);
+        const totalHT = items.reduce((s, it) => {
+            const pu = parseFloat(it.px_public) || 0;
+            const conditVal = parseFloat(it.longueur) || parseFloat(it.conditionnement) || 1;
+            const u = String(it.unit_condit || it.unit_vente || '').toUpperCase();
+            const mult = (u === 'M' || u === 'ML' || u === 'PC') ? conditVal : 1;
+            return s + it.toOrder * pu * mult;
+        }, 0);
 
         doc.autoTable({
             startY: yPos,
             margin: { left: 10, right: 10 },
-            head: [['#', 'Référence', 'Désignation', 'RAL', 'Condit.', 'P.U. HT', 'Besoin', 'Stock', 'À cmd.', 'Total HT', 'Note']],
+            head: [['#', 'Référence', 'Désignation', 'RAL', 'Condit.', 'PU. Pièce', 'Besoin', 'Stock', 'À cmd.', 'Total HT', 'Note']],
             body: items.map((it, i) => {
                 const pu = parseFloat(it.px_public) || 0;
-                const total = it.toOrder * pu;
+                const conditVal = parseFloat(it.longueur) || parseFloat(it.conditionnement) || 1;
+                const u = String(it.unit_condit || it.unit_vente || '').toUpperCase();
+                const mult = (u === 'M' || u === 'ML' || u === 'PC') ? conditVal : 1;
+                const puPiece = pu * mult;
+                const total = it.toOrder * puPiece;
+
                 return [
                     i + 1,
                     it.reference || '-',
                     it.designation || '-',
                     it.ral || '-',
-                    `${it.longueur || 1} ${it.unit_condit || 'U'}`,
-                    pu > 0 ? `${pu.toFixed(2)} €` : '-',
+                    `${conditVal} ${u}`,
+                    puPiece > 0 ? `${puPiece.toFixed(2)} €` : '-',
                     it.need,
                     it.stock || 0,
                     it.toOrder,
