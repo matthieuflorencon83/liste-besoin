@@ -247,7 +247,9 @@ function render() {
 
         const q = window.searchInput.value.toLowerCase().trim();
         const safeImage = escapeHtml(it.image);
-        const safeDes = highlight(formatName(it.designation), q);
+        const cleanDes = formatName(it.designation);
+        const safeDesAttr = escapeHtml(cleanDes);
+        const safeDes = highlight(cleanDes, q);
         const safeRef = highlight(it.reference, q);
         const safeUnit = escapeHtml(it.unit_condit || 'U');
         const safeType = escapeHtml(it.type || 'Plein');
@@ -260,7 +262,7 @@ function render() {
             </div>` : '';
 
         const img = it.image ?
-            `<div class="img-container" onclick="openVisualizer('${safeImage}')"><img src="${safeImage}" alt="${safeDes}" onerror="this.style.display='none'"></div>` :
+            `<div class="img-container" onclick="openVisualizer('${safeImage}')"><img src="${safeImage}" alt="${safeDesAttr}" onerror="this.style.display='none'"></div>` :
             `<div class="img-container opacity-5"><i data-lucide="image" class="w-6 h-6"></i></div>`;
 
         if (window.currentView === 'list') {
