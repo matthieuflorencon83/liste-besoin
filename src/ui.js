@@ -850,7 +850,7 @@ window.renderNeeds = function () {
     const tbody = document.getElementById('needsTableBody');
     if (!tbody) return;
 
-    // Handle header checkbox visibility and width
+    // Handle header checkbox visibility
     const selectAllCheckbox = document.getElementById('selectAllCheckbox');
     if (selectAllCheckbox) {
         const th = document.getElementById('thSelectAllCheck') || selectAllCheckbox.parentElement.parentElement;
@@ -861,10 +861,55 @@ window.renderNeeds = function () {
         }
     }
 
-    tbody.innerHTML = window.needs.map((item, index) => {
+    // Mettre à jour le badge de l'onglet Besoins
+    const badge = document.getElementById('needsBadge');
+    if (badge) {
+        const count = window.needs.length;
+        badge.textContent = count;
+        badge.classList.toggle('hidden', count === 0);
+    }
+
+    // Filtrer si une recherche est active
+    const q = (window.needsFilterQuery || '').toLowerCase().trim();
+    const displayedNeeds = q
+        ? window.needs.filter(item =>
+            (item.reference || '').toLowerCase().includes(q) ||
+            (item.designation || '').toLowerCase().includes(q) ||
+            (item.fournisseur || '').toLowerCase().includes(q)
+        )
+        : window.needs;
+
+    // Afficher le compteur de filtre
+    const filterCount = document.getElementById('needsFilterCount');
+    if (filterCount) {
+        if (q && displayedNeeds.length !== window.needs.length) {
+            filterCount.textContent = `${displayedNeeds.length} / ${window.needs.length}`;
+            filterCount.classList.remove('hidden');
+        } else {
+            filterCount.classList.add('hidden');
+        }
+    }
+
+    tbody.innerHTML = displayedNeeds.map((item, index) => {
+        // Retrouver l'index réel dans window.needs pour les actions
+        const realIndex = window.needs.indexOf(item);
         const isSelected = window.selectedNeeds.has(String(item.id));
         const ref = item.reference || '-';
         const des = item.designation || '-';
+
+        // Indicateur de couverture besoin/stock
+        const need = parseFloat(item.need) || 0;
+        const stock = parseFloat(item.stock) || 0;
+        let coverageIndicator = '';
+        if (need > 0) {
+            if (stock >= need) {
+                coverageIndicator = 'border-l-emerald-500'; // vert = couvert
+            } else if (stock > 0) {
+                coverageIndicator = 'border-l-amber-500';  // orange = partiel
+            } else {
+                coverageIndicator = 'border-l-red-500';    // rouge = rien en stock
+            }
+        }
 
         let ralDisplay = '<span class="text-zinc-500">-</span>';
         if (item.ral) {
@@ -874,10 +919,12 @@ window.renderNeeds = function () {
             ralDisplay = `<span class="text-zinc-400">${item.decor}</span>`;
         }
 
-        // Dynamic classes
         const rowBg = isSelected
-            ? 'bg-indigo-500/20 border-l-2 border-l-indigo-500'
-            : 'hover:bg-white/[0.02] border-b border-white/[0.03] last:border-0 border-l-2 border-l-transparent';
+            ? 'bg-indigo-500/20'
+            : 'hover:bg-white/[0.02] border-b border-white/[0.03] last:border-0';
+
+        // Classe de la bordure gauche (indicateur couverture ou sélection)
+        const borderLeft = isSelected ? 'border-l-indigo-500' : (coverageIndicator || 'border-l-transparent');
 
         // Checkbox column cell
         const checkboxCellClass = window.isRalSelectionMode
@@ -885,14 +932,14 @@ window.renderNeeds = function () {
             : 'opacity-0 pointer-events-none';
 
         return `
-        <tr onclick="window.handleRowClick(event, ${index})" 
-            class="group transition-all cursor-pointer ${rowBg}">
+        <tr onclick="window.handleRowClick(event, ${realIndex})" 
+            class="group transition-all cursor-pointer ${rowBg} border-l-2 ${borderLeft}">
             
             <!-- CHECKBOX -->
             <td class="text-center p-2 w-12 transition-opacity ${checkboxCellClass}">
                 <div class="flex items-center justify-center w-12 mx-auto">
                     <input type="checkbox" 
-                        onchange="window.toggleSelection(${index})" 
+                        onchange="window.toggleSelection(${realIndex})" 
                         ${isSelected ? 'checked' : ''} 
                         class="w-4 h-4 rounded border-zinc-600 bg-zinc-700 text-indigo-600 focus:ring-0 focus:ring-offset-0 cursor-pointer accent-indigo-600">
                 </div>
@@ -970,7 +1017,7 @@ window.renderNeeds = function () {
 
             <!-- ACTIONS -->
             <td class="p-4 w-16 text-right">
-                <button onclick="window.deleteNeed(${index})" class="p-2 text-zinc-600 hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-colors" title="Supprimer">
+                <button onclick="window.deleteNeed(${realIndex})" class="p-2 text-zinc-600 hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-colors" title="Supprimer">
                     <i data-lucide="trash-2" class="w-4 h-4"></i>
                 </button>
         </tr>
@@ -987,5 +1034,48 @@ window.renderNeeds = function () {
     // Re-init icons
     if (typeof lucide !== 'undefined') lucide.createIcons();
     updateRalModeUI();
+
+    // Ligne de total général
+    const totalNeed = window.needs.reduce((s, i) => s + (parseFloat(i.need) || 0), 0);
+    const totalCde = window.needs.reduce((s, i) => s + Math.max(0, (parseFloat(i.need) || 0) - (parseFloat(i.stock) || 0)), 0);
+    const totalHT = window.needs.reduce((s, i) => {
+        const cde = Math.max(0, (parseFloat(i.need) || 0) - (parseFloat(i.stock) || 0));
+        return s + cde * (parseFloat(i.px_public) || 0);
+    }, 0);
+
+    // Injecter ou mettre à jour la ligne de totaux sous le tableau
+    let totalRow = document.getElementById('needsTotalRow');
+    if (!totalRow) {
+        const table = document.querySelector('#needsTableBody')?.closest('table');
+        if (table) {
+            let tfoot = table.querySelector('tfoot');
+            if (!tfoot) { tfoot = document.createElement('tfoot'); table.appendChild(tfoot); }
+            tfoot.innerHTML = `<tr id="needsTotalRow" class="border-t-2 border-zinc-700 bg-zinc-900/80 sticky bottom-0">
+                <td colspan="6" class="px-4 py-3 text-right text-xs font-black text-zinc-500 uppercase tracking-widest">
+                    ${window.needs.length} article${window.needs.length > 1 ? 's' : ''}
+                </td>
+                <td class="p-3 text-center text-xs font-black text-white">${totalNeed}</td>
+                <td class="p-3 text-center text-xs text-zinc-500">—</td>
+                <td class="p-3 text-center text-xs font-black text-emerald-400">${totalCde}</td>
+                <td class="p-3 text-right text-sm font-black text-amber-400">${totalHT.toFixed(2)} €</td>
+                <td></td>
+            </tr>`;
+        }
+    } else {
+        totalRow.innerHTML = `
+            <td colspan="6" class="px-4 py-3 text-right text-xs font-black text-zinc-500 uppercase tracking-widest">
+                ${window.needs.length} article${window.needs.length > 1 ? 's' : ''}
+            </td>
+            <td class="p-3 text-center text-xs font-black text-white">${totalNeed}</td>
+            <td class="p-3 text-center text-xs text-zinc-500">—</td>
+            <td class="p-3 text-center text-xs font-black text-emerald-400">${totalCde}</td>
+            <td class="p-3 text-right text-sm font-black text-amber-400">${totalHT.toFixed(2)} €</td>
+            <td></td>`;
+    }
 }
 
+// Filtre rapide dans la vue Besoins
+window.filterNeeds = function (query) {
+    window.needsFilterQuery = query;
+    window.renderNeeds();
+};

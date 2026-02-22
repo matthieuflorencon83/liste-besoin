@@ -26,7 +26,7 @@
             </div>
             <h1 class="text-4xl font-black mb-12 tracking-tight text-white uppercase italic">Arts Alu <span
                     class="text-indigo-500">Zen</span></h1>
-            <button onclick="startApp()"
+            <button onclick="window.startApp()"
                 class="group relative px-16 py-6 bg-white rounded-2xl font-black text-xl hover:scale-105 transition-all shadow-[0_20px_40px_rgba(255,255,255,0.1)] active:scale-95">
                 <span class="relative z-10 text-black">ACCÉDER AU CATALOGUE</span>
                 <div
@@ -52,21 +52,25 @@
                     <h1 class="font-black text-xl tracking-tighter">ARTS ALU</h1>
                 </div>
                 <nav class="flex items-center gap-4">
-                    <button class="tab-btn active" onclick="switchView('catalogue')"
+                    <button class="tab-btn active" onclick="window.switchView('catalogue')"
                         id="tabCatalogue">Catalogue</button>
-                    <button class="tab-btn" onclick="switchView('needs')" id="tabNeeds">Besoins</button>
+                    <button class="tab-btn" onclick="window.switchView('needs')" id="tabNeeds">
+                        Besoins
+                        <span id="needsBadge"
+                            class="hidden ml-2 inline-flex items-center justify-center bg-indigo-500 text-white text-[9px] font-black rounded-full w-5 h-5">0</span>
+                    </button>
                 </nav>
             </div>
 
             <div class="flex items-center gap-4" id="catalogueToolbar">
                 <div class="flex items-center p-1.5 bg-white/[0.02] rounded-2xl border border-white/[0.05]">
-                    <button onclick="changeViewMode('grid')" class="action-btn !bg-transparent !border-0"
+                    <button onclick="window.changeViewMode('grid')" class="action-btn !bg-transparent !border-0"
                         title="Grille"><i data-lucide="layout-grid" class="w-4 h-4"></i></button>
-                    <button onclick="changeViewMode('compact')" class="action-btn !bg-transparent !border-0"
+                    <button onclick="window.changeViewMode('compact')" class="action-btn !bg-transparent !border-0"
                         title="Compact"><i data-lucide="layout-template" class="w-4 h-4"></i></button>
-                    <button onclick="changeViewMode('mini')" class="action-btn !bg-transparent !border-0"
+                    <button onclick="window.changeViewMode('mini')" class="action-btn !bg-transparent !border-0"
                         title="Mini"><i data-lucide="grid-2x2" class="w-4 h-4"></i></button>
-                    <button onclick="changeViewMode('list')" class="action-btn !bg-transparent !border-0"
+                    <button onclick="window.changeViewMode('list')" class="action-btn !bg-transparent !border-0"
                         title="Liste"><i data-lucide="layout-list" class="w-4 h-4"></i></button>
                 </div>
                 <!-- Bouton Calpinage supprimé d'ici car il est dans la vue Besoins -->
@@ -76,7 +80,7 @@
                     <span id="favCountBadge"
                         class="hidden absolute -top-1.5 -right-1.5 bg-red-500 text-[9px] w-5 h-5 flex items-center justify-center rounded-full text-white font-black border-2 border-[#050507]">0</span>
                 </button>
-                <button onclick="toggleFS()" class="action-btn h-10 w-10 rounded-2xl"><i data-lucide="maximize"
+                <button onclick="window.toggleFS()" class="action-btn h-10 w-10 rounded-2xl"><i data-lucide="maximize"
                         class="w-5 h-5"></i></button>
                 <button id="modeToggle" class="action-btn h-10 w-10 rounded-2xl"><i data-lucide="sparkles"
                         class="w-5 h-5"></i></button>
@@ -89,14 +93,15 @@
             <!-- NEEDS VIEW TOOLBAR -->
             <div class="hidden flex items-center gap-4" id="needsToolbar">
 
-                <input type="file" id="projectFileInput" accept=".json" class="hidden" onchange="loadProject(this)">
+                <input type="file" id="projectFileInput" accept=".json" class="hidden"
+                    onchange="window.loadProject(this)">
                 <button onclick="document.getElementById('projectFileInput').click()"
                     class="action-btn px-4 h-10 w-auto rounded-2xl gap-2 !bg-zinc-800 border !border-zinc-700 hover:!bg-zinc-700"
                     title="Ouvrir un projet">
                     <i data-lucide="folder-open" class="w-4 h-4 text-indigo-400"></i>
                     <span class="text-[10px] font-black uppercase tracking-widest">OUVRIR</span>
                 </button>
-                <button onclick="saveProject()"
+                <button onclick="window.saveProject()"
                     class="action-btn px-4 h-10 w-auto rounded-2xl gap-2 !bg-emerald-600/10 border !border-emerald-500/30 hover:!bg-emerald-600/20"
                     title="Enregistrer le projet">
                     <i data-lucide="save" class="w-4 h-4 text-emerald-500"></i>
@@ -104,7 +109,7 @@
                 </button>
 
                 <!-- BOUTON AJOUT DATABASE -->
-                <button onclick="openManualAddModal()"
+                <button onclick="window.openManualAddModal()"
                     class="action-btn px-4 h-10 w-auto rounded-2xl gap-2 !bg-indigo-600 border !border-indigo-500 hover:!bg-indigo-500 shadow-lg shadow-indigo-500/20"
                     title="Ajouter au Catalogue">
                     <i data-lucide="database" class="w-4 h-4 text-white"></i>
@@ -184,25 +189,39 @@
                                 <i data-lucide="map-pin" class="w-4 h-4 text-indigo-500 mr-3"></i>
                                 <input type="text" id="chantierRef" placeholder="Nom ou Réf. Chantier..."
                                     class="bg-transparent !border-0 !p-0 text-sm font-bold text-[var(--text-main)] placeholder:text-zinc-500 focus:ring-0 min-w-[250px]"
-                                    oninput="saveChantier(this.value)">
+                                    oninput="window.saveChantier(this.value)">
                             </div>
                         </div>
                     </div>
                     <div class="flex gap-4">
-                        <button id="ralModeBtn" onclick="toggleFinitionMode()"
+                        <button id="ralModeBtn" onclick="window.toggleFinitionMode()"
                             class="flex items-center gap-2 px-6 py-3 bg-white hover:bg-zinc-50 text-zinc-900 rounded-lg text-xs font-bold transition-all border border-zinc-200 shadow-sm">
                             <i data-lucide="palette" class="w-4 h-4 text-purple-600"></i>
                             <span id="ralBtnText">FINITIONS</span>
                         </button>
-                        <button id="mainCalpinageBtn" onclick="toggleCalpinageMode()"
+                        <button id="mainCalpinageBtn" onclick="window.toggleCalpinageMode()"
                             class="flex items-center gap-2 px-6 py-3 bg-white hover:bg-zinc-50 text-zinc-900 rounded-lg text-xs font-bold transition-all border border-zinc-200 shadow-sm">
                             <i data-lucide="scissors" class="w-4 h-4 text-orange-500"></i>
                             CALPINAGE
                         </button>
-                        <button onclick="exportToCSV()"
+                        <button onclick="window.exportToCSV()"
                             class="px-6 py-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-bold transition-all">EXPORTER</button>
-                        <button onclick="clearNeeds()"
+                        <button onclick="window.clearNeeds()"
                             class="px-6 py-3 bg-zinc-800 hover:bg-red-900/30 text-zinc-400 hover:text-red-400 rounded-lg text-xs font-bold transition-all border border-zinc-700 hover:border-red-900/50">VIDER</button>
+                    </div>
+                </div>
+
+                <!-- BARRE DE RECHERCHE BESOINS -->
+                <div class="px-10 pb-4 shrink-0">
+                    <div class="relative">
+                        <i data-lucide="search"
+                            class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-600"></i>
+                        <input type="text" id="needsSearch"
+                            placeholder="Filtrer par référence, désignation ou fournisseur..."
+                            oninput="window.filterNeeds(this.value)"
+                            class="w-full h-10 pl-11 pr-5 bg-zinc-900/50 border border-zinc-800 rounded-lg text-sm text-white placeholder:text-zinc-600 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 outline-none transition-all">
+                        <span id="needsFilterCount"
+                            class="hidden absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-bold text-zinc-500"></span>
                     </div>
                 </div>
             </div>
@@ -216,12 +235,12 @@
                                 <th id="thSelectAllCheck"
                                     class="w-12 p-2 text-center transition-opacity opacity-0 pointer-events-none">
                                     <div class="flex items-center justify-center">
-                                        <input type="checkbox" id="selectAllCheckbox" onclick="toggleSelectAll()"
+                                        <input type="checkbox" id="selectAllCheckbox" onclick="window.toggleSelectAll()"
                                             class="w-4 h-4 rounded border-zinc-600 bg-zinc-700 text-indigo-600 focus:ring-0 focus:ring-offset-0 cursor-pointer accent-indigo-600">
                                     </div>
                                 </th>
                                 <th class="table-header w-32 cursor-pointer hover:bg-zinc-800 transition-colors group"
-                                    onclick="toggleSupplierSort()">
+                                    onclick="window.toggleSupplierSort()">
                                     <div class="flex items-center gap-2">
                                         <span>Fournisseur</span>
                                         <i data-lucide="chevron-down" id="sortIcon"
@@ -251,7 +270,7 @@
 
     <div id="imageModal"
         class="hidden fixed inset-0 z-[60] flex items-center justify-center bg-black/98 backdrop-blur-3xl transition-all duration-500 cursor-zoom-out"
-        onclick="closeVisualizer()">
+        onclick="window.closeVisualizer()">
         <img id="modalImage" src=""
             class="max-w-[90vw] max-h-[85vh] object-contain rounded-3xl shadow-well transform scale-95 transition-transform duration-500">
     </div>
@@ -302,7 +321,8 @@
 
     <!-- RAL CONFIGURATION MODAL -->
     <div id="ralModal" class="hidden fixed inset-0 z-[100] flex items-center justify-center">
-        <div class="absolute inset-0 bg-black/80 backdrop-blur-sm transition-opacity" onclick="closeRalModal()"></div>
+        <div class="absolute inset-0 bg-black/80 backdrop-blur-sm transition-opacity" onclick="window.closeRalModal()">
+        </div>
 
         <div
             class="relative w-[600px] bg-[#1a1a1e] text-white border border-zinc-800 rounded-2xl shadow-2xl animate-fade overflow-hidden">
@@ -322,7 +342,7 @@
                         <i data-lucide="hash" class="w-4 h-4 text-zinc-500 mr-3"></i>
                         <input type="text" id="ralCodeInput" placeholder="Ex: 9010"
                             class="bg-transparent border-0 p-0 text-sm font-bold placeholder:text-zinc-600 focus:ring-0 w-full uppercase"
-                            oninput="updateRalPreview(this.value)">
+                            oninput="window.updateRalPreview(this.value)">
                     </div>
                 </div>
 
@@ -356,9 +376,9 @@
             <input type="hidden" id="selectedRalFamily" value="std">
 
             <div class="p-6 border-t border-zinc-800 bg-zinc-900/50 flex justify-end gap-3">
-                <button onclick="closeRalModal()"
+                <button onclick="window.closeRalModal()"
                     class="px-6 py-3 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 rounded-xl text-xs font-bold transition-all">ANNULER</button>
-                <button onclick="applyRalToSelection()"
+                <button onclick="window.applyRalToSelection()"
                     class="px-8 py-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold transition-all shadow-lg shadow-indigo-600/20">APPLIQUER</button>
             </div>
         </div>
@@ -374,7 +394,7 @@
                     <h2 class="text-xl font-bold">Ajouter un Article</h2>
                     <p class="text-sm text-zinc-400 mt-1">Ajouter un article au catalogue (BDD locale)</p>
                 </div>
-                <button onclick="closeManualAddModal()"
+                <button onclick="window.closeManualAddModal()"
                     class="p-2 hover:bg-zinc-800 rounded-lg text-zinc-500 hover:text-white transition-all">
                     <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
@@ -458,9 +478,9 @@
 
             <!-- Footer -->
             <div class="p-6 border-t border-zinc-800 flex justify-end gap-3">
-                <button onclick="closeManualAddModal()"
+                <button onclick="window.closeManualAddModal()"
                     class="px-6 py-3 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 rounded-xl text-xs font-bold transition-all">ANNULER</button>
-                <button id="submitManualBtn" onclick="submitManualArticle()"
+                <button id="submitManualBtn" onclick="window.submitManualArticle()"
                     class="px-8 py-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold transition-all shadow-lg shadow-indigo-600/20 flex items-center gap-2">
                     <i data-lucide="database" class="w-4 h-4"></i>
                     ENREGISTRER
@@ -469,7 +489,7 @@
         </div>
     </div>
 
-    <script type="module" src="src/main.js?v=129"></script>
+    <script type="module" src="src/main.js?v=130"></script>
 </body>
 
 </html>
