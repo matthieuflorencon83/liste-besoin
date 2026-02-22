@@ -1068,24 +1068,27 @@ window.renderNeeds = function () {
             </td>
 
 
-            <!-- ACTIONS : info + note + copy + delete -->
-            <td class="p-2 w-40 text-right">
-                <div class="flex items-center justify-end gap-1">
-                    <button onclick="event.stopPropagation(); window.showArticleCard(${realIndex})" 
-                        class="p-2 text-zinc-600 hover:text-indigo-400 hover:bg-indigo-500/10 rounded-lg transition-colors" title="Fiche article">
-                        <i data-lucide="info" class="w-4 h-4"></i>
+            <!-- ACTIONS : menu déroulant -->
+            <td class="p-2 w-16 text-right relative">
+                <button onclick="event.stopPropagation(); window.toggleNeedsActionMenu(${realIndex})" 
+                    class="p-2 text-zinc-500 hover:text-white hover:bg-zinc-800 rounded-lg transition-colors inline-block" title="Actions">
+                    <i data-lucide="more-vertical" class="w-4 h-4"></i>
+                </button>
+                
+                <!-- Menu dropdown -->
+                <div id="needsActionMenu_${realIndex}" class="hidden absolute right-10 top-1/2 -translate-y-1/2 z-50 min-w-[160px] bg-zinc-900 border border-zinc-700/50 rounded-xl shadow-2xl py-1 overflow-hidden" onclick="event.stopPropagation()">
+                    <button onclick="window.showArticleCard(${realIndex}); window.toggleNeedsActionMenu(${realIndex})" class="w-full px-4 py-2 text-left text-[11px] font-bold tracking-wide uppercase text-zinc-300 hover:text-indigo-400 hover:bg-indigo-500/10 flex items-center gap-3 transition-colors">
+                        <i data-lucide="info" class="w-4 h-4"></i> Fiche technique
                     </button>
-                    <button onclick="event.stopPropagation(); window.toggleNoteRow(${realIndex})" 
-                        class="p-2 ${item.note ? 'text-amber-400' : 'text-zinc-600 hover:text-amber-400'} hover:bg-amber-500/10 rounded-lg transition-colors" title="Note">
-                        <i data-lucide="${item.note ? 'message-square' : 'message-square-plus'}" class="w-4 h-4"></i>
+                    <button onclick="window.toggleNoteRow(${realIndex}); window.toggleNeedsActionMenu(${realIndex})" class="w-full px-4 py-2 text-left text-[11px] font-bold tracking-wide uppercase ${item.note ? 'text-amber-400' : 'text-zinc-300 hover:text-amber-400'} hover:bg-amber-500/10 flex items-center gap-3 transition-colors">
+                        <i data-lucide="${item.note ? 'message-square' : 'message-square-plus'}" class="w-4 h-4"></i> Note
                     </button>
-                    <button onclick="event.stopPropagation(); window.duplicateNeed(${realIndex})" 
-                        class="p-2 text-zinc-600 hover:text-emerald-400 hover:bg-emerald-500/10 rounded-lg transition-colors" title="Dupliquer">
-                        <i data-lucide="copy" class="w-4 h-4"></i>
+                    <button onclick="window.duplicateNeed(${realIndex}); window.toggleNeedsActionMenu(${realIndex})" class="w-full px-4 py-2 text-left text-[11px] font-bold tracking-wide uppercase text-zinc-300 hover:text-emerald-400 hover:bg-emerald-500/10 flex items-center gap-3 transition-colors">
+                        <i data-lucide="copy" class="w-4 h-4"></i> Dupliquer
                     </button>
-                    <button onclick="event.stopPropagation(); window.deleteNeed(${realIndex})" 
-                        class="p-2 text-zinc-600 hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-colors" title="Supprimer">
-                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                    <div class="h-px bg-zinc-800 my-1"></div>
+                    <button onclick="window.deleteNeed(${realIndex}); window.toggleNeedsActionMenu(${realIndex})" class="w-full px-4 py-2 text-left text-[11px] font-bold tracking-wide uppercase text-red-500 hover:bg-red-500/10 flex items-center gap-3 transition-colors">
+                        <i data-lucide="trash-2" class="w-4 h-4"></i> Supprimer
                     </button>
                 </div>
             </td>
@@ -1384,6 +1387,32 @@ window.adjustNeedField = function (realIndex, field, delta) {
         window.renderNeeds();
     }, 500);
 };
+
+// Afficher ou masquer le menu d'actions (3 petits points)
+window.toggleNeedsActionMenu = function (realIndex) {
+    const allMenus = document.querySelectorAll('[id^="needsActionMenu_"]');
+    const targetMenu = document.getElementById(`needsActionMenu_${realIndex}`);
+
+    // Fermer tous les autres
+    allMenus.forEach(m => {
+        if (m !== targetMenu) m.classList.add('hidden');
+    });
+
+    // Basculer celui-ci
+    if (targetMenu) {
+        targetMenu.classList.toggle('hidden');
+    }
+};
+
+// Fermer les menus si clic en dehors
+document.addEventListener('click', function (e) {
+    const menus = document.querySelectorAll('[id^="needsActionMenu_"]');
+    menus.forEach(m => {
+        if (!m.contains(e.target)) {
+            m.classList.add('hidden');
+        }
+    });
+});
 
 // ============================================================
 // SPRINT 5 — DUPLICATION DE LIGNE
