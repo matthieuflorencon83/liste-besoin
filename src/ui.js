@@ -1137,18 +1137,18 @@ window.renderNeeds = function () {
     }
 }
 
-    // Filtre rapide dans la vue Besoins (debounced)
-    (function () {
-        function debounceNeeds(fn, delay) {
-            let t;
-            return function (...a) { clearTimeout(t); t = setTimeout(() => fn(...a), delay); };
-        }
-        const _filterFn = function (query) {
-            window.needsFilterQuery = query;
-            window.renderNeeds();
-        };
-        window.filterNeeds = debounceNeeds(_filterFn, 200);
-    })();
+    ;// Filtre rapide dans la vue Besoins (debounced) — Sprint 4
+(function () {
+    function debounceNeeds(fn, delay) {
+        let t;
+        return function (...a) { clearTimeout(t); t = setTimeout(() => fn(...a), delay); };
+    }
+    const _filterFn = function (query) {
+        window.needsFilterQuery = query;
+        window.renderNeeds();
+    };
+    window.filterNeeds = debounceNeeds(_filterFn, 200);
+})();
 
 // ============================================================
 // SPRINT 3 — NOTES PAR LIGNE

@@ -1,6 +1,6 @@
-import './state.js?v=134';
-import './calpinage.js?v=134';
-import './ui.js?v=134';
+import './state.js?v=135';
+import './calpinage.js?v=135';
+import './ui.js?v=135';
 
 document.addEventListener('DOMContentLoaded', async () => {
     try {
