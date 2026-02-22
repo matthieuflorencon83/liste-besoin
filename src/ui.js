@@ -731,14 +731,27 @@ function renderBDCV2(title, items, chantier, type) {
     }
 
     container.innerHTML = `
-        <div class="bdc-header">
+        <div class="bdc-header" style="display: flex; justify-content: space-between; margin-bottom: 20px;">
             <div>
-                <h1 style="font-size: 24px; font-weight: 900; margin-bottom: 5px;">ARTS ALU</h1>
-                <p style="font-size: 12px; color: #666;">${type === 'calpinage' ? 'DÉTAIL CALPINAGE' : (type === 'list' ? 'LISTE COMPLÈTE' : 'BON DE COMMANDE')}</p>
+                <h1 style="font-size: 28px; font-weight: 900; margin-bottom: 8px; color: #1e1b4b; letter-spacing: -0.5px;">ARTS ALU</h1>
+                <div style="font-size: 10px; color: #4b5563; line-height: 1.5;">
+                    <p style="font-weight: bold; color: #1f2937;">Menuiserie Aluminium & PVC • Stores & Volets • Abris de Piscines</p>
+                    <p>Les Quatre Chemins - R.N.7, 83460 LES ARCS S/ARGENS</p>
+                    <p>Tél. 04 94 73 67 04 • Port : 06 61 63 33 67 / 06 11 35 75 09</p>
+                    <p>E-Mail: contact@artsalu.fr</p>
+                    <p style="font-size: 8px; margin-top: 6px; color: #9ca3af;">Arts Alu - Eurl au capital de 8000 € • Siret 48065874900027 • TVA Intracom FR61480658749</p>
+                </div>
             </div>
-            <div style="text-align: right;">
-                <p style="font-weight: bold; font-size: 14px;">CHANTIER : ${chantier}</p>
-                <p style="font-size: 12px;">Date : ${date}</p>
+            <div style="text-align: right; display: flex; flex-col; align-items: flex-end;">
+                <div style="background: #f3f4f6; padding: 10px 15px; border-radius: 6px; border: 1px solid #e5e7eb; display: inline-block;">
+                    <p style="font-size: 14px; font-weight: 900; color: #111827; text-transform: uppercase;">CHANTIER : ${chantier}</p>
+                    <p style="font-size: 11px; color: #6b7280; margin-top: 4px;">Date : ${date}</p>
+                </div>
+                <div style="margin-top: 15px; float: right;">
+                    <p style="font-size: 14px; font-weight: 900; color: #4338ca; text-transform: uppercase; letter-spacing: 1px;">
+                        ${type === 'calpinage' ? 'DÉTAIL CALPINAGE' : (type === 'list' ? 'LISTE COMPLÈTE' : 'BON DE COMMANDE')}
+                    </p>
+                </div>
             </div>
         </div>
 
