@@ -994,9 +994,19 @@ window.renderNeeds = function () {
                 ${ralDisplay}
             </td>
 
-            <!-- P.U. HT -->
-            <td class="p-4 w-24 text-right">
-                <span class="font-mono text-zinc-300">${(parseFloat(item.px_public) || 0).toFixed(2)}€</span>
+            <!-- P.U. HT — Éditable inline (Sprint 7) -->
+            <td class="p-2 w-24 text-right" onclick="event.stopPropagation()">
+                <div class="inline-flex items-center justify-end gap-1 group cursor-text rounded-lg px-2 py-1 hover:bg-zinc-800 transition-colors">
+                    <input type="number"
+                        step="0.01" min="0"
+                        value="${(parseFloat(item.px_public) || 0).toFixed(2)}"
+                        onclick="event.stopPropagation(); this.select()"
+                        onchange="window.saveNeedField(${realIndex}, 'px_public', parseFloat(this.value) || 0)"
+                        class="w-20 bg-transparent border-none text-right font-mono text-zinc-300 focus:text-white focus:outline-none focus:ring-0 p-0 cursor-text
+                               [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none"
+                        title="Cliquer pour modifier le prix">
+                    <span class="text-zinc-600 text-xs group-focus-within:text-zinc-400">€</span>
+                </div>
             </td>
 
             <!-- CONDIT -->
@@ -1004,26 +1014,40 @@ window.renderNeeds = function () {
                <div class="text-xs text-zinc-500">${item.conditionnement || '-'}</div>
             </td>
 
-            <!-- NEED -->
-            <td class="p-4 w-24 text-center">
-                <div class="inline-flex items-center justify-center min-w-[30px] h-8 px-2 bg-zinc-800 rounded-lg text-white font-bold border border-zinc-700">
-                    <input type="number" 
-                        min="0" 
-                        value="${item.need || 0}" 
-                        onclick="event.stopPropagation()"
-                        onchange="window.updateNeedV(${index}, 'need', this.value)"
-                        class="w-full bg-transparent border-none text-center font-bold focus:ring-0 p-0 text-white">
+            <!-- BESOIN — Éditable inline PREMIUM (Sprint 7) -->
+            <td class="p-2 w-24 text-center" onclick="event.stopPropagation()">
+                <div class="inline-flex items-center gap-1">
+                    <button onclick="event.stopPropagation(); window.adjustNeedField(${realIndex}, 'need', -1)"
+                        class="w-6 h-6 rounded-md bg-zinc-800 hover:bg-zinc-700 text-zinc-500 hover:text-white transition-all flex items-center justify-center text-sm font-black leading-none">-</button>
+                    <input type="number"
+                        min="0"
+                        value="${item.need || 0}"
+                        id="needInput_${realIndex}"
+                        onclick="event.stopPropagation(); this.select()"
+                        onchange="window.saveNeedField(${realIndex}, 'need', parseInt(this.value) || 0)"
+                        class="w-12 text-center font-black text-white bg-zinc-900 border border-zinc-700 rounded-lg focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 outline-none transition-all p-1 text-sm
+                               [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none">
+                    <button onclick="event.stopPropagation(); window.adjustNeedField(${realIndex}, 'need', +1)"
+                        class="w-6 h-6 rounded-md bg-zinc-800 hover:bg-indigo-600 text-zinc-500 hover:text-white transition-all flex items-center justify-center text-sm font-black leading-none">+</button>
                 </div>
             </td>
 
-            <!-- STOCK -->
-            <td class="p-4 w-24 text-center">
-                 <input type="number" 
-                    min="0" 
-                    value="${item.stock || 0}" 
-                    onclick="event.stopPropagation()"
-                    onchange="window.updateNeedV(${index}, 'stock', this.value)"
-                    class="w-full bg-transparent border-none text-center font-mono text-zinc-500 focus:ring-0 p-0 hover:text-white transition-colors">
+            <!-- STOCK — Éditable inline PREMIUM (Sprint 7) -->
+            <td class="p-2 w-24 text-center" onclick="event.stopPropagation()">
+                <div class="inline-flex items-center gap-1">
+                    <button onclick="event.stopPropagation(); window.adjustNeedField(${realIndex}, 'stock', -1)"
+                        class="w-6 h-6 rounded-md bg-zinc-800 hover:bg-zinc-700 text-zinc-500 hover:text-white transition-all flex items-center justify-center text-sm font-black leading-none">-</button>
+                    <input type="number"
+                        min="0"
+                        value="${item.stock || 0}"
+                        id="stockInput_${realIndex}"
+                        onclick="event.stopPropagation(); this.select()"
+                        onchange="window.saveNeedField(${realIndex}, 'stock', parseInt(this.value) || 0)"
+                        class="w-12 text-center font-mono text-emerald-400 bg-zinc-900 border border-zinc-700 rounded-lg focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/30 outline-none transition-all p-1 text-sm
+                               [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none">
+                    <button onclick="event.stopPropagation(); window.adjustNeedField(${realIndex}, 'stock', +1)"
+                        class="w-6 h-6 rounded-md bg-zinc-800 hover:bg-emerald-700 text-zinc-500 hover:text-white transition-all flex items-center justify-center text-sm font-black leading-none">+</button>
+                </div>
             </td>
 
             <!-- ORDER -->
@@ -1042,6 +1066,7 @@ window.renderNeeds = function () {
                     : `<span class="text-zinc-700 font-mono text-xs">—</span>`;
             })()}
             </td>
+
 
             <!-- ACTIONS : info + note + copy + delete -->
             <td class="p-2 w-40 text-right">
@@ -1319,6 +1344,45 @@ window.openBudgetChart = function () {
 window.closeBudgetChart = function () {
     const modal = document.getElementById('budgetChartModal');
     if (modal) modal.classList.add('hidden');
+};
+
+// ============================================================
+// SPRINT 7 — ÉDITION INLINE (saveNeedField + adjustNeedField)
+// ============================================================
+
+// Sauvegarde un champ modifié directement dans window.needs
+// et met à jour les totaux en bas du tableau sans re-render complet
+let _saveNeedDebounceTimer = null;
+window.saveNeedField = function (realIndex, field, value) {
+    if (!window.needs[realIndex]) return;
+    window.needs[realIndex][field] = value;
+    localStorage.setItem('art-needs', JSON.stringify(window.needs));
+
+    // Mettre à jour la ligne ORDER et TOTAL HT en live sans re-render global
+    clearTimeout(_saveNeedDebounceTimer);
+    _saveNeedDebounceTimer = setTimeout(() => {
+        window.renderNeeds();
+    }, 600);
+};
+
+// Incrémentation +/- fluide (boutons +/-)
+window.adjustNeedField = function (realIndex, field, delta) {
+    if (!window.needs[realIndex]) return;
+    const current = parseFloat(window.needs[realIndex][field]) || 0;
+    const newVal = Math.max(0, current + delta);
+    window.needs[realIndex][field] = field === 'px_public' ? newVal : Math.round(newVal);
+    localStorage.setItem('art-needs', JSON.stringify(window.needs));
+
+    // MAJ directe du champ input sans re-render
+    const inputId = field === 'need' ? `needInput_${realIndex}` : `stockInput_${realIndex}`;
+    const input = document.getElementById(inputId);
+    if (input) input.value = window.needs[realIndex][field];
+
+    // Re-render avec debounce court pour les totaux
+    clearTimeout(_saveNeedDebounceTimer);
+    _saveNeedDebounceTimer = setTimeout(() => {
+        window.renderNeeds();
+    }, 500);
 };
 
 // ============================================================
