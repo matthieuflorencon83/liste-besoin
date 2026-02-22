@@ -31,6 +31,23 @@ window.startApp = () => {
     setTimeout(() => document.getElementById('startOverlay').classList.add('hidden'), 1000);
 }
 
+// SPRINT 6 — Skip écran de démarrage si chantier ou besoins déjà présents
+try {
+    const hasNeeds = JSON.parse(localStorage.getItem('art-needs') || '[]').length > 0;
+    const hasChantier = !!localStorage.getItem('art-chantier');
+    if (hasNeeds || hasChantier) {
+        // Auto-skip après un court délai (laisser le temps que le DOM charge)
+        setTimeout(() => {
+            const overlay = document.getElementById('startOverlay');
+            if (overlay && !overlay.classList.contains('hidden')) {
+                overlay.style.transition = 'opacity 0.4s ease';
+                overlay.style.opacity = '0';
+                setTimeout(() => overlay.classList.add('hidden'), 450);
+            }
+        }, 600);
+    }
+} catch (e) { /* ignore */ }
+
 window.toggleFS = () => {
     if (!document.fullscreenElement) {
         document.documentElement.requestFullscreen().catch(() => { });
@@ -68,6 +85,17 @@ function escapeHtml(str) {
     const div = document.createElement('div');
     div.textContent = String(str);
     return div.innerHTML;
+}
+
+// ============================================================
+// SPRINT 6 — SURLIGNAGE DES TERMES DE RECHERCHE
+// ============================================================
+function highlight(text, query) {
+    if (!query || query.length < 2) return escapeHtml(text);
+    const safe = escapeHtml(text);
+    const safeQ = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    return safe.replace(new RegExp(`(${safeQ})`, 'gi'),
+        '<mark style="background:rgba(99,102,241,0.35);color:white;border-radius:3px;padding:0 2px;">$1</mark>');
 }
 
 window.loadProject = (input) => {
@@ -217,12 +245,13 @@ function render() {
         card.className = `item-card animate-fade ${window.currentView === 'list' ? 'flex-row items-center' : ''}`;
         card.style.animationDelay = `${(idx % 40) * 15}ms`;
 
+        const q = window.searchInput.value.toLowerCase().trim();
         const safeImage = escapeHtml(it.image);
-        const safeRef = escapeHtml(it.reference);
-        const safeType = escapeHtml(it.type || 'Plein');
-        const safeFour = escapeHtml(it.fournisseur || '-');
-        const safeDes = escapeHtml(formatName(it.designation));
+        const safeDes = highlight(formatName(it.designation), q);
+        const safeRef = highlight(it.reference, q);
         const safeUnit = escapeHtml(it.unit_condit || 'U');
+        const safeType = escapeHtml(it.type || 'Plein');
+        const safeFour = highlight(it.fournisseur || '-', q);
 
         const conditHtml = multiplier > 1 ? `
             <div class="flex items-center gap-2 text-[8px] font-black text-indigo-500 underline underline-offset-4 decoration-indigo-500/20 mt-2 uppercase tracking-widest">
@@ -334,18 +363,49 @@ window.toggleN = (e, id, idx) => {
             longueur: it.condit || 1,
             unit_condit: it.unit_condit || 'M',
             type: it.type || (isProfil ? 'Profilé' : 'Accessoire'),
-            need: 0,
+            need: 1,
             stock: 0,
             px_public: it.px_public || 0 // Store initial public price
         });
     }
     localStorage.setItem('art-needs', JSON.stringify(window.needs));
+    // Toast de confirmation (Sprint 6)
+    const label = it ? (it.designation || it.reference || 'Article') : 'Article';
+    if (i > -1) {
+        window.showToast(`❌ Retiré des besoins`, 'zinc');
+    } else {
+        window.showToast(`✅ Ajouté aux besoins — ${label.slice(0, 40)}`, 'indigo');
+    }
     render();
 };
 
 function updateFavCount() {
     const c = window.favorites.length; window.favCountBadge.textContent = c; window.favCountBadge.classList.toggle('hidden', c === 0);
 }
+
+// ============================================================
+// SPRINT 6 — TOAST DE CONFIRMATION
+// ============================================================
+window.showToast = function (message, color = 'indigo') {
+    let container = document.getElementById('toastContainer');
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'toastContainer';
+        container.style.cssText = 'position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:8px;pointer-events:none;';
+        document.body.appendChild(container);
+    }
+    const toast = document.createElement('div');
+    const colors = { indigo: '#4f46e5', zinc: '#52525b', emerald: '#059669', red: '#dc2626', amber: '#d97706' };
+    const bg = colors[color] || colors.indigo;
+    toast.style.cssText = `background:${bg};color:white;padding:10px 16px;border-radius:12px;font-size:12px;font-weight:700;font-family:inherit;box-shadow:0 8px 24px rgba(0,0,0,0.4);transform:translateX(120%);transition:transform 0.3s cubic-bezier(0.34,1.56,0.64,1);max-width:320px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;`;
+    toast.textContent = message;
+    container.appendChild(toast);
+    requestAnimationFrame(() => { requestAnimationFrame(() => { toast.style.transform = 'translateX(0)'; }); });
+    setTimeout(() => {
+        toast.style.transform = 'translateX(120%)';
+        setTimeout(() => { if (toast.parentNode) toast.parentNode.removeChild(toast); }, 350);
+    }, 2500);
+};
 
 window.switchView = (v) => {
     document.getElementById('catalogueView').classList.toggle('hidden', v !== 'catalogue');
