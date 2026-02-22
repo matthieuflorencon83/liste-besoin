@@ -679,8 +679,15 @@ function renderBDCV2(title, items, chantier, type) {
     } else {
         // Standard BDC or Full List
         const isBdc = type === 'bdc';
+        let totalGlobalHT = 0;
 
-        const rows = items.map(item => `
+        const rows = items.map(item => {
+            const puPiece = window.getPuPiece(item);
+            const qty = isBdc ? item.toOrder : item.need;
+            const totalHT = qty * puPiece;
+            totalGlobalHT += totalHT;
+
+            return `
             <tr>
                 <td>${item.reference}</td>
                 <td>${item.designation}</td>
@@ -691,8 +698,11 @@ function renderBDCV2(title, items, chantier, type) {
                 <td style="text-align: center; font-weight: bold; color: ${item.toOrder > 0 ? '#000' : '#ccc'};">
                     ${item.toOrder}
                 </td>
+                <td style="text-align: right;">${puPiece.toFixed(2)} €</td>
+                <td style="text-align: right; font-weight: bold;">${totalHT.toFixed(2)} €</td>
             </tr>
-        `).join('');
+            `;
+        }).join('');
 
         contentHtml = `
             <table class="bdc-table">
@@ -701,13 +711,21 @@ function renderBDCV2(title, items, chantier, type) {
                         <th style="width: 15%;">RÉFÉRENCE</th>
                         <th>DÉSIGNATION</th>
                         <th style="width: 10%;">RAL</th>
-                        <th style="width: 15%;">CONDIT.</th>
+                        <th style="width: 10%;">CONDIT.</th>
                         ${!isBdc ? `<th style="width: 8%; text-align: center;">BESOIN</th>` : ''}
                         ${!isBdc ? `<th style="width: 8%; text-align: center;">STOCK</th>` : ''}
                         <th style="width: 8%; text-align: center;">${isBdc ? 'QUANTITÉ' : 'CDE'}</th>
+                        <th style="width: 10%; text-align: right;">PU HT</th>
+                        <th style="width: 12%; text-align: right;">TOTAL HT</th>
                     </tr>
                 </thead>
-                <tbody>${rows}</tbody>
+                <tbody>
+                    ${rows}
+                    <tr>
+                        <td colspan="${!isBdc ? 8 : 6}" style="text-align: right; font-weight: 900; padding-top: 15px; border-top: 2px solid #000;">TOTAL GÉNÉRAL HT</td>
+                        <td style="text-align: right; font-weight: 900; font-size: 16px; padding-top: 15px; border-top: 2px solid #000; color: #166534;">${totalGlobalHT.toFixed(2)} €</td>
+                    </tr>
+                </tbody>
             </table>
         `;
     }

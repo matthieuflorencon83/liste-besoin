@@ -284,24 +284,8 @@
                             <i data-lucide="scissors" class="w-4 h-4 text-orange-500"></i>
                             CALPINAGE
                         </button>
-                        <div class="relative group">
-                            <button
-                                class="flex items-center gap-2 px-6 py-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-bold transition-all border border-indigo-600 shadow-sm shadow-indigo-500/20">
-                                EXPORTER <i data-lucide="chevron-down" class="w-4 h-4"></i>
-                            </button>
-                            <!-- Dropdown Menu -->
-                            <div
-                                class="absolute right-0 top-full mt-2 hidden group-hover:flex flex-col w-56 bg-zinc-800 border border-zinc-700 rounded-xl shadow-2xl overflow-hidden z-[100] animate-fade">
-                                <button onclick="window.exportExcel()"
-                                    class="flex items-center gap-3 px-4 py-3 hover:bg-zinc-700 text-emerald-400 text-xs font-bold transition-colors text-left border-b border-zinc-700/50">
-                                    <i data-lucide="file-spreadsheet" class="w-4 h-4"></i> EXCEL (Liste)
-                                </button>
-                                <button onclick="window.exportPDF()"
-                                    class="flex items-center gap-3 px-4 py-3 hover:bg-zinc-700 text-red-400 text-xs font-bold transition-colors text-left">
-                                    <i data-lucide="file-text" class="w-4 h-4"></i> BDC (PDF par Frn)
-                                </button>
-                            </div>
-                        </div>
+                        <button onclick="window.openExportModalV2()"
+                            class="px-6 py-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-bold transition-all border border-indigo-600 shadow-sm shadow-indigo-500/20">EXPORTER</button>
                         <button onclick="window.clearNeeds()"
                             class="px-6 py-3 bg-zinc-800 hover:bg-red-900/30 text-zinc-400 hover:text-red-400 rounded-lg text-xs font-bold transition-all border border-zinc-700 hover:border-red-900/50">VIDER</button>
                     </div>
@@ -423,13 +407,19 @@
                 </div>
             </div>
 
-            <!-- Floating Action Button for Print -->
-            <button onclick="window.print()"
-                class="absolute bottom-8 right-8 px-8 py-4 bg-indigo-600 hover:bg-indigo-500 text-white rounded-full 
-                shadow-2xl shadow-indigo-600/30 font-bold flex items-center gap-3 transition-transform hover:scale-105 active:scale-95 no-print z-50">
-                <i data-lucide="printer" class="w-5 h-5"></i>
-                <span>IMPRIMER</span>
-            </button>
+            <!-- Floating Action Buttons for Print & Excel -->
+            <div class="absolute bottom-8 right-8 flex items-center gap-4 z-50 no-print">
+                <button onclick="window.exportExcel()"
+                    class="px-8 py-4 bg-emerald-600 hover:bg-emerald-500 text-white rounded-full shadow-2xl shadow-emerald-600/30 font-bold flex items-center gap-3 transition-transform hover:scale-105 active:scale-95">
+                    <i data-lucide="file-spreadsheet" class="w-5 h-5"></i>
+                    <span>EXCEL</span>
+                </button>
+                <button onclick="window.print()"
+                    class="px-8 py-4 bg-indigo-600 hover:bg-indigo-500 text-white rounded-full shadow-2xl shadow-indigo-600/30 font-bold flex items-center gap-3 transition-transform hover:scale-105 active:scale-95">
+                    <i data-lucide="printer" class="w-5 h-5"></i>
+                    <span>IMPRIMER</span>
+                </button>
+            </div>
         </div>
     </div>
 
@@ -642,7 +632,7 @@
         </div>
     </div>
 
-    <script type="module" src="src/main.js?v=145"></script>
+    <script type="module" src="src/main.js?v=146"></script>
 </body>
 
 </html>
