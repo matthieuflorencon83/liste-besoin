@@ -851,6 +851,24 @@ window.submitManualArticle = async () => {
 
 
 
+// ============================================================
+// HELPERS POUR LE PRIX DE LA PIÈCE
+// ============================================================
+window.getPuPiece = function (item) {
+    if (item.px_piece !== undefined) return parseFloat(item.px_piece) || 0;
+    const conditVal = parseFloat(item.longueur) || parseFloat(item.conditionnement) || 1;
+    const u = String(item.unit_condit || item.unit_vente || '').toUpperCase();
+    const mult = (u === 'M' || u === 'ML' || u === 'PC') ? conditVal : 1;
+    const px_base = parseFloat(item.px_remise) || parseFloat(item.px_public) || 0;
+    return px_base * mult;
+};
+
+window.getMult = function (item) {
+    const conditVal = parseFloat(item.longueur) || parseFloat(item.conditionnement) || 1;
+    const u = String(item.unit_condit || item.unit_vente || '').toUpperCase();
+    return (u === 'M' || u === 'ML' || u === 'PC') ? conditVal : 1;
+};
+
 window.renderNeeds = function () {
     const tbody = document.getElementById('needsTableBody');
     if (!tbody) return;
@@ -994,25 +1012,25 @@ window.renderNeeds = function () {
                 ${ralDisplay}
             </td>
 
-            <!-- P.U. HT — Éditable inline -->
-            <td class="p-2 w-24 text-right" onclick="event.stopPropagation()">
+            <!-- P.U. PIÈCE HT (Remisé) — Éditable inline -->
+            <td class="p-2 w-28 text-right" onclick="event.stopPropagation()">
                 <div class="inline-flex items-center justify-end gap-1 group cursor-text rounded-lg px-2 py-1 hover:bg-zinc-800 transition-colors">
                     <input type="number"
                         step="0.01" min="0"
-                        value="${(parseFloat(item.px_public) || 0).toFixed(2)}"
+                        value="${window.getPuPiece(item).toFixed(2)}"
                         onclick="event.stopPropagation(); this.select()"
-                        onchange="window.saveNeedField(${realIndex}, 'px_public', parseFloat(this.value) || 0)"
-                        class="w-16 bg-transparent border-none text-right font-mono text-zinc-300 focus:text-white focus:outline-none focus:ring-0 p-0 cursor-text
+                        onchange="window.saveNeedField(${realIndex}, 'px_piece', parseFloat(this.value) || 0)"
+                        class="w-20 bg-transparent border-none text-right font-mono text-emerald-300 focus:text-white focus:outline-none focus:ring-0 p-0 cursor-text
                                [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none"
-                        title="Cliquer pour modifier le prix">
-                    <span class="text-zinc-600 text-[10px] uppercase font-bold group-focus-within:text-zinc-400">€ / ${item.unit_condit || item.unit_vente || 'U'}</span>
+                        title="Cliquer pour modifier le prix de la pièce">
+                    <span class="text-zinc-600 text-[10px] uppercase font-bold group-focus-within:text-zinc-400">€ / PCE</span>
                 </div>
                 ${(() => {
-                const conditVal = parseFloat(item.longueur) || parseFloat(item.conditionnement) || 1;
-                const u = String(item.unit_condit || item.unit_vente || '').toUpperCase();
-                const mult = (u === 'M' || u === 'ML' || u === 'PC') ? conditVal : 1;
+                const mult = window.getMult(item);
                 if (mult > 1) {
-                    return `<div class="text-[9px] text-zinc-500 mt-1 mr-2">1 pce = ${((parseFloat(item.px_public) || 0) * mult).toFixed(2)} €</div>`;
+                    const puBase = window.getPuPiece(item) / mult;
+                    const u = String(item.unit_condit || item.unit_vente || '').toUpperCase();
+                    return `<div class="text-[9px] text-zinc-500 mt-1 mr-2 text-right">soit ${puBase.toFixed(2)} € / ${u}</div>`;
                 }
                 return '';
             })()}
@@ -1068,13 +1086,7 @@ window.renderNeeds = function () {
             <td class="p-4 w-20 text-right">
                 ${(() => {
                 const toOrder = Math.max(0, (parseFloat(item.need) || 0) - (parseFloat(item.stock) || 0));
-                const pu = parseFloat(item.px_public) || 0;
-
-                const conditVal = parseFloat(item.longueur) || parseFloat(item.conditionnement) || 1;
-                const u = String(item.unit_condit || item.unit_vente || '').toUpperCase();
-                const mult = (u === 'M' || u === 'ML' || u === 'PC') ? conditVal : 1;
-
-                const total = toOrder * pu * mult;
+                const total = toOrder * window.getPuPiece(item);
                 return total > 0
                     ? `<span class="font-mono font-bold text-amber-400">${total.toFixed(2)} €</span>`
                     : `<span class="text-zinc-700 font-mono text-xs">—</span>`;
@@ -1145,10 +1157,7 @@ window.renderNeeds = function () {
     const totalCde = window.needs.reduce((s, i) => s + Math.max(0, (parseFloat(i.need) || 0) - (parseFloat(i.stock) || 0)), 0);
     const totalHT = window.needs.reduce((s, i) => {
         const cde = Math.max(0, (parseFloat(i.need) || 0) - (parseFloat(i.stock) || 0));
-        const conditVal = parseFloat(i.longueur) || parseFloat(i.conditionnement) || 1;
-        const u = String(i.unit_condit || i.unit_vente || '').toUpperCase();
-        const mult = (u === 'M' || u === 'ML' || u === 'PC') ? conditVal : 1;
-        return s + cde * (parseFloat(i.px_public) || 0) * mult;
+        return s + cde * window.getPuPiece(i);
     }, 0);
 
     // Injecter ou mettre à jour la ligne de totaux sous le tableau
@@ -1390,7 +1399,7 @@ window.adjustNeedField = function (realIndex, field, delta) {
     if (!window.needs[realIndex]) return;
     const current = parseFloat(window.needs[realIndex][field]) || 0;
     const newVal = Math.max(0, current + delta);
-    window.needs[realIndex][field] = field === 'px_public' ? newVal : Math.round(newVal);
+    window.needs[realIndex][field] = (field === 'px_public' || field === 'px_piece') ? newVal : Math.round(newVal);
     localStorage.setItem('art-needs', JSON.stringify(window.needs));
 
     // MAJ directe du champ input sans re-render
@@ -1563,17 +1572,15 @@ window.exportExcel = function () {
     const dateStr = now.toLocaleDateString('fr-FR');
 
     // --- Build rows ---
-    const headers = ['#', 'Fournisseur', 'Référence', 'Désignation', 'RAL / Finition', 'Conditionnement', 'P.U. HT', 'PU Pièce HT', 'Besoin', 'Stock', 'À commander', 'Total HT (€)', 'Note'];
+    const headers = ['#', 'Fournisseur', 'Référence', 'Désignation', 'RAL / Finition', 'Conditionnement', 'PU Pièce HT (€)', 'Besoin', 'Stock', 'À commander', 'Total HT (€)', 'Note'];
     const rows = window.needs.map((item, i) => {
         const need = parseFloat(item.need) || 0;
         const stock = parseFloat(item.stock) || 0;
         const toOrder = Math.max(0, need - stock);
-        const pu = parseFloat(item.px_public) || 0;
+        const puPiece = window.getPuPiece(item);
 
         const conditVal = parseFloat(item.longueur) || parseFloat(item.conditionnement) || 1;
         const u = String(item.unit_condit || item.unit_vente || '').toUpperCase();
-        const mult = (u === 'M' || u === 'ML' || u === 'PC') ? conditVal : 1;
-        const puPiece = pu * mult;
 
         return [
             i + 1,
@@ -1582,7 +1589,6 @@ window.exportExcel = function () {
             item.designation || '-',
             item.ral || '-',
             `${conditVal} ${u}`,
-            `${pu} € / ${u}`,
             parseFloat(puPiece.toFixed(2)),
             need,
             stock,
@@ -1598,13 +1604,9 @@ window.exportExcel = function () {
     const totalCmd = window.needs.reduce((s, i) => s + Math.max(0, (parseFloat(i.need) || 0) - (parseFloat(i.stock) || 0)), 0);
     const totalHT = window.needs.reduce((s, i) => {
         const toOrder = Math.max(0, (parseFloat(i.need) || 0) - (parseFloat(i.stock) || 0));
-        const pu = parseFloat(i.px_public) || 0;
-        const conditVal = parseFloat(i.longueur) || parseFloat(i.conditionnement) || 1;
-        const u = String(i.unit_condit || i.unit_vente || '').toUpperCase();
-        const mult = (u === 'M' || u === 'ML' || u === 'PC') ? conditVal : 1;
-        return s + toOrder * pu * mult;
+        return s + toOrder * window.getPuPiece(i);
     }, 0);
-    rows.push(['', 'TOTAL', '', '', '', '', '', '', totalNeed, totalStock, totalCmd, parseFloat(totalHT.toFixed(2)), '']);
+    rows.push(['', 'TOTAL', '', '', '', '', '', totalNeed, totalStock, totalCmd, parseFloat(totalHT.toFixed(2)), '']);
 
     // --- Build workbook ---
     const wb = XLSX.utils.book_new();
@@ -1723,11 +1725,7 @@ window.exportPDF = async function () {
 
         // — Tableau articles —
         const totalHT = items.reduce((s, it) => {
-            const pu = parseFloat(it.px_public) || 0;
-            const conditVal = parseFloat(it.longueur) || parseFloat(it.conditionnement) || 1;
-            const u = String(it.unit_condit || it.unit_vente || '').toUpperCase();
-            const mult = (u === 'M' || u === 'ML' || u === 'PC') ? conditVal : 1;
-            return s + it.toOrder * pu * mult;
+            return s + it.toOrder * window.getPuPiece(it);
         }, 0);
 
         doc.autoTable({
@@ -1735,12 +1733,11 @@ window.exportPDF = async function () {
             margin: { left: 10, right: 10 },
             head: [['#', 'Référence', 'Désignation', 'RAL', 'Condit.', 'PU. Pièce', 'Besoin', 'Stock', 'À cmd.', 'Total HT', 'Note']],
             body: items.map((it, i) => {
-                const pu = parseFloat(it.px_public) || 0;
+                const puPiece = window.getPuPiece(it);
+                const total = it.toOrder * puPiece;
+
                 const conditVal = parseFloat(it.longueur) || parseFloat(it.conditionnement) || 1;
                 const u = String(it.unit_condit || it.unit_vente || '').toUpperCase();
-                const mult = (u === 'M' || u === 'ML' || u === 'PC') ? conditVal : 1;
-                const puPiece = pu * mult;
-                const total = it.toOrder * puPiece;
 
                 return [
                     i + 1,

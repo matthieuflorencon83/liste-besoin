@@ -365,7 +365,8 @@ window.toggleN = (e, id, idx) => {
             type: it.type || (isProfil ? 'Profilé' : 'Accessoire'),
             need: 1,
             stock: 0,
-            px_public: it.px_public || 0 // Store initial public price
+            px_public: it.px_public || 0, // Store initial public price
+            px_remise: it.px_remise || it.px_public || 0 // Store initial discounted price
         });
     }
     localStorage.setItem('art-needs', JSON.stringify(window.needs));
