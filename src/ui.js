@@ -1151,7 +1151,7 @@ window.renderNeeds = function () {
         <!-- EXPANSION ROW FOR CALPINAGE -->
         <tr id="calpRow_${realIndex}" class="${window.activeCalpinageId === String(item.id) ? '' : 'hidden'} bg-zinc-950/50 border-b border-white/[0.03]">
             <td colspan="12" class="p-0">
-                <div id="calpContainer_${index}" class="p-4 border-l-2 border-orange-500"></div>
+                <div id="calpContainer_${realIndex}" class="p-4 border-l-2 border-orange-500"></div>
             </td>
         </tr>
         `;
