@@ -1059,8 +1059,11 @@ window.renderNeeds = function () {
         `;
     }).join('');
 
-    // Re-init icons
-    if (typeof lucide !== 'undefined') lucide.createIcons();
+    // Re-init icons — ciblé sur tbody uniquement (optimisation Sprint 4)
+    if (typeof lucide !== 'undefined') {
+        const tbody = document.getElementById('needsTableBody');
+        if (tbody) lucide.createIcons({ nameAttr: 'data-lucide', nodes: [tbody] });
+    }
     updateRalModeUI();
 
     // Ligne de total général
@@ -1102,11 +1105,18 @@ window.renderNeeds = function () {
     }
 }
 
-// Filtre rapide dans la vue Besoins
-window.filterNeeds = function (query) {
-    window.needsFilterQuery = query;
-    window.renderNeeds();
-};
+    // Filtre rapide dans la vue Besoins (debounced)
+    (function () {
+        function debounceNeeds(fn, delay) {
+            let t;
+            return function (...a) { clearTimeout(t); t = setTimeout(() => fn(...a), delay); };
+        }
+        const _filterFn = function (query) {
+            window.needsFilterQuery = query;
+            window.renderNeeds();
+        };
+        window.filterNeeds = debounceNeeds(_filterFn, 200);
+    })();
 
 // ============================================================
 // SPRINT 3 — NOTES PAR LIGNE

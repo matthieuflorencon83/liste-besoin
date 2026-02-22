@@ -401,7 +401,19 @@ window.closeVisualizer = () => {
     setTimeout(() => m.classList.add('hidden'), 500);
 };
 
-window.searchInput.addEventListener('input', applyFilters);
+// ============================================================
+// SPRINT 4 — PERFORMANCE : Debounce
+// ============================================================
+function debounce(fn, delay) {
+    let timer;
+    return function (...args) {
+        clearTimeout(timer);
+        timer = setTimeout(() => fn.apply(this, args), delay);
+    };
+}
+
+const debouncedApplyFilters = debounce(applyFilters, 250);
+window.searchInput.addEventListener('input', debouncedApplyFilters);
 window.fFour.addEventListener('change', (e) => applyFilters(e.target));
 window.fType.addEventListener('change', (e) => applyFilters(e.target));
 window.fSerie.addEventListener('change', (e) => applyFilters(e.target));
@@ -409,4 +421,3 @@ document.getElementById('resetFilters').addEventListener('click', () => { window
 document.getElementById('toggleFavFilter').addEventListener('click', () => { window.showOnlyFavs = !window.showOnlyFavs; document.getElementById('toggleFavFilter').classList.toggle('active', window.showOnlyFavs); applyFilters(); });
 document.getElementById('modeToggle').addEventListener('click', () => { window.isDarkMode = !window.isDarkMode; document.body.classList.toggle('light-mode', !window.isDarkMode); localStorage.setItem('theme', window.isDarkMode ? 'dark' : 'light'); });
 document.getElementById('loadMoreBtn').addEventListener('click', () => { window.displayCount += window.INCREMENT; render(); });
-
