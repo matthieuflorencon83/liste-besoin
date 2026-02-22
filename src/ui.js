@@ -856,6 +856,18 @@ window.submitManualArticle = async () => {
 // ============================================================
 window.getPuPiece = function (item) {
     if (item.px_piece !== undefined) return parseFloat(item.px_piece) || 0;
+
+    // Rétro-compatibilité V142+ pour les articles en cache qui n'ont pas px_remise
+    if (item.px_remise === undefined && window.ART_DATA) {
+        const catItem = window.ART_DATA.find(a => String(a.reference) === String(item.reference) && String(a.decor || '') === String(item.ral || ''));
+        if (catItem) {
+            item.px_remise = catItem.px_remise || catItem.px_public || 0;
+            if (window.needs) localStorage.setItem('art-needs', JSON.stringify(window.needs));
+        } else {
+            item.px_remise = item.px_public || 0;
+        }
+    }
+
     const conditVal = parseFloat(item.longueur) || parseFloat(item.conditionnement) || 1;
     const u = String(item.unit_condit || item.unit_vente || '').toUpperCase();
     const mult = (u === 'M' || u === 'ML' || u === 'PC') ? conditVal : 1;
