@@ -1015,10 +1015,10 @@ window.renderNeeds = function () {
             </td>
 
             <!-- BESOIN — Éditable inline PREMIUM (Sprint 7) -->
-            <td class="p-2 w-24 text-center" onclick="event.stopPropagation()">
-                <div class="inline-flex items-center gap-1">
+            <td class="p-2 w-32 text-center" onclick="event.stopPropagation()">
+                <div class="inline-flex items-center justify-center gap-2">
                     <button onclick="event.stopPropagation(); window.adjustNeedField(${realIndex}, 'need', -1)"
-                        class="w-6 h-6 rounded-md bg-zinc-800 hover:bg-zinc-700 text-zinc-500 hover:text-white transition-all flex items-center justify-center text-sm font-black leading-none">-</button>
+                        class="w-6 h-6 rounded-md bg-zinc-800 hover:bg-zinc-700 text-zinc-500 hover:text-white transition-all flex items-center justify-center text-sm font-black leading-none shrink-0">-</button>
                     <input type="number"
                         min="0"
                         value="${item.need || 0}"
@@ -1033,10 +1033,10 @@ window.renderNeeds = function () {
             </td>
 
             <!-- STOCK — Éditable inline PREMIUM (Sprint 7) -->
-            <td class="p-2 w-24 text-center" onclick="event.stopPropagation()">
-                <div class="inline-flex items-center gap-1">
+            <td class="p-2 w-32 text-center" onclick="event.stopPropagation()">
+                <div class="inline-flex items-center justify-center gap-2">
                     <button onclick="event.stopPropagation(); window.adjustNeedField(${realIndex}, 'stock', -1)"
-                        class="w-6 h-6 rounded-md bg-zinc-800 hover:bg-zinc-700 text-zinc-500 hover:text-white transition-all flex items-center justify-center text-sm font-black leading-none">-</button>
+                        class="w-6 h-6 rounded-md bg-zinc-800 hover:bg-zinc-700 text-zinc-500 hover:text-white transition-all flex items-center justify-center text-sm font-black leading-none shrink-0">-</button>
                     <input type="number"
                         min="0"
                         value="${item.stock || 0}"
