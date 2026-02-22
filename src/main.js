@@ -1,11 +1,11 @@
-import './state.js?v=133';
-import './calpinage.js?v=133';
-import './ui.js?v=133';
+import './state.js?v=134';
+import './calpinage.js?v=134';
+import './ui.js?v=134';
 
 document.addEventListener('DOMContentLoaded', async () => {
     try {
         const controller = new AbortController();
-        const timeout = setTimeout(() => controller.abort(), 15000);
+        const timeout = setTimeout(() => controller.abort(), 30000);
 
         const response = await fetch('data.json', { signal: controller.signal });
         clearTimeout(timeout);

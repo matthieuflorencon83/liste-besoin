@@ -1043,8 +1043,8 @@ window.renderNeeds = function () {
             })()}
             </td>
 
-            <!-- ACTIONS : info + note + delete -->
-            <td class="p-4 w-24 text-right">
+            <!-- ACTIONS : info + note + copy + delete -->
+            <td class="p-2 w-40 text-right">
                 <div class="flex items-center justify-end gap-1">
                     <button onclick="event.stopPropagation(); window.showArticleCard(${realIndex})" 
                         class="p-2 text-zinc-600 hover:text-indigo-400 hover:bg-indigo-500/10 rounded-lg transition-colors" title="Fiche article">
@@ -1382,7 +1382,10 @@ window.openProjectHistory = function () {
         `).join('');
     }
     panel.classList.remove('hidden');
-    document.addEventListener('click', _histClickOutside, { once: true });
+    // Délai pour éviter la fermeture immédiate par propagation du clic d'ouverture
+    setTimeout(() => {
+        document.addEventListener('click', _histClickOutside, { once: true });
+    }, 50);
 };
 
 window.closeProjectHistory = function () {
