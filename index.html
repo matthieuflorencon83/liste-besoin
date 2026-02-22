@@ -13,6 +13,64 @@
         href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="style.css?v=113">
+    <style>
+        /* ======= CSS PRINT — Sprint 5 ======= */
+        @media print {
+            body {
+                background: white !important;
+                color: black !important;
+                overflow: visible !important;
+            }
+
+            #startOverlay,
+            header,
+            #catalogueView,
+            #needsToolbar,
+            .no-print,
+            button,
+            [id$="Modal"],
+            [id$="Panel"],
+            #needsSearch {
+                display: none !important;
+            }
+
+            #needsListView {
+                display: block !important;
+                overflow: visible !important;
+            }
+
+            #needsTableBody tr {
+                break-inside: avoid;
+            }
+
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                font-size: 11px;
+            }
+
+            th,
+            td {
+                border: 1px solid #ddd !important;
+                padding: 4px 8px !important;
+                color: black !important;
+                background: white !important;
+            }
+
+            thead {
+                background: #f3f4f6 !important;
+            }
+
+            tfoot {
+                font-weight: bold;
+                background: #f9fafb !important;
+            }
+
+            .border-l-2 {
+                border-left: 3px solid #6366f1 !important;
+            }
+        }
+    </style>
 </head>
 
 <body class="flex flex-col h-screen overflow-hidden">
@@ -95,12 +153,28 @@
 
                 <input type="file" id="projectFileInput" accept=".json" class="hidden"
                     onchange="window.loadProject(this)">
-                <button onclick="document.getElementById('projectFileInput').click()"
-                    class="action-btn px-4 h-10 w-auto rounded-2xl gap-2 !bg-zinc-800 border !border-zinc-700 hover:!bg-zinc-700"
-                    title="Ouvrir un projet">
-                    <i data-lucide="folder-open" class="w-4 h-4 text-indigo-400"></i>
-                    <span class="text-[10px] font-black uppercase tracking-widest">OUVRIR</span>
-                </button>
+                <!-- Bouton OUVRIR + Historique -->
+                <div class="relative">
+                    <div class="flex items-center">
+                        <button onclick="document.getElementById('projectFileInput').click()"
+                            class="action-btn px-4 h-10 w-auto rounded-l-2xl rounded-r-none gap-2 !bg-zinc-800 border !border-zinc-700 hover:!bg-zinc-700 !border-r-0"
+                            title="Ouvrir un projet">
+                            <i data-lucide="folder-open" class="w-4 h-4 text-indigo-400"></i>
+                            <span class="text-[10px] font-black uppercase tracking-widest">OUVRIR</span>
+                        </button>
+                        <button onclick="window.openProjectHistory()" title="Projets récents"
+                            class="action-btn px-2 h-10 w-auto rounded-l-none rounded-r-2xl !bg-zinc-800 border !border-zinc-700 hover:!bg-zinc-600 border-l border-zinc-600">
+                            <i data-lucide="history" class="w-4 h-4 text-zinc-400"></i>
+                        </button>
+                    </div>
+                    <!-- Panel historique -->
+                    <div id="projectHistoryPanel"
+                        class="hidden absolute top-12 left-0 z-50 w-72 bg-zinc-900 border border-zinc-700 rounded-xl shadow-2xl p-2">
+                        <p class="text-[9px] font-black text-zinc-500 uppercase tracking-widest px-3 pt-1 pb-2">Projets
+                            récents</p>
+                        <div id="projectHistoryList"></div>
+                    </div>
+                </div>
                 <button onclick="window.saveProject()"
                     class="action-btn px-4 h-10 w-auto rounded-2xl gap-2 !bg-emerald-600/10 border !border-emerald-500/30 hover:!bg-emerald-600/20"
                     title="Enregistrer le projet">
@@ -238,6 +312,7 @@
                     <table class="w-full text-left border-collapse table-fixed">
                         <thead class="sticky top-0 z-10 bg-zinc-900 shadow-md">
                             <tr>
+                                <th class="w-8 p-2 text-center text-[9px] font-black text-zinc-700">#</th>
                                 <th id="thSelectAllCheck"
                                     class="w-12 p-2 text-center transition-opacity opacity-0 pointer-events-none">
                                     <div class="flex items-center justify-center">
@@ -245,24 +320,41 @@
                                             class="w-4 h-4 rounded border-zinc-600 bg-zinc-700 text-indigo-600 focus:ring-0 focus:ring-offset-0 cursor-pointer accent-indigo-600">
                                     </div>
                                 </th>
-                                <th class="table-header w-32 cursor-pointer hover:bg-zinc-800 transition-colors group"
-                                    onclick="window.toggleSupplierSort()">
-                                    <div class="flex items-center gap-2">
-                                        <span>Fournisseur</span>
-                                        <i data-lucide="chevron-down" id="sortIcon"
-                                            class="w-3 h-3 transition-transform duration-300 opacity-0 group-hover:opacity-100"></i>
-                                    </div>
+                                <th class="table-header w-32 cursor-pointer hover:bg-zinc-800/50 select-none"
+                                    data-sort-col="fournisseur" onclick="window.sortNeedsBy('fournisseur')">
+                                    <div class="flex items-center gap-1">Fournisseur<span
+                                            class="sort-icon text-indigo-400 text-xs"></span></div>
                                 </th>
-                                <th class="table-header w-48">Référence</th>
-                                <th class="table-header">Désignation</th>
+                                <th class="table-header w-48 cursor-pointer hover:bg-zinc-800/50 select-none"
+                                    data-sort-col="reference" onclick="window.sortNeedsBy('reference')">
+                                    <div class="flex items-center gap-1">Référence<span
+                                            class="sort-icon text-indigo-400 text-xs"></span></div>
+                                </th>
+                                <th class="table-header cursor-pointer hover:bg-zinc-800/50 select-none"
+                                    data-sort-col="designation" onclick="window.sortNeedsBy('designation')">
+                                    <div class="flex items-center gap-1">Désignation<span
+                                            class="sort-icon text-indigo-400 text-xs"></span></div>
+                                </th>
                                 <th class="table-header w-24">RAL</th>
-                                <th class="table-header w-24 text-right">P.U. HT</th>
+                                <th class="table-header w-24 text-right cursor-pointer hover:bg-zinc-800/50 select-none"
+                                    data-sort-col="px_public" onclick="window.sortNeedsBy('px_public')">
+                                    <div class="flex items-center justify-end gap-1">P.U. HT<span
+                                            class="sort-icon text-indigo-400 text-xs"></span></div>
+                                </th>
                                 <th class="table-header w-32">Condit.</th>
-                                <th class="table-header text-center w-24">Besoin</th>
-                                <th class="table-header text-center w-24">Stock</th>
+                                <th class="table-header text-center w-24 cursor-pointer hover:bg-zinc-800/50 select-none"
+                                    data-sort-col="need" onclick="window.sortNeedsBy('need')">
+                                    <div class="flex items-center justify-center gap-1">Besoin<span
+                                            class="sort-icon text-indigo-400 text-xs"></span></div>
+                                </th>
+                                <th class="table-header text-center w-24 cursor-pointer hover:bg-zinc-800/50 select-none"
+                                    data-sort-col="stock" onclick="window.sortNeedsBy('stock')">
+                                    <div class="flex items-center justify-center gap-1">Stock<span
+                                            class="sort-icon text-indigo-400 text-xs"></span></div>
+                                </th>
                                 <th class="table-header text-center w-24">Cde</th>
                                 <th class="table-header text-right w-20">Total HT</th>
-                                <th class="table-header text-center w-16"></th>
+                                <th class="table-header text-center w-28"></th>
                             </tr>
 
                         </thead>
@@ -534,7 +626,7 @@
         </div>
     </div>
 
-    <script type="module" src="src/main.js?v=132"></script>
+    <script type="module" src="src/main.js?v=133"></script>
 </body>
 
 </html>

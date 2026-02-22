@@ -2,10 +2,6 @@ window.saveProject = () => {
     const chantierVal = document.getElementById('chantierRef') ? document.getElementById('chantierRef').value : '';
     const defaultName = chantierVal ? `Projet_${chantierVal.replace(/[^a-z0-9]/gi, '_')}` : 'Projet_ArtsAlu';
 
-    // Prompt handled by browser "Save As" usually, but we can set default name
-    // To strictly force "Save As" dialog in some browsers requires stream saver or checking browser settings,
-    // but 'download' attribute is the standard web way.
-
     const data = {
         timestamp: new Date().toISOString(),
         chantier: chantierVal,
@@ -23,6 +19,15 @@ window.saveProject = () => {
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
+
+    // Historique des projets récents
+    try {
+        const hist = JSON.parse(localStorage.getItem('art-project-history') || '[]');
+        const entry = { name: defaultName, chantier: chantierVal, date: new Date().toISOString(), count: window.needs.length };
+        const filtered = hist.filter(h => h.name !== entry.name);
+        filtered.unshift(entry);
+        localStorage.setItem('art-project-history', JSON.stringify(filtered.slice(0, 5)));
+    } catch (e) { /* ignore */ }
 };
 
 window.saveChantier = (v) => {
@@ -890,7 +895,27 @@ window.renderNeeds = function () {
         }
     }
 
-    tbody.innerHTML = displayedNeeds.map((item, index) => {
+    // Tri par colonne si actif
+    const sortCol = window.needsSortCol;
+    const sortDir = window.needsSortDir || 'asc';
+    let sortedNeeds = [...displayedNeeds];
+    if (sortCol) {
+        sortedNeeds.sort((a, b) => {
+            let va, vb;
+            if (sortCol === 'need' || sortCol === 'stock' || sortCol === 'px_public') {
+                va = parseFloat(a[sortCol]) || 0;
+                vb = parseFloat(b[sortCol]) || 0;
+            } else {
+                va = (a[sortCol] || '').toString().toLowerCase();
+                vb = (b[sortCol] || '').toString().toLowerCase();
+            }
+            if (va < vb) return sortDir === 'asc' ? -1 : 1;
+            if (va > vb) return sortDir === 'asc' ? 1 : -1;
+            return 0;
+        });
+    }
+
+    tbody.innerHTML = sortedNeeds.map((item, index) => {
         // Retrouver l'index réel dans window.needs pour les actions
         const realIndex = window.needs.indexOf(item);
         const isSelected = window.selectedNeeds.has(String(item.id));
@@ -934,6 +959,9 @@ window.renderNeeds = function () {
         return `
         <tr onclick="window.handleRowClick(event, ${realIndex})" 
             class="group transition-all cursor-pointer ${rowBg} border-l-2 ${borderLeft}">
+
+            <!-- # (numéro de ligne) -->
+            <td class="p-2 w-8 text-center text-[10px] font-black text-zinc-700 select-none">${index + 1}</td>
             
             <!-- CHECKBOX -->
             <td class="text-center p-2 w-12 transition-opacity ${checkboxCellClass}">
@@ -1026,6 +1054,10 @@ window.renderNeeds = function () {
                         class="p-2 ${item.note ? 'text-amber-400' : 'text-zinc-600 hover:text-amber-400'} hover:bg-amber-500/10 rounded-lg transition-colors" title="Note">
                         <i data-lucide="${item.note ? 'message-square' : 'message-square-plus'}" class="w-4 h-4"></i>
                     </button>
+                    <button onclick="event.stopPropagation(); window.duplicateNeed(${realIndex})" 
+                        class="p-2 text-zinc-600 hover:text-emerald-400 hover:bg-emerald-500/10 rounded-lg transition-colors" title="Dupliquer">
+                        <i data-lucide="copy" class="w-4 h-4"></i>
+                    </button>
                     <button onclick="event.stopPropagation(); window.deleteNeed(${realIndex})" 
                         class="p-2 text-zinc-600 hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-colors" title="Supprimer">
                         <i data-lucide="trash-2" class="w-4 h-4"></i>
@@ -1036,7 +1068,7 @@ window.renderNeeds = function () {
 
         <!-- NOTE ROW -->
         <tr id="noteRow_${realIndex}" class="${item.note || window.activeNoteRow === realIndex ? '' : 'hidden'} bg-amber-950/10 border-b border-amber-500/10">
-            <td colspan="11" class="px-6 py-3">
+            <td colspan="12" class="px-6 py-3">
                 <div class="flex items-start gap-3">
                     <i data-lucide="message-square" class="w-4 h-4 text-amber-400 mt-1 shrink-0"></i>
                     <textarea
@@ -1052,7 +1084,7 @@ window.renderNeeds = function () {
 
         <!-- EXPANSION ROW FOR CALPINAGE -->
         <tr id="calpRow_${realIndex}" class="${window.activeCalpinageId === String(item.id) ? '' : 'hidden'} bg-zinc-950/50 border-b border-white/[0.03]">
-            <td colspan="11" class="p-0">
+            <td colspan="12" class="p-0">
                 <div id="calpContainer_${index}" class="p-4 border-l-2 border-orange-500"></div>
             </td>
         </tr>
@@ -1288,3 +1320,120 @@ window.closeBudgetChart = function () {
     const modal = document.getElementById('budgetChartModal');
     if (modal) modal.classList.add('hidden');
 };
+
+// ============================================================
+// SPRINT 5 — DUPLICATION DE LIGNE
+// ============================================================
+window.duplicateNeed = function (realIndex) {
+    const original = window.needs[realIndex];
+    if (!original) return;
+    const copy = { ...original, id: original.id + '_copy_' + Date.now(), note: '' };
+    window.needs.splice(realIndex + 1, 0, copy);
+    localStorage.setItem('art-needs', JSON.stringify(window.needs));
+    window.renderNeeds();
+};
+
+// ============================================================
+// SPRINT 5 — TRI PAR COLONNE (appelé depuis les headers)
+// ============================================================
+window.sortNeedsBy = function (col) {
+    if (window.needsSortCol === col) {
+        window.needsSortDir = window.needsSortDir === 'asc' ? 'desc' : 'asc';
+    } else {
+        window.needsSortCol = col;
+        window.needsSortDir = 'asc';
+    }
+    // Mettre à jour les indicateurs visuels des headers
+    document.querySelectorAll('[data-sort-col]').forEach(th => {
+        const icon = th.querySelector('.sort-icon');
+        if (!icon) return;
+        if (th.dataset.sortCol === col) {
+            icon.textContent = window.needsSortDir === 'asc' ? ' ↑' : ' ↓';
+            th.classList.add('text-indigo-400');
+        } else {
+            icon.textContent = '';
+            th.classList.remove('text-indigo-400');
+        }
+    });
+    window.renderNeeds();
+};
+
+// ============================================================
+// SPRINT 5 — HISTORIQUE PROJETS RÉCENTS
+// ============================================================
+window.openProjectHistory = function () {
+    const hist = JSON.parse(localStorage.getItem('art-project-history') || '[]');
+    const panel = document.getElementById('projectHistoryPanel');
+    const list = document.getElementById('projectHistoryList');
+    if (!panel || !list) return;
+
+    if (hist.length === 0) {
+        list.innerHTML = '<p class="text-zinc-500 text-xs text-center py-4">Aucun projet récent</p>';
+    } else {
+        list.innerHTML = hist.map((h, i) => `
+            <div class="flex items-center justify-between py-2 px-3 hover:bg-zinc-800 rounded-lg cursor-pointer group"
+                 onclick="window.closeProjectHistory()">
+                <div>
+                    <div class="text-sm font-bold text-white">${h.chantier || h.name}</div>
+                    <div class="text-[10px] text-zinc-500">${h.count} article${h.count !== 1 ? 's' : ''} · ${new Date(h.date).toLocaleDateString('fr-FR')}</div>
+                </div>
+                <span class="text-[9px] text-zinc-700 group-hover:text-zinc-400 font-mono">${h.name}.json</span>
+            </div>
+        `).join('');
+    }
+    panel.classList.remove('hidden');
+    document.addEventListener('click', _histClickOutside, { once: true });
+};
+
+window.closeProjectHistory = function () {
+    const panel = document.getElementById('projectHistoryPanel');
+    if (panel) panel.classList.add('hidden');
+};
+
+function _histClickOutside(e) {
+    const panel = document.getElementById('projectHistoryPanel');
+    if (panel && !panel.contains(e.target)) panel.classList.add('hidden');
+}
+
+// ============================================================
+// SPRINT 5 — RACCOURCIS CLAVIER
+// ============================================================
+document.addEventListener('keydown', function (e) {
+    // Ignorer si focus dans un input ou textarea
+    const tag = document.activeElement?.tagName;
+    if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') {
+        if (e.key === 'Escape') document.activeElement.blur();
+        return;
+    }
+
+    // Ctrl+S — Sauvegarder le projet
+    if (e.ctrlKey && e.key === 's') {
+        e.preventDefault();
+        window.saveProject();
+        // Flash visuel
+        const btn = document.querySelector('[onclick="window.saveProject()"]');
+        if (btn) { btn.classList.add('ring-2', 'ring-emerald-500'); setTimeout(() => btn.classList.remove('ring-2', 'ring-emerald-500'), 800); }
+        return;
+    }
+
+    // Ctrl+F — Focus sur la barre de recherche active
+    if (e.ctrlKey && e.key === 'f') {
+        e.preventDefault();
+        const needsVisible = !document.getElementById('needsListView')?.classList.contains('hidden');
+        if (needsVisible) {
+            document.getElementById('needsSearch')?.focus();
+        } else {
+            document.getElementById('globalSearch')?.focus();
+        }
+        return;
+    }
+
+    // Échap — Fermer toutes les modales ouvertes
+    if (e.key === 'Escape') {
+        ['exportModal', 'ralModal', 'manualAddModal', 'imageModal', 'articleCardModal', 'budgetChartModal', 'projectHistoryPanel'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el && !el.classList.contains('hidden')) el.classList.add('hidden');
+        });
+        return;
+    }
+});
