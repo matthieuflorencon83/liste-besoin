@@ -622,37 +622,54 @@ function renderBDCV2(title, items, chantier, type) {
     if (type === 'calpinage') {
         const calpRows = items.map(item => {
             let cutsHtml = '';
-            if (item.cuts && item.cuts.length > 0) {
-                var validCuts = item.cuts.filter(c => c > 0);
-                if (validCuts.length > 0) {
-                    cutsHtml = `
-                        <div style="display: flex; flex-wrap: wrap; gap: 5px; margin-top: 5px;">
-                            ${validCuts.map(c => `
-                                <span style="padding: 2px 6px; background: #eee; border: 1px solid #ddd; border-radius: 4px; font-size: 10px;">
-                                    ${c} ${item.unit_condit || 'mm'}
-                                </span>
-                            `).join('')}
-                        </div>
-                        ${item.chutes && item.chutes.length > 0 ? `
-                            <div style="margin-top: 2px; font-size: 10px; color: #d66;">
-                                Chutes: ${item.chutes.map(c => Math.round(c)).join(', ')}
-                            </div>
-                        ` : ''}
-                    `;
-                } else {
-                    cutsHtml = `<span style="color: #999; font-style: italic; font-size: 10px;">Pas de coupe définie</span>`;
+
+            let extractedCuts = [];
+            let wasteText = '';
+
+            if (item.calpinageData && item.calpinageData.cuts) {
+                item.calpinageData.cuts.forEach(c => {
+                    for (let i = 0; i < c.quantity; i++) {
+                        extractedCuts.push(Math.round(c.length * 1000));
+                    }
+                });
+
+                if (item.calpinageData.lastSolution && item.calpinageData.lastSolution.length > 0) {
+                    let chutes = [];
+                    item.calpinageData.lastSolution.forEach(bar => {
+                        const total = bar.stockVariant.length;
+                        const waste = total - (bar.usedLength - 0.004);
+                        if (waste > 0) chutes.push(Math.round(waste * 1000));
+                    });
+                    if (chutes.length > 0) {
+                        wasteText = `<div style="margin-top: 2px; font-size: 10px; color: #d66;">Chutes: ${chutes.join('mm, ')}mm</div>`;
+                    }
                 }
+            } else if (item.cuts && item.cuts.length > 0) {
+                extractedCuts = item.cuts.filter(c => c > 0).map(c => c > 10 ? c : Math.round(c * 1000));
+            }
+
+            if (extractedCuts.length > 0) {
+                cutsHtml = `
+                    <div style="display: flex; flex-wrap: wrap; gap: 5px; margin-top: 5px;">
+                        ${extractedCuts.map(c => `
+                            <span style="padding: 2px 6px; background: #eee; border: 1px solid #ddd; border-radius: 4px; font-size: 10px;">
+                                ${c} mm
+                            </span>
+                        `).join('')}
+                    </div>
+                    ${wasteText}
+                `;
             } else {
                 cutsHtml = `<span style="color: #999; font-style: italic; font-size: 10px;">Pas de coupe définie</span>`;
             }
 
             return `
             <tr style="page-break-inside: avoid;">
-                <td>
+                <td style="padding-right: 15px;">
                     <div style="font-weight: bold;">${item.reference}</div>
                     <div style="font-size: 10px; color: #666;">${item.fournisseur}</div>
                 </td>
-                <td>
+                <td style="padding-right: 15px;">
                     <div>${item.designation}</div>
                     <div style="font-size: 10px; color: #666;">${item.ral || '-'}</div>
                 </td>
@@ -666,10 +683,10 @@ function renderBDCV2(title, items, chantier, type) {
             <table class="bdc-table">
                 <thead>
                     <tr>
-                        <th style="width: 15%;">REF/FRN</th>
-                        <th style="width: 30%;">DÉSIGNATION/RAL</th>
-                        <th style="width: 10%; text-align: center;">LONG.</th>
-                        <th style="width: 10%; text-align: center;">BESOIN</th>
+                        <th style="width: 18%;">REF/FRN</th>
+                        <th style="width: 35%;">DÉSIGNATION/RAL</th>
+                        <th style="width: 8%; text-align: center;">LONG.</th>
+                        <th style="width: 8%; text-align: center;">BESOIN</th>
                         <th>DÉTAIL DÉBITS (Coupes)</th>
                     </tr>
                 </thead>
@@ -691,8 +708,8 @@ function renderBDCV2(title, items, chantier, type) {
             <tr>
                 <td>${item.reference}</td>
                 <td>${item.designation}</td>
-                <td>${item.ral || '-'}</td>
-                <td>${item.longueur || '-'} ${item.unit_condit || ''}</td>
+                <td style="text-align: center;">${item.ral || '-'}</td>
+                <td style="text-align: center;">${item.longueur || '-'} ${item.unit_condit || ''}</td>
                 ${!isBdc ? `<td style="text-align: center;">${item.need}</td>` : ''}
                 ${!isBdc ? `<td style="text-align: center;">${item.stock}</td>` : ''}
                 <td style="text-align: center; font-weight: bold; color: ${item.toOrder > 0 ? '#000' : '#ccc'};">
@@ -708,12 +725,12 @@ function renderBDCV2(title, items, chantier, type) {
             <table class="bdc-table">
                 <thead>
                     <tr>
-                        <th style="width: 15%;">RÉFÉRENCE</th>
-                        <th>DÉSIGNATION</th>
-                        <th style="width: 10%;">RAL</th>
-                        <th style="width: 10%;">CONDIT.</th>
-                        ${!isBdc ? `<th style="width: 8%; text-align: center;">BESOIN</th>` : ''}
-                        ${!isBdc ? `<th style="width: 8%; text-align: center;">STOCK</th>` : ''}
+                        <th style="width: 18%;">RÉFÉRENCE</th>
+                        <th style="width: ${isBdc ? '32%' : '26%'};">DÉSIGNATION</th>
+                        <th style="width: 8%; text-align: center;">RAL</th>
+                        <th style="width: 10%; text-align: center;">CONDIT.</th>
+                        ${!isBdc ? `<th style="width: 7%; text-align: center;">BESOIN</th>` : ''}
+                        ${!isBdc ? `<th style="width: 7%; text-align: center;">STOCK</th>` : ''}
                         <th style="width: 8%; text-align: center;">${isBdc ? 'QUANTITÉ' : 'CDE'}</th>
                         <th style="width: 10%; text-align: right;">PU HT</th>
                         <th style="width: 12%; text-align: right;">TOTAL HT</th>
@@ -776,6 +793,7 @@ function renderBDCV2(title, items, chantier, type) {
 
 // Map the new function to the export action
 window.exportToCSV = openExportModalV2;
+window.openExportModalV2 = openExportModalV2;
 
 
 /* --- MANUAL ADD SYSTEM (DATABASE) --- */
@@ -1005,9 +1023,10 @@ window.renderNeeds = function () {
             ralDisplay = `<span class="text-zinc-400">${item.decor}</span>`;
         }
 
+        const bgOddEven = index % 2 === 0 ? 'bg-white/[0.015]' : '';
         const rowBg = isSelected
             ? 'bg-indigo-500/20'
-            : 'hover:bg-white/[0.02] border-b border-white/[0.03] last:border-0';
+            : `${bgOddEven} hover:bg-white/[0.03] border-b border-white/[0.03] last:border-0`;
 
         // Classe de la bordure gauche (indicateur couverture ou sélection)
         const borderLeft = isSelected ? 'border-l-indigo-500' : (coverageIndicator || 'border-l-transparent');
@@ -1080,7 +1099,7 @@ window.renderNeeds = function () {
             </td>
 
             <!-- CONDIT -->
-            <td class="p-4 w-32">
+            <td class="p-4 w-28 text-center">
                <div class="text-xs text-zinc-500 font-mono font-bold">${item.longueur || item.conditionnement || 1} ${String(item.unit_condit || item.unit_vente || 'U').toUpperCase()}</div>
             </td>
 
@@ -1180,7 +1199,7 @@ window.renderNeeds = function () {
         </tr>
 
         <!-- EXPANSION ROW FOR CALPINAGE -->
-        <tr id="calpRow_${realIndex}" class="${window.activeCalpinageId === String(item.id) ? '' : 'hidden'} bg-zinc-950/50 border-b border-white/[0.03]">
+        <tr id="calpRow_${realIndex}" class="${(window.activeCalpinageId === String(item.id) || (window.isCalpinageMode && window.getIsProfil(item))) ? '' : 'hidden'} bg-zinc-950/50 border-b border-white/[0.03]">
             <td colspan="12" class="p-0">
                 <div id="calpContainer_${realIndex}" class="p-4 border-l-2 border-orange-500"></div>
             </td>
@@ -1193,6 +1212,16 @@ window.renderNeeds = function () {
         const tbody = document.getElementById('needsTableBody');
         if (tbody) lucide.createIcons({ nameAttr: 'data-lucide', nodes: [tbody] });
     }
+
+    // Auto-init Calpinage if Global Mode or specific active
+    if (window.CalpinageSystem && window.needs) {
+        window.needs.forEach((it, i) => {
+            if (window.activeCalpinageId === String(it.id) || (window.isCalpinageMode && window.getIsProfil && window.getIsProfil(it))) {
+                setTimeout(() => window.CalpinageSystem.initRow(i), 10);
+            }
+        });
+    }
+
     updateRalModeUI();
 
     // Ligne de total général
@@ -1210,8 +1239,8 @@ window.renderNeeds = function () {
         if (table) {
             let tfoot = table.querySelector('tfoot');
             if (!tfoot) { tfoot = document.createElement('tfoot'); table.appendChild(tfoot); }
-            tfoot.innerHTML = `<tr id="needsTotalRow" class="border-t-2 border-zinc-700 bg-zinc-900/80 sticky bottom-0">
-                <td colspan="6" class="px-4 py-3 text-right text-xs font-black text-zinc-500 uppercase tracking-widest">
+            tfoot.innerHTML = `<tr id="needsTotalRow" class="border-t-2 border-zinc-700 bg-zinc-900/80">
+                <td colspan="8" class="px-4 py-3 text-right text-xs font-black text-zinc-500 uppercase tracking-widest">
                     ${window.needs.length} article${window.needs.length > 1 ? 's' : ''}
                 </td>
                 <td class="p-3 text-center text-xs font-black text-white">${totalNeed}</td>
@@ -1223,14 +1252,15 @@ window.renderNeeds = function () {
         }
     } else {
         totalRow.innerHTML = `
-            <td colspan="6" class="px-4 py-3 text-right text-xs font-black text-zinc-500 uppercase tracking-widest">
+            <td colspan="8" class="px-4 py-3 text-right text-xs font-black text-zinc-500 uppercase tracking-widest">
                 ${window.needs.length} article${window.needs.length > 1 ? 's' : ''}
             </td>
             <td class="p-3 text-center text-xs font-black text-white">${totalNeed}</td>
             <td class="p-3 text-center text-xs text-zinc-500">—</td>
             <td class="p-3 text-center text-xs font-black text-emerald-400">${totalCde}</td>
             <td class="p-3 text-right text-sm font-black text-amber-400">${totalHT.toFixed(2)} €</td>
-            <td></td>`;
+            <td></td>
+        `;
     }
 }
 

@@ -290,7 +290,7 @@ const CalpinageSystem = {
                     Où souhaitez-vous effectuer la coupe de raccord ?
                 </p>
                 
-                <div class="window.grid window.grid-cols-2 gap-4 mb-4">
+                <div class="grid grid-cols-2 gap-4 mb-4">
                     <div>
                         <label class="block text-[10px] uppercase text-zinc-500 mb-1">Partie A (mm)</label>
                         <input type="number" id="splitA_${idx}" value="${Math.min(mm - 500, maxMm - 100)}" 
@@ -500,6 +500,7 @@ const CalpinageSystem = {
 
             // Remove original
             window.needs.splice(idx, 1);
+            let insertIndex = idx;
 
             // Insert new items
             itemsToAdd.forEach(newItem => {
@@ -528,7 +529,8 @@ const CalpinageSystem = {
                     // Let's just overwrite for simplicity in this specific flow
                     existing.calpinageData = newItem.calpinageData;
                 } else {
-                    window.needs.push(newItem);
+                    window.needs.splice(insertIndex, 0, newItem);
+                    insertIndex++;
                 }
             });
 

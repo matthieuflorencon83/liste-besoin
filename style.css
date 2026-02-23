@@ -545,7 +545,7 @@
 
         @media print {
             @page {
-                margin: 0;
+                margin: 10mm;
             }
 
             body,
@@ -553,7 +553,7 @@
                 margin: 0;
                 padding: 0;
                 background: white;
-                height: 100%;
+                height: auto !important;
                 overflow: visible !important;
             }
 
@@ -570,10 +570,10 @@
 
             /* Reset Modal Layout for Print */
             #exportModal {
-                position: fixed;
+                position: absolute !important;
                 inset: 0;
-                width: 100%;
-                height: 100%;
+                width: 100% !important;
+                height: auto !important;
                 z-index: 9999;
                 background: white;
                 display: block !important;
@@ -615,10 +615,15 @@
             .a4-page {
                 width: 100% !important;
                 min-height: auto !important;
+                height: auto !important;
                 margin: 0 !important;
-                padding: 15mm !important;
+                padding: 0 !important;
                 box-shadow: none !important;
-                page-break-after: always;
+            }
+
+            .bdc-table tr {
+                page-break-inside: avoid;
+                break-inside: avoid;
             }
         }
     
