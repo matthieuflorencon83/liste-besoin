@@ -215,10 +215,44 @@ try:
         cleaned_row['image'] = find_best_image(cleaned_row.get('reference'), img_map)
         cleaned_data.append(cleaned_row)
     
-    with open(output_path, 'w', encoding='utf-8') as f:
-        json.dump(cleaned_data, f, default=handler, ensure_ascii=False, indent=2)
+    # --- SPLIT BY SUPPLIER ---
+    grouped_data = {}
+    for item in cleaned_data:
+        sup = str(item.get('fournisseur') or 'inconnu').strip()
+        if sup not in grouped_data:
+            grouped_data[sup] = []
+        grouped_data[sup].append(item)
     
-    print(f"Success: {len(cleaned_data)} records exported to {output_path} with image mapping.")
+    catalog_index = []
+    
+    for sup, items in grouped_data.items():
+        clean_sup = re.sub(r'[^a-z0-9]', '_', sup.lower())
+        clean_sup = re.sub(r'_+', '_', clean_sup).strip('_')
+        if not clean_sup:
+            clean_sup = 'inconnu'
+            
+        file_name = f"data_{clean_sup}.json"
+        file_path = os.path.join(BASE_DIR, file_name)
+        
+        with open(file_path, 'w', encoding='utf-8') as f:
+            json.dump(items, f, default=handler, ensure_ascii=False, indent=2)
+            
+        catalog_index.append({
+            "fournisseur": sup,
+            "file": file_name,
+            "count": len(items)
+        })
+        print(f"Exported {len(items)} records to {file_name}")
+        
+    index_path = os.path.join(BASE_DIR, 'catalog_index.json')
+    with open(index_path, 'w', encoding='utf-8') as f:
+        json.dump({
+            "version": datetime.now().isoformat(),
+            "sources": catalog_index,
+            "total_records": len(cleaned_data)
+        }, f, default=handler, ensure_ascii=False, indent=2)
+        
+    print(f"Success: Catalog index generated at {index_path} with {len(catalog_index)} suppliers.")
 except Exception as e:
     import traceback
     print(f"Error: {str(e)}")

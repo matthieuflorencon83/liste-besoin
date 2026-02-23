@@ -1,0 +1,86 @@
+{
+  "version": "2026-02-23T23:41:08.162018",
+  "sources": [
+    {
+      "fournisseur": "ARCELOR (BERTON SICARD)",
+      "file": "data_arcelor_berton_sicard.json",
+      "count": 17490
+    },
+    {
+      "fournisseur": "ACDIS",
+      "file": "data_acdis.json",
+      "count": 36
+    },
+    {
+      "fournisseur": "AKRAPLAST",
+      "file": "data_akraplast.json",
+      "count": 150
+    },
+    {
+      "fournisseur": "AMITUBES",
+      "file": "data_amitubes.json",
+      "count": 12
+    },
+    {
+      "fournisseur": "CIFFREO BONA",
+      "file": "data_ciffreo_bona.json",
+      "count": 3
+    },
+    {
+      "fournisseur": "DISTRI BOIS",
+      "file": "data_distri_bois.json",
+      "count": 6
+    },
+    {
+      "fournisseur": "JAUFFREY",
+      "file": "data_jauffrey.json",
+      "count": 2
+    },
+    {
+      "fournisseur": "FERBAT",
+      "file": "data_ferbat.json",
+      "count": 8
+    },
+    {
+      "fournisseur": "DISPANO",
+      "file": "data_dispano.json",
+      "count": 13
+    },
+    {
+      "fournisseur": "PREFAL",
+      "file": "data_prefal.json",
+      "count": 45
+    },
+    {
+      "fournisseur": "BALITRAND",
+      "file": "data_balitrand.json",
+      "count": 7
+    },
+    {
+      "fournisseur": "Balitrand",
+      "file": "data_balitrand.json",
+      "count": 4
+    },
+    {
+      "fournisseur": "INSTALLUX",
+      "file": "data_installux.json",
+      "count": 41
+    },
+    {
+      "fournisseur": "TSE",
+      "file": "data_tse.json",
+      "count": 2
+    },
+    {
+      "fournisseur": "WURTH",
+      "file": "data_wurth.json",
+      "count": 25
+    },
+    {
+      "fournisseur": "SEPALUMIC",
+      "file": "data_sepalumic.json",
+      "count": 13
+    }
+  ],
+  "total_records": 17857
+}

@@ -139,10 +139,9 @@ window.loadProject = (input) => {
 window.init = async function () {
     try {
         if (typeof lucide !== 'undefined') lucide.createIcons();
-        let retries = 0;
-        while (!window.ART_DATA && retries < 40) { await new Promise(r => setTimeout(r, 200)); retries++; }
-        if (!window.ART_DATA) throw new Error("Base de données indisponible.");
 
+        // init est mtn appelé par main.js dès que le 1er chunk (Arcelor) est dispo.
+        if (!window.ART_DATA) window.ART_DATA = [];
         window.groupedData = processData(window.ART_DATA);
 
         // Initial filter options setup
@@ -159,6 +158,23 @@ window.init = async function () {
         console.error("Critical error in init:", err);
         const lo = document.getElementById('loadingOverlay');
         if (lo) lo.innerHTML = `<p class="text-red-500 font-black uppercase tracking-[0.2em]">${err.message}</p>`;
+    }
+}
+
+// SPRINT 10 - Ajout progressif des données JSON
+window.appendCatalogData = function (newItems, isLastBatch = false) {
+    if (!window.ART_DATA) window.ART_DATA = [];
+    window.ART_DATA = window.ART_DATA.concat(newItems);
+
+    window.groupedData = processData(window.ART_DATA);
+
+    // Mettre à jour silencieusement les filtres et recalculer les vues actuelles
+    updateFilterOptions();
+    applyFilters();
+
+    if (isLastBatch) {
+        console.log("Catalogue complet chargé : " + window.ART_DATA.length + " articles");
+        // Si un toast "Catalogue en cours de chargement..." était actif, on pourrait le fermer ici.
     }
 }
 
