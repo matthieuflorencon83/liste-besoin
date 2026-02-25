@@ -218,7 +218,7 @@ try:
     # --- SPLIT BY SUPPLIER ---
     grouped_data = {}
     for item in cleaned_data:
-        sup = str(item.get('fournisseur') or 'inconnu').strip()
+        sup = str(item.get('fournisseur') or 'inconnu').strip().upper()
         if sup not in grouped_data:
             grouped_data[sup] = []
         grouped_data[sup].append(item)

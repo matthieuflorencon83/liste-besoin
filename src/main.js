@@ -1,7 +1,7 @@
-import './state.js?v=156';
-import './calpinage.js?v=156';
-import './ui.js?v=156';
-import { initDB, getFromDB, saveToDB, clearCatalogDB } from './db.js?v=156';
+import './state.js?v=157';
+import './calpinage.js?v=157';
+import './ui.js?v=157';
+import { initDB, getFromDB, saveToDB, clearCatalogDB } from './db.js?v=157';
 
 document.addEventListener('DOMContentLoaded', async () => {
     try {
@@ -42,14 +42,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         window.ART_DATA = primaryData;
         if (typeof window.init === 'function') window.init();
 
-        // 4. Chargement paresseux (Lazy Loading) du reste du catalogue en arrière-plan
+        // 4. Chargement paresseux (Lazy Loading) du reste en parallèle !
         const restSources = catalogIndex.sources.filter(s => s.file !== primarySrc.file);
 
         setTimeout(async () => {
-            for (let i = 0; i < restSources.length; i++) {
-                const src = restSources[i];
+            const promises = restSources.map(async (src) => {
                 let data = await getFromDB(src.file).catch(() => null);
-
                 if (!data) {
                     try {
                         const res = await fetch(src.file);
@@ -57,16 +55,21 @@ document.addEventListener('DOMContentLoaded', async () => {
                         await saveToDB(src.file, data).catch(() => { });
                     } catch (err) {
                         console.error(`Erreur chargement background de ${src.file}`, err);
-                        continue;
+                        return [];
                     }
                 }
+                return data || [];
+            });
 
-                const isLast = (i === restSources.length - 1);
-                if (typeof window.appendCatalogData === 'function') {
-                    window.appendCatalogData(data, isLast);
-                }
+            // On attend que tout soit dispo pour n'update le state qu'UNE seule fois
+            const results = await Promise.all(promises);
+            let combinedData = [];
+            results.forEach(arr => combinedData = combinedData.concat(arr));
+
+            if (combinedData.length > 0 && typeof window.appendCatalogData === 'function') {
+                window.appendCatalogData(combinedData, true);
             }
-        }, 300); // Léger retard pour ne pas concurrencer le rendu initial de l'UI
+        }, 150); // Léger retard pour ne pas concurrencer le rendu initial de l'UI
 
     } catch (e) {
         console.error("Erreur de chargement data.json:", e);

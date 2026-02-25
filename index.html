@@ -16,7 +16,7 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=114">
+    <link rel="stylesheet" href="style.css?v=115">
     <style>
         /* ======= CSS PRINT — Sprint 5 ======= */
         @media print {
@@ -161,19 +161,19 @@
                 <div class="relative">
                     <div class="flex items-center">
                         <button onclick="document.getElementById('projectFileInput').click()"
-                            class="action-btn px-4 h-10 w-auto rounded-l-2xl rounded-r-none gap-2 !bg-zinc-800 border !border-zinc-700 hover:!bg-zinc-700 !border-r-0"
+                            class="action-btn px-4 h-10 w-auto rounded-l-2xl rounded-r-none gap-2 !bg-[var(--card)] border !border-[var(--border)] hover:!bg-[var(--card-hover)] !border-r-0"
                             title="Ouvrir un projet">
                             <i data-lucide="folder-open" class="w-4 h-4 text-indigo-400"></i>
                             <span class="text-[10px] font-black uppercase tracking-widest">OUVRIR</span>
                         </button>
                         <button onclick="window.openProjectHistory()" title="Projets récents"
-                            class="action-btn px-2 h-10 w-auto rounded-l-none rounded-r-2xl !bg-zinc-800 border !border-zinc-700 hover:!bg-zinc-600 border-l border-zinc-600">
+                            class="action-btn px-2 h-10 w-auto rounded-l-none rounded-r-2xl !bg-[var(--card)] border !border-[var(--border)] hover:!bg-[var(--card-hover)] border-l border-[var(--border)]">
                             <i data-lucide="history" class="w-4 h-4 text-zinc-400"></i>
                         </button>
                     </div>
                     <!-- Panel historique -->
                     <div id="projectHistoryPanel"
-                        class="hidden absolute top-12 left-0 z-50 w-72 bg-zinc-900 border border-zinc-700 rounded-xl shadow-2xl p-2">
+                        class="hidden absolute top-12 left-0 z-50 w-72 bg-[var(--card)] border border-[var(--border)] rounded-xl shadow-2xl p-2">
                         <p class="text-[9px] font-black text-zinc-500 uppercase tracking-widest px-3 pt-1 pb-2">Projets
                             récents</p>
                         <div id="projectHistoryList"></div>
@@ -194,7 +194,7 @@
                     <span class="text-[10px] font-black uppercase tracking-widest text-white">EXPORTER</span>
                 </button>
                 <button onclick="window.clearNeeds()"
-                    class="action-btn px-4 h-10 w-auto rounded-2xl gap-2 !bg-zinc-800 border !border-zinc-700 hover:!bg-red-900/30 group"
+                    class="action-btn px-4 h-10 w-auto rounded-2xl gap-2 !bg-[var(--card)] border !border-[var(--border)] hover:!bg-red-900/30 group"
                     title="Vider la liste">
                     <i data-lucide="trash-2" class="w-4 h-4 text-zinc-400 group-hover:text-red-400"></i>
                     <span
@@ -306,7 +306,7 @@
                         <input type="text" id="needsSearch"
                             placeholder="Filtrer par référence, désignation ou fournisseur..."
                             oninput="window.filterNeeds(this.value)"
-                            class="w-full h-11 pl-11 pr-5 bg-zinc-900/50 border border-zinc-800 rounded-lg text-sm text-white placeholder:text-zinc-600 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 outline-none transition-all">
+                            class="w-full h-11 pl-11 pr-5 bg-[var(--card)] border border-[var(--border)] rounded-lg text-sm text-[var(--text-main)] placeholder:text-[var(--text-muted)] focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 outline-none transition-all">
                         <span id="needsFilterCount"
                             class="hidden absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-bold text-zinc-500"></span>
                     </div>
@@ -315,9 +315,9 @@
 
             <!-- SCROLLABLE TABLE AREA -->
             <div class="flex-1 overflow-y-auto min-h-0 px-10 pb-10">
-                <div class="bg-zinc-900 border border-zinc-800 rounded-lg shadow-sm">
+                <div class="bg-[var(--card)] border border-[var(--border)] rounded-lg shadow-sm">
                     <table class="w-full text-left border-collapse table-fixed">
-                        <thead class="sticky top-0 z-10 bg-zinc-900 shadow-md">
+                        <thead class="sticky top-0 z-10 bg-[var(--card)] shadow-md">
                             <tr>
                                 <th class="w-8 p-2 text-center text-[9px] font-black text-zinc-700">#</th>
                                 <th id="thSelectAllCheck"
@@ -327,34 +327,34 @@
                                             class="w-4 h-4 rounded border-zinc-600 bg-zinc-700 text-indigo-600 focus:ring-0 focus:ring-offset-0 cursor-pointer accent-indigo-600">
                                     </div>
                                 </th>
-                                <th class="table-header w-32 cursor-pointer hover:bg-zinc-800/50 select-none"
+                                <th class="table-header w-32 cursor-pointer hover:bg-[var(--card-hover)] select-none"
                                     data-sort-col="fournisseur" onclick="window.sortNeedsBy('fournisseur')">
                                     <div class="flex items-center gap-1">Fournisseur<span
                                             class="sort-icon text-indigo-400 text-xs"></span></div>
                                 </th>
-                                <th class="table-header w-48 cursor-pointer hover:bg-zinc-800/50 select-none"
+                                <th class="table-header w-48 cursor-pointer hover:bg-[var(--card-hover)] select-none"
                                     data-sort-col="reference" onclick="window.sortNeedsBy('reference')">
                                     <div class="flex items-center gap-1">Référence<span
                                             class="sort-icon text-indigo-400 text-xs"></span></div>
                                 </th>
-                                <th class="table-header cursor-pointer hover:bg-zinc-800/50 select-none"
+                                <th class="table-header cursor-pointer hover:bg-[var(--card-hover)] select-none"
                                     data-sort-col="designation" onclick="window.sortNeedsBy('designation')">
                                     <div class="flex items-center gap-1">Désignation<span
                                             class="sort-icon text-indigo-400 text-xs"></span></div>
                                 </th>
                                 <th class="table-header w-24">RAL</th>
-                                <th class="table-header w-28 text-right cursor-pointer hover:bg-zinc-800/50 select-none"
+                                <th class="table-header w-28 text-right cursor-pointer hover:bg-[var(--card-hover)] select-none"
                                     data-sort-col="px_public" onclick="window.sortNeedsBy('px_public')">
                                     <div class="flex items-center justify-end gap-1">P.U. Pièce HT<span
                                             class="sort-icon text-indigo-400 text-xs"></span></div>
                                 </th>
                                 <th class="table-header w-28 text-center">Condit.</th>
-                                <th class="table-header text-center w-32 cursor-pointer hover:bg-zinc-800/50 select-none"
+                                <th class="table-header text-center w-32 cursor-pointer hover:bg-[var(--card-hover)] select-none"
                                     data-sort-col="need" onclick="window.sortNeedsBy('need')">
                                     <div class="flex items-center justify-center gap-1">Besoin<span
                                             class="sort-icon text-indigo-400 text-xs"></span></div>
                                 </th>
-                                <th class="table-header text-center w-32 cursor-pointer hover:bg-zinc-800/50 select-none"
+                                <th class="table-header text-center w-32 cursor-pointer hover:bg-[var(--card-hover)] select-none"
                                     data-sort-col="stock" onclick="window.sortNeedsBy('stock')">
                                     <div class="flex items-center justify-center gap-1">Stock<span
                                             class="sort-icon text-indigo-400 text-xs"></span></div>
@@ -436,8 +436,8 @@
         </div>
 
         <div
-            class="relative w-[600px] bg-[#1a1a1e] text-white border border-zinc-800 rounded-2xl shadow-2xl animate-fade overflow-hidden">
-            <div class="p-6 border-b border-zinc-800 bg-zinc-900/50">
+            class="relative w-[600px] bg-[var(--canvas)] text-[var(--text-main)] border border-[var(--border)] rounded-2xl shadow-2xl animate-fade overflow-hidden">
+            <div class="p-6 border-b border-zinc-800 bg-[var(--card-hover)]">
                 <h2 class="text-xl font-bold">Configuration Finitions</h2>
                 <p class="text-sm text-zinc-400 mt-1">Appliquer à <span id="ralModalCount"
                         class="text-indigo-400 font-bold">0</span> éléments sélectionnés</p>
@@ -449,10 +449,10 @@
                     <label class="text-xs font-bold text-zinc-500 uppercase tracking-widest">Code Teinte /
                         RAL</label>
                     <div
-                        class="flex items-center bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-3 focus-within:border-indigo-500 focus-within:ring-1 focus-within:ring-indigo-500/50">
+                        class="flex items-center bg-[var(--card)] border border-[var(--border)] rounded-xl px-4 py-3 focus-within:border-indigo-500 focus-within:ring-1 focus-within:ring-indigo-500/50">
                         <i data-lucide="hash" class="w-4 h-4 text-zinc-500 mr-3"></i>
                         <input type="text" id="ralCodeInput" placeholder="Ex: 9010"
-                            class="bg-transparent border-0 p-0 text-sm font-bold placeholder:text-zinc-600 focus:ring-0 w-full uppercase"
+                            class="bg-transparent border-0 p-0 text-sm font-bold placeholder:text-[var(--text-muted)] focus:ring-0 w-full uppercase"
                             oninput="window.updateRalPreview(this.value)">
                     </div>
                 </div>
@@ -472,7 +472,7 @@
             <div class="space-y-3 mb-8">
                 <label class="text-xs font-bold text-zinc-500 uppercase tracking-widest">Finition</label>
                 <select id="ralFinishSelect"
-                    class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-3 text-sm font-bold focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/50 outline-none appearance-none">
+                    class="w-full bg-[var(--card)] border border-[var(--border)] rounded-xl px-4 py-3 text-sm font-bold focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/50 outline-none appearance-none">
                     <option value="Brillant">Brillant (Std)</option>
                     <option value="Satiné">Satiné</option>
                     <option value="Mat">Mat</option>
@@ -486,9 +486,9 @@
             <!-- Hidden Family Input (Managed by JS) -->
             <input type="hidden" id="selectedRalFamily" value="std">
 
-            <div class="p-6 border-t border-zinc-800 bg-zinc-900/50 flex justify-end gap-3">
+            <div class="p-6 border-t border-zinc-800 bg-[var(--card-hover)] flex justify-end gap-3">
                 <button onclick="window.closeRalModal()"
-                    class="px-6 py-3 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 rounded-xl text-xs font-bold transition-all">ANNULER</button>
+                    class="px-6 py-3 bg-[var(--card)] hover:bg-[var(--card-hover)] text-[var(--text-main)] border border-[var(--border)] rounded-xl text-xs font-bold transition-all">ANNULER</button>
                 <button onclick="window.applyRalToSelection()"
                     class="px-8 py-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold transition-all shadow-lg shadow-indigo-600/20">APPLIQUER</button>
             </div>
@@ -498,7 +498,7 @@
     <div id="manualAddModal" class="hidden fixed inset-0 z-[200] flex items-center justify-center">
         <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="closeManualAddModal()"></div>
         <div
-            class="relative w-[600px] max-h-[90vh] overflow-y-auto bg-[#1a1a1e] text-white border border-zinc-800 rounded-2xl shadow-2xl">
+            class="relative w-[600px] max-h-[90vh] overflow-y-auto bg-[var(--canvas)] text-[var(--text-main)] border border-[var(--border)] rounded-2xl shadow-2xl">
             <!-- Header -->
             <div class="p-6 border-b border-zinc-800 flex items-center justify-between">
                 <div>
@@ -506,7 +506,7 @@
                     <p class="text-sm text-zinc-400 mt-1">Ajouter un article au catalogue (BDD locale)</p>
                 </div>
                 <button onclick="window.closeManualAddModal()"
-                    class="p-2 hover:bg-zinc-800 rounded-lg text-zinc-500 hover:text-white transition-all">
+                    class="p-2 hover:bg-[var(--card-hover)] text-[var(--text-muted)] hover:text-[var(--text-main)] transition-all">
                     <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
             </div>
@@ -519,12 +519,12 @@
                     <div class="space-y-2">
                         <label class="text-xs font-bold text-zinc-500 uppercase tracking-widest">Référence *</label>
                         <input type="text" name="reference" required placeholder="Ex: ALU-001"
-                            class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-3 text-sm font-bold placeholder:text-zinc-600 focus:border-indigo-500 outline-none uppercase">
+                            class="w-full bg-[var(--card)] border border-[var(--border)] rounded-xl px-4 py-3 text-sm font-bold placeholder:text-[var(--text-muted)] focus:border-indigo-500 outline-none uppercase">
                     </div>
                     <div class="space-y-2">
                         <label class="text-xs font-bold text-zinc-500 uppercase tracking-widest">Désignation</label>
                         <input type="text" name="designation" placeholder="Ex: Profil T 40x40"
-                            class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-3 text-sm placeholder:text-zinc-600 focus:border-indigo-500 outline-none">
+                            class="w-full bg-[var(--card)] border border-[var(--border)] rounded-xl px-4 py-3 text-sm placeholder:text-[var(--text-muted)] focus:border-indigo-500 outline-none">
                     </div>
                 </div>
 
@@ -533,13 +533,13 @@
                     <div class="space-y-2">
                         <label class="text-xs font-bold text-zinc-500 uppercase tracking-widest">Fournisseur *</label>
                         <input type="text" name="fournisseur" required list="suppliersList" placeholder="Ex: AKRAPLAST"
-                            class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-3 text-sm placeholder:text-zinc-600 focus:border-indigo-500 outline-none uppercase">
+                            class="w-full bg-[var(--card)] border border-[var(--border)] rounded-xl px-4 py-3 text-sm placeholder:text-[var(--text-muted)] focus:border-indigo-500 outline-none uppercase">
                         <datalist id="suppliersList"></datalist>
                     </div>
                     <div class="space-y-2">
                         <label class="text-xs font-bold text-zinc-500 uppercase tracking-widest">Famille</label>
                         <input type="text" name="famille" list="familiesList" placeholder="Ex: PROFILÉ"
-                            class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-3 text-sm placeholder:text-zinc-600 focus:border-indigo-500 outline-none">
+                            class="w-full bg-[var(--card)] border border-[var(--border)] rounded-xl px-4 py-3 text-sm placeholder:text-[var(--text-muted)] focus:border-indigo-500 outline-none">
                         <datalist id="familiesList"></datalist>
                     </div>
                 </div>
@@ -549,12 +549,12 @@
                     <div class="space-y-2">
                         <label class="text-xs font-bold text-zinc-500 uppercase tracking-widest">Prix (€)</label>
                         <input type="number" name="prix" step="0.01" min="0" placeholder="0.00"
-                            class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-3 text-sm placeholder:text-zinc-600 focus:border-indigo-500 outline-none">
+                            class="w-full bg-[var(--card)] border border-[var(--border)] rounded-xl px-4 py-3 text-sm placeholder:text-[var(--text-muted)] focus:border-indigo-500 outline-none">
                     </div>
                     <div class="space-y-2">
                         <label class="text-xs font-bold text-zinc-500 uppercase tracking-widest">Finition / RAL</label>
                         <input type="text" name="finition" placeholder="Ex: Anodisé, RAL 9010..."
-                            class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-3 text-sm placeholder:text-zinc-600 focus:border-indigo-500 outline-none">
+                            class="w-full bg-[var(--card)] border border-[var(--border)] rounded-xl px-4 py-3 text-sm placeholder:text-[var(--text-muted)] focus:border-indigo-500 outline-none">
                     </div>
                 </div>
 
@@ -563,7 +563,7 @@
                     <label class="text-xs font-bold text-zinc-500 uppercase tracking-widest">Dimensions /
                         Conditionnement</label>
                     <input type="text" name="dimensions" placeholder="Ex: 6000mm, barre de 6m..."
-                        class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-3 text-sm placeholder:text-zinc-600 focus:border-indigo-500 outline-none">
+                        class="w-full bg-[var(--card)] border border-[var(--border)] rounded-xl px-4 py-3 text-sm placeholder:text-[var(--text-muted)] focus:border-indigo-500 outline-none">
                 </div>
 
                 <!-- Image Upload -->
@@ -590,7 +590,7 @@
             <!-- Footer -->
             <div class="p-6 border-t border-zinc-800 flex justify-end gap-3">
                 <button onclick="window.closeManualAddModal()"
-                    class="px-6 py-3 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 rounded-xl text-xs font-bold transition-all">ANNULER</button>
+                    class="px-6 py-3 bg-[var(--card)] hover:bg-[var(--card-hover)] text-[var(--text-main)] border border-[var(--border)] rounded-xl text-xs font-bold transition-all">ANNULER</button>
                 <button id="submitManualBtn" onclick="window.submitManualArticle()"
                     class="px-8 py-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold transition-all shadow-lg shadow-indigo-600/20 flex items-center gap-2">
                     <i data-lucide="database" class="w-4 h-4"></i>
@@ -604,11 +604,11 @@
     <div id="articleCardModal" class="hidden fixed inset-0 z-[110] flex items-center justify-center">
         <div class="absolute inset-0 bg-black/85 backdrop-blur-sm" onclick="window.closeArticleCard()"></div>
         <div
-            class="relative w-[420px] max-h-[90vh] overflow-y-auto bg-[#1a1a1e] text-white border border-zinc-800 rounded-2xl shadow-2xl animate-fade">
+            class="relative w-[420px] max-h-[90vh] overflow-y-auto bg-[var(--canvas)] text-[var(--text-main)] border border-[var(--border)] rounded-2xl shadow-2xl animate-fade">
             <div class="flex items-center justify-between px-6 pt-6 pb-4 border-b border-zinc-800">
                 <h2 class="text-lg font-black tracking-tight">Fiche Article</h2>
                 <button onclick="window.closeArticleCard()"
-                    class="p-2 hover:bg-zinc-800 rounded-lg text-zinc-500 hover:text-white transition-all">
+                    class="p-2 hover:bg-[var(--card-hover)] text-[var(--text-muted)] hover:text-[var(--text-main)] transition-all">
                     <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
             </div>
@@ -620,7 +620,7 @@
     <div id="budgetChartModal" class="hidden fixed inset-0 z-[110] flex items-center justify-center">
         <div class="absolute inset-0 bg-black/85 backdrop-blur-sm" onclick="window.closeBudgetChart()"></div>
         <div
-            class="relative w-[680px] max-h-[90vh] overflow-y-auto bg-[#1a1a1e] text-white border border-zinc-800 rounded-2xl shadow-2xl animate-fade">
+            class="relative w-[680px] max-h-[90vh] overflow-y-auto bg-[var(--canvas)] text-[var(--text-main)] border border-[var(--border)] rounded-2xl shadow-2xl animate-fade">
             <div class="flex items-center justify-between px-6 pt-6 pb-4 border-b border-zinc-800">
                 <div>
                     <h2 class="text-lg font-black tracking-tight">Budget par Fournisseur</h2>
@@ -628,7 +628,7 @@
                             class="text-amber-400 font-black">0 €</span></p>
                 </div>
                 <button onclick="window.closeBudgetChart()"
-                    class="p-2 hover:bg-zinc-800 rounded-lg text-zinc-500 hover:text-white transition-all">
+                    class="p-2 hover:bg-[var(--card-hover)] text-[var(--text-muted)] hover:text-[var(--text-main)] transition-all">
                     <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
             </div>
@@ -639,7 +639,11 @@
         </div>
     </div>
 
-    <script type="module" src="src/main.js?v=156"></script>
+    <script src="src/db.js?v=4"></script>
+    <script src="src/state.js?v=4"></script>
+    <script src="src/calpinage.js?v=4"></script>
+    <script src="src/ui.js?v=4"></script>
+    <script type="module" src="src/main.js?v=158"></script>
 </body>
 
 </html>

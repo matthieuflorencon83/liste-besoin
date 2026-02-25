@@ -164,17 +164,46 @@ window.init = async function () {
 // SPRINT 10 - Ajout progressif des données JSON
 window.appendCatalogData = function (newItems, isLastBatch = false) {
     if (!window.ART_DATA) window.ART_DATA = [];
-    window.ART_DATA = window.ART_DATA.concat(newItems);
 
+    // Check what is currently visible
+    const getVisibleIds = () => window.filteredData.slice(0, window.displayCount).map(it => `${it.reference}_${it.fournisseur || ''}`);
+    const currentVisibles = window.filteredData ? getVisibleIds() : [];
+
+    window.ART_DATA = window.ART_DATA.concat(newItems);
     window.groupedData = processData(window.ART_DATA);
 
-    // Mettre à jour silencieusement les filtres et recalculer les vues actuelles
+    // Mettre à jour silencieusement les options des filtres
     updateFilterOptions();
-    applyFilters();
+
+    const q = window.searchInput.value.toLowerCase().trim();
+    const four = window.fFour.value, type = window.fType.value, serie = window.fSerie.value;
+
+    window.filteredData = window.groupedData.filter(item => {
+        const id = `${item.reference}_${item.fournisseur || item.fabricant || ''}`.toLowerCase();
+        if (window.showOnlyFavs && !window.favorites.includes(id)) return false;
+        const matchSearch = !q || String(item.reference).toLowerCase().includes(q) || String(item.designation).toLowerCase().includes(q);
+        return matchSearch && (!four || item.fournisseur === four) && (!type || item.type === type) && (!serie || item.serie === serie);
+    });
+
+    document.getElementById('matchCount').textContent = window.filteredData.length;
+
+    const newVisibles = getVisibleIds();
+
+    let changed = currentVisibles.length !== newVisibles.length;
+    if (!changed) {
+        for (let i = 0; i < currentVisibles.length; i++) {
+            if (currentVisibles[i] !== newVisibles[i]) { changed = true; break; }
+        }
+    }
+
+    if (changed) {
+        render(); // Ne refait le rendu que si les élèments visibles ont changé
+    }
+
+    document.getElementById('loadMoreContainer').classList.toggle('hidden', window.displayCount >= window.filteredData.length);
 
     if (isLastBatch) {
         console.log("Catalogue complet chargé : " + window.ART_DATA.length + " articles");
-        // Si un toast "Catalogue en cours de chargement..." était actif, on pourrait le fermer ici.
     }
 }
 

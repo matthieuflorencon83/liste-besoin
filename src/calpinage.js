@@ -101,18 +101,18 @@ const CalpinageSystem = {
             container.innerHTML = `
                 <div class="flex flex-col lg:flex-row gap-6 animate-in fade-in slide-in-from-top-2 duration-300">
                     <!-- 1. Saisie Débits -->
-                    <div class="w-full lg:w-1/3 bg-zinc-900/50 p-4 rounded border border-zinc-800 flex flex-col">
+                    <div class="w-full lg:w-1/3 bg-[var(--card)] p-4 rounded border border-[var(--border)] flex flex-col">
                         <h4 class="text-xs font-bold text-zinc-500 uppercase mb-3 flex justify-between">
                             <span>Débits (Coupes)</span>
                         </h4>
-                        <div class="flex-1 overflow-y-auto max-h-40 mb-3 bg-black/20 rounded border border-zinc-800/50">
+                        <div class="flex-1 overflow-y-auto max-h-40 mb-3 bg-[var(--card-hover)] rounded border border-[var(--border)]">
                             <table class="w-full text-left text-sm">
                                 <tbody id="calpTable_${idx}"></tbody>
                             </table>
                         </div>
                         <div class="flex gap-2">
-                            <input type="number" id="cutLen_${idx}" placeholder="Long (mm)" step="1" class="w-32 bg-zinc-800 border-zinc-700 rounded text-white px-2 py-1 text-sm focus:border-indigo-500 outline-none transition-colors">
-                            <input type="number" id="cutQty_${idx}" placeholder="Qté" value="1" class="w-16 bg-zinc-800 border-zinc-700 rounded text-white px-2 py-1 text-sm focus:border-indigo-500 outline-none transition-colors">
+                            <input type="number" id="cutLen_${idx}" placeholder="Long (mm)" step="1" class="w-32 bg-[var(--card)] border border-[var(--border)] rounded text-[var(--text-main)] px-2 py-1 text-sm focus:border-indigo-500 outline-none transition-colors">
+                            <input type="number" id="cutQty_${idx}" placeholder="Qté" value="1" class="w-16 bg-[var(--card)] border border-[var(--border)] rounded text-[var(--text-main)] px-2 py-1 text-sm focus:border-indigo-500 outline-none transition-colors">
                             <button onclick="CalpinageSystem.addCut(${idx})" class="px-3 py-1 bg-zinc-700 hover:bg-zinc-600 text-white rounded text-xs font-bold transition-colors">+</button>
                         </div>
                         <div class="mt-2 flex justify-end">
@@ -121,9 +121,9 @@ const CalpinageSystem = {
                     </div>
 
                     <!-- 2. Résultats -->
-                    <div class="flex-1 bg-zinc-900/50 p-4 rounded border border-zinc-800 flex flex-col">
+                    <div class="flex-1 bg-[var(--card)] p-4 rounded border border-[var(--border)] flex flex-col">
                         <h4 class="text-xs font-bold text-zinc-500 uppercase mb-3">Optimisation & Chutes</h4>
-                        <div id="calpRes_${idx}" class="flex-1 overflow-y-auto max-h-60 bg-black/20 rounded border border-zinc-800/50 p-3 text-xs text-zinc-400">
+                        <div id="calpRes_${idx}" class="flex-1 overflow-y-auto max-h-60 bg-[var(--card-hover)] rounded border border-[var(--border)] p-3 text-xs text-[var(--text-muted)]">
                             <div class="flex items-center justify-center h-full opacity-50">Ajoutez des coupes puis cliquez sur CALCULER.</div>
                         </div>
                     </div>
@@ -174,7 +174,7 @@ const CalpinageSystem = {
         tbody.innerHTML = cuts.map((c, i) => `
             <tr class="border-b border-zinc-800/50 last:border-0 hover:bg-white/5 transition-colors">
                 <td class="p-2 text-indigo-300 font-mono">${Math.round(c.length * 1000)}mm</td>
-                <td class="p-2 font-bold text-white">x${c.quantity}</td>
+                <td class="p-2 font-bold text-[var(--text-main)]">x${c.quantity}</td>
                 <td class="p-2 text-right"><button onclick="CalpinageSystem.removeCut(${idx}, ${i})" class="text-zinc-600 hover:text-red-500 transition-colors">x</button></td>
             </tr>
         `).join('');
@@ -369,7 +369,7 @@ const CalpinageSystem = {
             totalBars++;
         });
 
-        let html = `<div class="mb-4 flex items-center justify-between bg-zinc-800/50 p-2 rounded">`;
+        let html = `<div class="mb-4 flex items-center justify-between bg-[var(--card-hover)] p-2 rounded">`;
         html += `<div class="flex flex-wrap gap-2">`;
         Object.values(synthesis).forEach(s => {
             html += `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-900/50 text-indigo-300 border border-indigo-500/30">
@@ -395,7 +395,7 @@ const CalpinageSystem = {
 
             html += `
                 <div class="mb-3 relative group">
-                    <div class="h-9 w-full bg-zinc-900/60 rounded-md flex overflow-hidden relative border border-white/5">
+                    <div class="h-9 w-full bg-[var(--card-hover)] rounded-md flex overflow-hidden relative border border-[var(--border)]">
                         <!-- Info Overlay (Inside) -->
                         <div class="absolute inset-x-0 h-full flex items-center justify-between px-3 pointer-events-none z-30 text-[10px] font-bold">
                             <span class="text-white/70 drop-shadow-sm">BARRE ${i + 1} (${total}m)</span>

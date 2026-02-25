@@ -1,5 +1,5 @@
 {
-  "version": "2026-02-23T23:41:08.162018",
+  "version": "2026-02-25T21:31:45.608801",
   "sources": [
     {
       "fournisseur": "ARCELOR (BERTON SICARD)",
@@ -54,12 +54,7 @@
     {
       "fournisseur": "BALITRAND",
       "file": "data_balitrand.json",
-      "count": 7
-    },
-    {
-      "fournisseur": "Balitrand",
-      "file": "data_balitrand.json",
-      "count": 4
+      "count": 11
     },
     {
       "fournisseur": "INSTALLUX",

@@ -1076,7 +1076,7 @@ window.renderNeeds = function () {
 
             <!-- P.U. PIÈCE HT (Remisé) — Éditable inline -->
             <td class="p-2 w-28 text-right" onclick="event.stopPropagation()">
-                <div class="inline-flex items-center justify-end gap-1 group cursor-text rounded-lg px-2 py-1 hover:bg-zinc-800 transition-colors">
+                <div class="inline-flex items-center justify-end gap-1 group cursor-text rounded-lg px-2 py-1 hover:bg-[var(--card-hover)] transition-colors">
                     <input type="number"
                         step="0.01" min="0"
                         value="${window.getPuPiece(item).toFixed(2)}"
@@ -1107,17 +1107,17 @@ window.renderNeeds = function () {
             <td class="p-2 w-32 text-center" onclick="event.stopPropagation()">
                 <div class="inline-flex items-center justify-center gap-2">
                     <button onclick="event.stopPropagation(); window.adjustNeedField(${realIndex}, 'need', -1)"
-                        class="w-6 h-6 rounded-md bg-zinc-800 hover:bg-zinc-700 text-zinc-500 hover:text-white transition-all flex items-center justify-center text-sm font-black leading-none shrink-0">-</button>
+                        class="w-6 h-6 rounded-md bg-[var(--card-hover)] hover:bg-[var(--border)] text-[var(--text-muted)] hover:text-[var(--text-main)] transition-all flex items-center justify-center text-sm font-black leading-none shrink-0">-</button>
                     <input type="number"
                         min="0"
                         value="${item.need || 0}"
                         id="needInput_${realIndex}"
                         onclick="event.stopPropagation(); this.select()"
                         onchange="window.saveNeedField(${realIndex}, 'need', parseInt(this.value) || 0)"
-                        class="w-12 text-center font-black text-white bg-zinc-900 border border-zinc-700 rounded-lg focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 outline-none transition-all p-1 text-sm
+                        class="w-12 text-center font-black text-[var(--text-main)] bg-[var(--card)] border border-[var(--border)] rounded-lg focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 outline-none transition-all p-1 text-sm
                                [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none">
                     <button onclick="event.stopPropagation(); window.adjustNeedField(${realIndex}, 'need', +1)"
-                        class="w-6 h-6 rounded-md bg-zinc-800 hover:bg-indigo-600 text-zinc-500 hover:text-white transition-all flex items-center justify-center text-sm font-black leading-none">+</button>
+                        class="w-6 h-6 rounded-md bg-[var(--card-hover)] hover:bg-indigo-600 text-[var(--text-muted)] hover:text-white transition-all flex items-center justify-center text-sm font-black leading-none">+</button>
                 </div>
             </td>
 
@@ -1125,17 +1125,17 @@ window.renderNeeds = function () {
             <td class="p-2 w-32 text-center" onclick="event.stopPropagation()">
                 <div class="inline-flex items-center justify-center gap-2">
                     <button onclick="event.stopPropagation(); window.adjustNeedField(${realIndex}, 'stock', -1)"
-                        class="w-6 h-6 rounded-md bg-zinc-800 hover:bg-zinc-700 text-zinc-500 hover:text-white transition-all flex items-center justify-center text-sm font-black leading-none shrink-0">-</button>
+                        class="w-6 h-6 rounded-md bg-[var(--card-hover)] hover:bg-[var(--border)] text-[var(--text-muted)] hover:text-[var(--text-main)] transition-all flex items-center justify-center text-sm font-black leading-none shrink-0">-</button>
                     <input type="number"
                         min="0"
                         value="${item.stock || 0}"
                         id="stockInput_${realIndex}"
                         onclick="event.stopPropagation(); this.select()"
                         onchange="window.saveNeedField(${realIndex}, 'stock', parseInt(this.value) || 0)"
-                        class="w-12 text-center font-mono text-emerald-400 bg-zinc-900 border border-zinc-700 rounded-lg focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/30 outline-none transition-all p-1 text-sm
+                        class="w-12 text-center font-mono text-emerald-500 bg-[var(--card)] border border-[var(--border)] rounded-lg focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/30 outline-none transition-all p-1 text-sm
                                [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none">
                     <button onclick="event.stopPropagation(); window.adjustNeedField(${realIndex}, 'stock', +1)"
-                        class="w-6 h-6 rounded-md bg-zinc-800 hover:bg-emerald-700 text-zinc-500 hover:text-white transition-all flex items-center justify-center text-sm font-black leading-none">+</button>
+                        class="w-6 h-6 rounded-md bg-[var(--card-hover)] hover:bg-emerald-700 text-[var(--text-muted)] hover:text-white transition-all flex items-center justify-center text-sm font-black leading-none">+</button>
                 </div>
             </td>
 
@@ -1159,12 +1159,12 @@ window.renderNeeds = function () {
             <!-- ACTIONS : menu déroulant -->
             <td class="p-2 w-16 text-right relative">
                 <button onclick="event.stopPropagation(); window.toggleNeedsActionMenu(${realIndex})" 
-                    class="p-2 text-zinc-500 hover:text-white hover:bg-zinc-800 rounded-lg transition-colors inline-block" title="Actions">
+                    class="p-2 text-zinc-500 hover:text-white hover:bg-[var(--card-hover)] rounded-lg transition-colors inline-block" title="Actions">
                     <i data-lucide="more-vertical" class="w-4 h-4"></i>
                 </button>
                 
                 <!-- Menu dropdown -->
-                <div id="needsActionMenu_${realIndex}" class="hidden absolute right-10 top-1/2 -translate-y-1/2 z-50 min-w-[160px] bg-zinc-900 border border-zinc-700/50 rounded-xl shadow-2xl py-1 overflow-hidden" onclick="event.stopPropagation()">
+                <div id="needsActionMenu_${realIndex}" class="hidden absolute right-10 top-1/2 -translate-y-1/2 z-50 min-w-[160px] bg-[var(--card)] border border-[var(--border)] rounded-xl shadow-2xl py-1 overflow-hidden" onclick="event.stopPropagation()">
                     <button onclick="window.showArticleCard(${realIndex}); window.toggleNeedsActionMenu(${realIndex})" class="w-full px-4 py-2 text-left text-[11px] font-bold tracking-wide uppercase text-zinc-300 hover:text-indigo-400 hover:bg-indigo-500/10 flex items-center gap-3 transition-colors">
                         <i data-lucide="info" class="w-4 h-4"></i> Fiche technique
                     </button>
@@ -1199,7 +1199,7 @@ window.renderNeeds = function () {
         </tr>
 
         <!-- EXPANSION ROW FOR CALPINAGE -->
-        <tr id="calpRow_${realIndex}" class="${(window.activeCalpinageId === String(item.id) || (window.isCalpinageMode && window.getIsProfil(item))) ? '' : 'hidden'} bg-zinc-950/50 border-b border-white/[0.03]">
+        <tr id="calpRow_${realIndex}" class="${(window.activeCalpinageId === String(item.id) || (window.isCalpinageMode && window.getIsProfil(item))) ? '' : 'hidden'} bg-[var(--card-hover)] border-b border-[var(--border)]">
             <td colspan="12" class="p-0">
                 <div id="calpContainer_${realIndex}" class="p-4 border-l-2 border-orange-500"></div>
             </td>
@@ -1239,7 +1239,7 @@ window.renderNeeds = function () {
         if (table) {
             let tfoot = table.querySelector('tfoot');
             if (!tfoot) { tfoot = document.createElement('tfoot'); table.appendChild(tfoot); }
-            tfoot.innerHTML = `<tr id="needsTotalRow" class="border-t-2 border-zinc-700 bg-zinc-900/80">
+            tfoot.innerHTML = `<tr id="needsTotalRow" class="border-t-2 border-zinc-700 bg-[var(--card-hover)]">
                 <td colspan="8" class="px-4 py-3 text-right text-xs font-black text-zinc-500 uppercase tracking-widest">
                     ${window.needs.length} article${window.needs.length > 1 ? 's' : ''}
                 </td>
@@ -1343,19 +1343,19 @@ window.showArticleCard = function (realIndex) {
                 </div>
             </div>
             <div class="grid grid-cols-2 gap-3 text-sm">
-                <div class="bg-zinc-900 rounded-xl p-3">
+                <div class="bg-[var(--card)] rounded-xl p-3">
                     <div class="text-zinc-500 text-[10px] font-black uppercase tracking-widest mb-1">Finition</div>
                     <div class="font-bold text-white">${item.ral || item.decor || '—'} ${item.ral_finish || ''}</div>
                 </div>
-                <div class="bg-zinc-900 rounded-xl p-3">
+                <div class="bg-[var(--card)] rounded-xl p-3">
                     <div class="text-zinc-500 text-[10px] font-black uppercase tracking-widest mb-1">Conditionnement</div>
                     <div class="font-bold text-white">${item.conditionnement || item.longueur || '—'}</div>
                 </div>
-                <div class="bg-zinc-900 rounded-xl p-3">
+                <div class="bg-[var(--card)] rounded-xl p-3">
                     <div class="text-zinc-500 text-[10px] font-black uppercase tracking-widest mb-1">P.U. HT</div>
                     <div class="font-mono font-black text-white">${pu} €</div>
                 </div>
-                <div class="bg-zinc-900 rounded-xl p-3">
+                <div class="bg-[var(--card)] rounded-xl p-3">
                     <div class="text-zinc-500 text-[10px] font-black uppercase tracking-widest mb-1">Besoin / Stock / CDE</div>
                     <div class="font-mono font-bold text-white">${item.need || 0} / ${item.stock || 0} / <span class="text-emerald-400">${cde}</span></div>
                 </div>
@@ -1564,7 +1564,7 @@ window.openProjectHistory = function () {
         list.innerHTML = '<p class="text-zinc-500 text-xs text-center py-4">Aucun projet récent</p>';
     } else {
         list.innerHTML = hist.map((h, i) => `
-            <div class="flex items-center justify-between py-2 px-3 hover:bg-zinc-800 rounded-lg cursor-pointer group"
+            <div class="flex items-center justify-between py-2 px-3 hover:bg-[var(--card-hover)] rounded-lg cursor-pointer group"
                  onclick="window.closeProjectHistory()">
                 <div>
                     <div class="text-sm font-bold text-white">${h.chantier || h.name}</div>
