@@ -1015,12 +1015,12 @@ window.renderNeeds = function () {
             }
         }
 
-        let ralDisplay = '<span class="text-zinc-500">-</span>';
+        let ralDisplay = '<span class="text-[var(--text-muted)]">-</span>';
         if (item.ral) {
-            const finishLabel = item.ral_finish ? ` <span class="text-[9px] text-zinc-500 font-normal">${item.ral_finish}</span>` : '';
-            ralDisplay = `<span class="font-bold text-white text-xs">${item.ral}</span>${finishLabel}`;
+            const finishLabel = item.ral_finish ? ` <span class="text-[9px] text-[var(--text-muted)] font-normal">${item.ral_finish}</span>` : '';
+            ralDisplay = `<span class="font-bold text-[var(--text-main)] text-xs">${item.ral}</span>${finishLabel}`;
         } else if (item.decor) {
-            ralDisplay = `<span class="text-zinc-400">${item.decor}</span>`;
+            ralDisplay = `<span class="text-[var(--text-muted)]">${item.decor}</span>`;
         }
 
         const bgOddEven = index % 2 === 0 ? 'bg-white/[0.015]' : '';
@@ -1041,7 +1041,7 @@ window.renderNeeds = function () {
             class="group transition-all cursor-pointer ${rowBg} border-l-2 ${borderLeft}">
 
             <!-- # (numéro de ligne) -->
-            <td class="p-2 w-8 text-center text-[10px] font-black text-zinc-700 select-none">${index + 1}</td>
+            <td class="p-2 w-8 text-center text-[10px] font-black text-[var(--text-muted)] select-none">${index + 1}</td>
             
             <!-- CHECKBOX -->
             <td class="text-center p-2 w-12 transition-opacity ${checkboxCellClass}">
@@ -1049,24 +1049,24 @@ window.renderNeeds = function () {
                     <input type="checkbox" 
                         onchange="window.toggleSelection(${realIndex})" 
                         ${isSelected ? 'checked' : ''} 
-                        class="w-4 h-4 rounded border-zinc-600 bg-zinc-700 text-indigo-600 focus:ring-0 focus:ring-offset-0 cursor-pointer accent-indigo-600">
+                        class="w-4 h-4 rounded border-[var(--border)] bg-[var(--card)] text-indigo-600 focus:ring-0 focus:ring-offset-0 cursor-pointer accent-indigo-600">
                 </div>
             </td>
 
             <!-- SUPPLIER -->
             <td class="p-4 w-32">
                 <div class="flex items-center gap-2">
-                    <div class="w-1 h-8 rounded-full bg-indigo-500/50"></div>
-                    <span class="font-bold text-xs uppercase tracking-wider text-zinc-400">${item.fournisseur || 'AUTRE'}</span>
+                    <div class="w-1 h-8 rounded-full bg-[var(--indigo)] opacity-50"></div>
+                    <span class="font-bold text-xs uppercase tracking-wider text-[var(--text-muted)]">${item.fournisseur || 'AUTRE'}</span>
                 </div>
             </td>
 
             <!-- REFERENCE -->
-            <td class="p-4 w-48 font-mono text-indigo-300 font-bold">${ref}</td>
+            <td class="p-4 w-48 font-mono text-[var(--indigo)] font-bold">${ref}</td>
 
             <!-- DESIGNATION -->
             <td class="p-4">
-                <div class="text-sm font-medium text-zinc-300 line-clamp-2">${des}</div>
+                <div class="text-sm font-medium text-[var(--text-main)] line-clamp-2">${des}</div>
             </td>
 
             <!-- RAL / FINISH -->
@@ -1082,17 +1082,17 @@ window.renderNeeds = function () {
                         value="${window.getPuPiece(item).toFixed(2)}"
                         onclick="event.stopPropagation(); this.select()"
                         onchange="window.saveNeedField(${realIndex}, 'px_piece', parseFloat(this.value) || 0)"
-                        class="w-20 bg-transparent border-none text-right font-mono text-emerald-300 focus:text-white focus:outline-none focus:ring-0 p-0 cursor-text
+                        class="w-20 bg-transparent border-none text-right font-mono text-[var(--emerald)] focus:text-[var(--text-main)] focus:outline-none focus:ring-0 p-0 cursor-text
                                [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none"
                         title="Cliquer pour modifier le prix de la pièce">
-                    <span class="text-zinc-600 text-[10px] uppercase font-bold group-focus-within:text-zinc-400">€ / PCE</span>
+                    <span class="text-[var(--text-muted)] text-[10px] uppercase font-bold group-focus-within:text-[var(--text-main)]">€ / PCE</span>
                 </div>
                 ${(() => {
                 const mult = window.getMult(item);
                 if (mult > 1) {
                     const puBase = window.getPuPiece(item) / mult;
                     const u = String(item.unit_condit || item.unit_vente || '').toUpperCase();
-                    return `<div class="text-[9px] text-zinc-500 mt-1 mr-2 text-right">soit ${puBase.toFixed(2)} € / ${u}</div>`;
+                    return `<div class="text-[9px] text-[var(--text-muted)] mt-1 mr-2 text-right">soit ${puBase.toFixed(2)} € / ${u}</div>`;
                 }
                 return '';
             })()}
@@ -1100,7 +1100,7 @@ window.renderNeeds = function () {
 
             <!-- CONDIT -->
             <td class="p-4 w-28 text-center">
-               <div class="text-xs text-zinc-500 font-mono font-bold">${item.longueur || item.conditionnement || 1} ${String(item.unit_condit || item.unit_vente || 'U').toUpperCase()}</div>
+               <div class="text-xs text-[var(--text-muted)] font-mono font-bold">${item.longueur || item.conditionnement || 1} ${String(item.unit_condit || item.unit_vente || 'U').toUpperCase()}</div>
             </td>
 
             <!-- BESOIN — Éditable inline PREMIUM (Sprint 7) -->
@@ -1132,7 +1132,7 @@ window.renderNeeds = function () {
                         id="stockInput_${realIndex}"
                         onclick="event.stopPropagation(); this.select()"
                         onchange="window.saveNeedField(${realIndex}, 'stock', parseInt(this.value) || 0)"
-                        class="w-12 text-center font-mono text-emerald-500 bg-[var(--card)] border border-[var(--border)] rounded-lg focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/30 outline-none transition-all p-1 text-sm
+                        class="w-12 text-center font-mono text-[var(--emerald)] bg-[var(--card)] border border-[var(--border)] rounded-lg focus:border-[var(--emerald)] focus:ring-1 focus:ring-[var(--emerald)] outline-none transition-all p-1 text-sm
                                [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none">
                     <button onclick="event.stopPropagation(); window.adjustNeedField(${realIndex}, 'stock', +1)"
                         class="w-6 h-6 rounded-md bg-[var(--card-hover)] hover:bg-emerald-700 text-[var(--text-muted)] hover:text-white transition-all flex items-center justify-center text-sm font-black leading-none">+</button>
@@ -1141,17 +1141,20 @@ window.renderNeeds = function () {
 
             <!-- ORDER -->
             <td class="p-4 w-24 text-center">
-                <span class="text-emerald-500 font-bold font-mono">${Math.max(0, (parseFloat(item.need) || 0) - (parseFloat(item.stock) || 0))}</span>
+                <span class="text-[var(--emerald)] font-bold font-mono">${Math.max(0, (parseFloat(item.need) || 0) - (parseFloat(item.stock) || 0))}</span>
             </td>
 
             <!-- TOTAL HT -->
             <td class="p-4 w-20 text-right">
                 ${(() => {
                 const toOrder = Math.max(0, (parseFloat(item.need) || 0) - (parseFloat(item.stock) || 0));
-                const total = toOrder * window.getPuPiece(item);
-                return total > 0
-                    ? `<span class="font-mono font-bold text-amber-400">${total.toFixed(2)} €</span>`
-                    : `<span class="text-zinc-700 font-mono text-xs">—</span>`;
+                const prixU = window.getPuPiece(item);
+                const isPriceEstimated = window.isEstimatedPrice(item);
+                const totalHT = toOrder * prixU;
+                const star = isPriceEstimated ? '*' : '';
+
+                if (totalHT > 0) return `<span class="font-black text-[var(--amber)] text-xs">${totalHT.toFixed(2)} €${star}</span>`;
+                return `<span class="text-[var(--text-muted)] text-xs">—</span>`;
             })()}
             </td>
 

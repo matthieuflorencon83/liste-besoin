@@ -102,7 +102,7 @@ const CalpinageSystem = {
                 <div class="flex flex-col lg:flex-row gap-6 animate-in fade-in slide-in-from-top-2 duration-300">
                     <!-- 1. Saisie Débits -->
                     <div class="w-full lg:w-1/3 bg-[var(--card)] p-4 rounded border border-[var(--border)] flex flex-col">
-                        <h4 class="text-xs font-bold text-zinc-500 uppercase mb-3 flex justify-between">
+                        <h4 class="text-xs font-bold text-[var(--text-muted)] uppercase mb-3 flex justify-between">
                             <span>Débits (Coupes)</span>
                         </h4>
                         <div class="flex-1 overflow-y-auto max-h-40 mb-3 bg-[var(--card-hover)] rounded border border-[var(--border)]">
@@ -111,9 +111,9 @@ const CalpinageSystem = {
                             </table>
                         </div>
                         <div class="flex gap-2">
-                            <input type="number" id="cutLen_${idx}" placeholder="Long (mm)" step="1" class="w-32 bg-[var(--card)] border border-[var(--border)] rounded text-[var(--text-main)] px-2 py-1 text-sm focus:border-indigo-500 outline-none transition-colors">
-                            <input type="number" id="cutQty_${idx}" placeholder="Qté" value="1" class="w-16 bg-[var(--card)] border border-[var(--border)] rounded text-[var(--text-main)] px-2 py-1 text-sm focus:border-indigo-500 outline-none transition-colors">
-                            <button onclick="CalpinageSystem.addCut(${idx})" class="px-3 py-1 bg-zinc-700 hover:bg-zinc-600 text-white rounded text-xs font-bold transition-colors">+</button>
+                            <input type="number" id="cutLen_${idx}" placeholder="Long (mm)" step="1" class="w-32 bg-[var(--card)] border border-[var(--border)] rounded text-[var(--text-main)] px-2 py-1 text-sm focus:border-[var(--indigo)] outline-none transition-colors">
+                            <input type="number" id="cutQty_${idx}" placeholder="Qté" value="1" class="w-16 bg-[var(--card)] border border-[var(--border)] rounded text-[var(--text-main)] px-2 py-1 text-sm focus:border-[var(--indigo)] outline-none transition-colors">
+                            <button onclick="CalpinageSystem.addCut(${idx})" class="px-3 py-1 bg-[var(--card-hover)] hover:bg-[var(--border)] text-[var(--text-main)] rounded text-xs font-bold transition-colors">+</button>
                         </div>
                         <div class="mt-2 flex justify-end">
                                 <button id="btnCalc_${idx}" onclick="CalpinageSystem.optimize(${idx})" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded text-xs font-bold shadow-lg shadow-indigo-500/20 transition-all">CALCULER</button>
@@ -122,7 +122,7 @@ const CalpinageSystem = {
 
                     <!-- 2. Résultats -->
                     <div class="flex-1 bg-[var(--card)] p-4 rounded border border-[var(--border)] flex flex-col">
-                        <h4 class="text-xs font-bold text-zinc-500 uppercase mb-3">Optimisation & Chutes</h4>
+                        <h4 class="text-xs font-bold text-[var(--text-muted)] uppercase mb-3">Optimisation & Chutes</h4>
                         <div id="calpRes_${idx}" class="flex-1 overflow-y-auto max-h-60 bg-[var(--card-hover)] rounded border border-[var(--border)] p-3 text-xs text-[var(--text-muted)]">
                             <div class="flex items-center justify-center h-full opacity-50">Ajoutez des coupes puis cliquez sur CALCULER.</div>
                         </div>
@@ -172,10 +172,10 @@ const CalpinageSystem = {
         if (!tbody) return;
         const cuts = (window.needs[idx].calpinageData && window.needs[idx].calpinageData.cuts) ? window.needs[idx].calpinageData.cuts : [];
         tbody.innerHTML = cuts.map((c, i) => `
-            <tr class="border-b border-zinc-800/50 last:border-0 hover:bg-white/5 transition-colors">
-                <td class="p-2 text-indigo-300 font-mono">${Math.round(c.length * 1000)}mm</td>
+            <tr class="border-b border-[var(--border)] last:border-0 hover:bg-[var(--border)] transition-colors">
+                <td class="p-2 text-[var(--indigo)] font-bold">${Math.round(c.length * 1000)}mm</td>
                 <td class="p-2 font-bold text-[var(--text-main)]">x${c.quantity}</td>
-                <td class="p-2 text-right"><button onclick="CalpinageSystem.removeCut(${idx}, ${i})" class="text-zinc-600 hover:text-red-500 transition-colors">x</button></td>
+                <td class="p-2 text-right"><button onclick="CalpinageSystem.removeCut(${idx}, ${i})" class="text-[var(--text-muted)] hover:text-[var(--rose)] transition-colors">x</button></td>
             </tr>
         `).join('');
     },
@@ -280,34 +280,34 @@ const CalpinageSystem = {
         const maxMm = Math.round(maxBar * 1000);
 
         let html = `
-            <div class="p-4 bg-orange-950/20 border border-orange-500/30 rounded-lg">
-                <div class="flex items-center gap-2 text-orange-400 mb-3 font-bold">
+            <div class="p-4 bg-[var(--amber)]/10 border border-[var(--amber)]/30 rounded-lg">
+                <div class="flex items-center gap-2 text-[var(--amber)] mb-3 font-bold">
                     <i data-lucide="scissors" class="w-5 h-5"></i>
                     COUPE TROP LONGUE (${mm}mm)
                 </div>
-                <p class="text-xs text-orange-300/80 mb-4">
+                <p class="text-xs text-[var(--amber)]/80 mb-4">
                     Cette pièce est plus longue que la plus grande barre disponible (${maxMm}mm). 
                     Où souhaitez-vous effectuer la coupe de raccord ?
                 </p>
                 
                 <div class="grid grid-cols-2 gap-4 mb-4">
                     <div>
-                        <label class="block text-[10px] uppercase text-zinc-500 mb-1">Partie A (mm)</label>
+                        <label class="block text-[10px] uppercase text-[var(--text-muted)] mb-1">Partie A (mm)</label>
                         <input type="number" id="splitA_${idx}" value="${Math.min(mm - 500, maxMm - 100)}" 
-                               class="w-full bg-black/40 border border-zinc-700 rounded px-2 py-1 text-white text-sm focus:border-orange-500 outline-none"
+                               class="w-full bg-[var(--card)] border border-[var(--border)] rounded px-2 py-1 text-[var(--text-main)] text-sm focus:border-[var(--amber)] outline-none"
                                oninput="document.getElementById('splitB_${idx}').value = ${mm} - this.value">
                     </div>
                     <div>
-                        <label class="block text-[10px] uppercase text-zinc-500 mb-1">Partie B (mm)</label>
+                        <label class="block text-[10px] uppercase text-[var(--text-muted)] mb-1">Partie B (mm)</label>
                         <input type="number" id="splitB_${idx}" value="${mm - Math.min(mm - 500, maxMm - 100)}" 
-                               class="w-full bg-black/40 border border-zinc-700 rounded px-2 py-1 text-white text-sm focus:border-orange-500 outline-none"
+                               class="w-full bg-[var(--card)] border border-[var(--border)] rounded px-2 py-1 text-[var(--text-main)] text-sm focus:border-[var(--amber)] outline-none"
                                oninput="document.getElementById('splitA_${idx}').value = ${mm} - this.value">
                     </div>
                 </div>
 
                 <div class="flex justify-end gap-2">
                     <button onclick="CalpinageSystem.confirmSplit(${idx}, ${cutLen})" 
-                            class="px-3 py-1 bg-orange-600 hover:bg-orange-500 text-white rounded text-xs font-bold transition-colors">
+                            class="px-3 py-1 bg-amber-600 hover:bg-amber-500 text-white rounded text-xs font-bold transition-colors">
                         VALIDER LA SCISSION
                     </button>
                 </div>
@@ -372,7 +372,7 @@ const CalpinageSystem = {
         let html = `<div class="mb-4 flex items-center justify-between bg-[var(--card-hover)] p-2 rounded">`;
         html += `<div class="flex flex-wrap gap-2">`;
         Object.values(synthesis).forEach(s => {
-            html += `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-900/50 text-indigo-300 border border-indigo-500/30">
+            html += `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[var(--indigo)]/20 text-[var(--indigo)] border border-[var(--indigo)]/30">
                 <span class="font-bold mr-1">${s.count}x</span> Barre ${s.length}m
                 </span>`;
         });
@@ -414,7 +414,7 @@ const CalpinageSystem = {
                         `).join('')}
                         
                         <!-- Empty Space (Waste) -->
-                        <div class="h-full flex-1 bg-black/30"></div>
+                        <div class="h-full flex-1 bg-[var(--text-muted)] opacity-30"></div>
                     </div>
                 </div>
                 `;

@@ -16,7 +16,7 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=115">
+    <link rel="stylesheet" href="style.css?v=116">
     <style>
         /* ======= CSS PRINT — Sprint 5 ======= */
         @media print {
@@ -125,7 +125,7 @@
             </div>
 
             <div class="flex items-center gap-4" id="catalogueToolbar">
-                <div class="flex items-center p-1.5 bg-white/[0.02] rounded-2xl border border-white/[0.05]">
+                <div class="flex items-center p-1.5 bg-[var(--card)] rounded-2xl border border-[var(--border)]">
                     <button onclick="window.changeViewMode('grid')" class="action-btn !bg-transparent !border-0"
                         title="Grille"><i data-lucide="layout-grid" class="w-4 h-4"></i></button>
                     <button onclick="window.changeViewMode('compact')" class="action-btn !bg-transparent !border-0"
@@ -146,9 +146,10 @@
                         class="w-5 h-5"></i></button>
                 <button id="modeToggle" class="action-btn h-10 w-10 rounded-2xl"><i data-lucide="sparkles"
                         class="w-5 h-5"></i></button>
-                <div class="ml-6 pl-6 border-l border-white/5 text-right">
-                    <span id="matchCount" class="text-2xl font-black text-indigo-500 block leading-none">0</span>
-                    <span class="text-[7px] block font-black text-muted uppercase tracking-[0.2em] mt-1">Articles</span>
+                <div class="ml-6 pl-6 border-l border-[var(--border)] text-right">
+                    <span id="matchCount" class="text-2xl font-black text-[var(--indigo)] block leading-none">0</span>
+                    <span
+                        class="text-[7px] block font-black text-[var(--text-muted)] uppercase tracking-[0.2em] mt-1">Articles</span>
                 </div>
             </div>
 
@@ -168,13 +169,15 @@
                         </button>
                         <button onclick="window.openProjectHistory()" title="Projets récents"
                             class="action-btn px-2 h-10 w-auto rounded-l-none rounded-r-2xl !bg-[var(--card)] border !border-[var(--border)] hover:!bg-[var(--card-hover)] border-l border-[var(--border)]">
-                            <i data-lucide="history" class="w-4 h-4 text-zinc-400"></i>
+                            <i data-lucide="history" class="w-4 h-4 text-[var(--text-muted)]"></i>
                         </button>
                     </div>
                     <!-- Panel historique -->
                     <div id="projectHistoryPanel"
                         class="hidden absolute top-12 left-0 z-50 w-72 bg-[var(--card)] border border-[var(--border)] rounded-xl shadow-2xl p-2">
-                        <p class="text-[9px] font-black text-zinc-500 uppercase tracking-widest px-3 pt-1 pb-2">Projets
+                        <p
+                            class="text-[9px] font-black text-[var(--text-muted)] uppercase tracking-widest px-3 pt-1 pb-2">
+                            Projets
                             récents</p>
                         <div id="projectHistoryList"></div>
                     </div>
@@ -229,12 +232,13 @@
     <main class="flex-1 relative overflow-hidden flex flex-col">
         <div id="catalogueView" class="flex-1 flex flex-col overflow-hidden relative">
             <div id="loadingOverlay"
-                class="absolute inset-0 flex items-center justify-center bg-[#050507]/95 z-40 transition-opacity duration-700">
+                class="absolute inset-0 flex items-center justify-center bg-[var(--glass)] z-40 transition-opacity duration-700">
                 <div class="text-center">
                     <div
-                        class="w-12 h-12 border-4 border-indigo-500/5 border-t-indigo-500 rounded-full animate-spin mb-6 mx-auto">
+                        class="w-12 h-12 border-4 border-[var(--indigo)]/10 border-t-[var(--indigo)] rounded-full animate-spin mb-6 mx-auto">
                     </div>
-                    <p class="text-indigo-500 font-black text-[9px] uppercase tracking-[0.4em] animate-pulse">Arts Alu
+                    <p class="text-[var(--indigo)] font-black text-[9px] uppercase tracking-[0.4em] animate-pulse">Arts
+                        Alu
                         Intelligence</p>
                 </div>
             </div>
@@ -243,9 +247,10 @@
 
             <div id="emptyState"
                 class="hidden flex-1 flex flex-col items-center justify-center p-20 text-center animate-fade">
-                <i data-lucide="search-x" class="w-20 h-20 text-zinc-900 mb-8 outline-none"></i>
-                <h3 class="text-2xl font-black mb-3">Aucun produit trouvé</h3>
-                <p class="text-zinc-500 text-sm font-medium">Réessayez avec d'autres mots-clés ou filtres.</p>
+                <i data-lucide="search-x" class="w-20 h-20 text-[var(--text-muted)] opacity-50 mb-8 outline-none"></i>
+                <h3 class="text-2xl font-black mb-3 text-[var(--text-main)]">Aucun produit trouvé</h3>
+                <p class="text-[var(--text-muted)] text-sm font-medium">Réessayez avec d'autres mots-clés ou filtres.
+                </p>
             </div>
             <div id="loadMoreContainer"
                 class="p-5 flex justify-center bg-transparent hidden border-t border-white/[0.02] shrink-0">
@@ -267,20 +272,20 @@
                         <div class="h-10 w-px bg-zinc-200 dark:bg-zinc-800 mx-2"></div>
                         <div class="relative group">
                             <label
-                                class="absolute -top-6 left-0 text-[9px] font-black text-indigo-500 uppercase tracking-[0.2em] opacity-0 group-focus-within:opacity-100 transition-opacity">RÉFÉRENCE
+                                class="absolute -top-6 left-0 text-[9px] font-black text-[var(--indigo)] uppercase tracking-[0.2em] opacity-0 group-focus-within:opacity-100 transition-opacity">RÉFÉRENCE
                                 CHANTIER</label>
-                            <div class="flex items-center bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 rounded-2xl px-4 py-2 hover:border-indigo-500/50 transition-all focus-within:border-indigo-500 focus-within:ring-4 focus-within:ring-indigo-500/10"
-                                style="background-color: var(--card); border-color: var(--border);">
-                                <i data-lucide="map-pin" class="w-4 h-4 text-indigo-500 mr-3"></i>
+                            <div
+                                class="flex items-center bg-[var(--card)] border border-[var(--border)] hover:border-[var(--indigo)]/50 rounded-2xl px-4 py-2 transition-all focus-within:border-[var(--indigo)] focus-within:ring-4 focus-within:ring-[var(--indigo)]/10">
+                                <i data-lucide="map-pin" class="w-4 h-4 text-[var(--indigo)] mr-3"></i>
                                 <input type="text" id="chantierRef" placeholder="Nom ou Réf. Chantier..."
-                                    class="bg-transparent !border-0 !p-0 text-sm font-bold text-[var(--text-main)] placeholder:text-zinc-500 focus:ring-0 min-w-[250px]"
+                                    class="bg-transparent !border-0 !p-0 text-sm font-bold text-[var(--text-main)] placeholder:text-[var(--text-muted)] focus:ring-0 min-w-[250px]"
                                     oninput="window.saveChantier(this.value)">
                             </div>
                         </div>
                     </div>
                     <div class="flex gap-4">
                         <button id="ralModeBtn" onclick="window.toggleFinitionMode()"
-                            class="flex items-center gap-2 px-6 py-3 bg-white hover:bg-zinc-50 text-zinc-900 rounded-lg text-xs font-bold transition-all border border-zinc-200 shadow-sm">
+                            class="flex items-center gap-2 px-6 py-3 bg-[var(--card)] hover:bg-[var(--card-hover)] text-[var(--text-main)] rounded-lg text-xs font-bold transition-all border border-[var(--border)] shadow-sm">
                             <i data-lucide="palette" class="w-4 h-4 text-purple-600"></i>
                             <span id="ralBtnText">FINITIONS</span>
                         </button>
@@ -302,11 +307,11 @@
                 <div class="w-full shrink-0">
                     <div class="relative">
                         <i data-lucide="search"
-                            class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-600"></i>
+                            class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-muted)]"></i>
                         <input type="text" id="needsSearch"
                             placeholder="Filtrer par référence, désignation ou fournisseur..."
                             oninput="window.filterNeeds(this.value)"
-                            class="w-full h-11 pl-11 pr-5 bg-[var(--card)] border border-[var(--border)] rounded-lg text-sm text-[var(--text-main)] placeholder:text-[var(--text-muted)] focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 outline-none transition-all">
+                            class="w-full h-11 pl-11 pr-5 bg-[var(--card)] border border-[var(--border)] rounded-lg text-sm text-[var(--text-main)] placeholder:text-[var(--text-muted)] hover:border-[var(--indigo)] focus:border-[var(--indigo)] focus:ring-1 focus:ring-[var(--indigo)]/30 outline-none transition-all">
                         <span id="needsFilterCount"
                             class="hidden absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-bold text-zinc-500"></span>
                     </div>
@@ -640,11 +645,11 @@
         </div>
     </div>
 
-    <script src="src/db.js?v=4"></script>
-    <script src="src/state.js?v=4"></script>
-    <script src="src/calpinage.js?v=4"></script>
-    <script src="src/ui.js?v=4"></script>
-    <script type="module" src="src/main.js?v=158"></script>
+    <script src="src/db.js?v=7"></script>
+    <script src="src/state.js?v=7"></script>
+    <script src="src/calpinage.js?v=7"></script>
+    <script src="src/ui.js?v=5"></script>
+    <script type="module" src="src/main.js?v=159"></script>
 </body>
 
 </html>

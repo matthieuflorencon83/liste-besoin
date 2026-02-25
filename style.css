@@ -10,6 +10,8 @@
     --indigo-soft: rgba(99, 102, 241, 0.1);
     --emerald: #10b981;
     --emerald-soft: rgba(16, 185, 129, 0.1);
+    --amber: #f59e0b;
+    --rose: #f43f5e;
     --glass: rgba(10, 10, 14, 0.9);
     --shadow: 0 20px 50px -12px rgba(0, 0, 0, 0.6);
 }
@@ -26,6 +28,8 @@ body.light-mode {
     --indigo-soft: #eef2ff;
     --emerald: #059669;
     --emerald-soft: #ecfdf5;
+    --amber: #d97706;
+    --rose: #e11d48;
     --glass: rgba(255, 255, 255, 0.95);
     --shadow: 0 20px 40px -15px rgba(100, 116, 139, 0.1);
 }

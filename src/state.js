@@ -59,6 +59,13 @@ window.toggleFS = () => {
 function processData(data) {
     const map = new Map();
     data.forEach(item => {
+        if (item.fournisseur) {
+            item.fournisseur = item.fournisseur.toString().trim().toUpperCase();
+        }
+        if (item.fabricant) {
+            item.fabricant = item.fabricant.toString().trim().toUpperCase();
+        }
+
         const key = `${item.reference}_${item.fournisseur || item.fabricant || ''}_${item.designation}`.toLowerCase();
         if (!map.has(key)) map.set(key, item);
         else {
@@ -286,6 +293,8 @@ function render() {
         const pxP = (Number(it.px_public || 0) * multiplier).toFixed(2);
         const pxR = (Number(it.px_remise || 0) * multiplier).toFixed(2);
 
+        const safeJsId = id.replace(/'/g, "\\'");
+
         const card = document.createElement('div');
         card.className = `item-card animate-fade ${window.currentView === 'list' ? 'flex-row items-center' : ''}`;
         card.style.animationDelay = `${(idx % 40) * 15}ms`;
@@ -324,15 +333,15 @@ function render() {
                         <div class="flex flex-col items-end"><span class="price-label text-emerald-500 font-black">Net HT</span><span class="price-remise">${pxR}€</span></div>
                     </div>
                     <div class="relative flex flex-row gap-3 z-50">
-                        <button class="action-btn fav-btn ${isFav ? 'active' : ''}" onclick="toggleF(event, '${id}')"><i data-lucide="star" class="w-4 h-4 ${isFav ? 'fill-current' : ''}"></i></button>
-                        <button class="action-btn ${isNeed ? 'active' : ''}" onclick="toggleN(event, '${id}', ${idx})"><i data-lucide="${isNeed ? 'check-circle' : 'plus-circle'}" class="w-4 h-4"></i></button>
+                        <button class="action-btn fav-btn ${isFav ? 'active' : ''}" onclick="toggleF(event, '${safeJsId}')"><i data-lucide="star" class="w-4 h-4 ${isFav ? 'fill-current' : ''}"></i></button>
+                        <button class="action-btn ${isNeed ? 'active' : ''}" onclick="toggleN(event, '${safeJsId}', ${idx})"><i data-lucide="${isNeed ? 'check-circle' : 'plus-circle'}" class="w-4 h-4"></i></button>
                     </div>
                 </div>`;
         } else {
             card.innerHTML = `
                 <div class="absolute top-4 right-4 flex flex-col gap-3 z-50">
-                    <button class="action-btn fav-btn ${isFav ? 'active' : ''}" onclick="toggleF(event, '${id}')"><i data-lucide="star" class="w-4 h-4 ${isFav ? 'fill-current' : ''}"></i></button>
-                    <button class="action-btn ${isNeed ? 'active' : ''}" onclick="toggleN(event, '${id}', ${idx})"><i data-lucide="${isNeed ? 'check-circle' : 'plus-circle'}" class="w-4 h-4"></i></button>
+                    <button class="action-btn fav-btn ${isFav ? 'active' : ''}" onclick="toggleF(event, '${safeJsId}')"><i data-lucide="star" class="w-4 h-4 ${isFav ? 'fill-current' : ''}"></i></button>
+                    <button class="action-btn ${isNeed ? 'active' : ''}" onclick="toggleN(event, '${safeJsId}', ${idx})"><i data-lucide="${isNeed ? 'check-circle' : 'plus-circle'}" class="w-4 h-4"></i></button>
                 </div>
                 ${img}
                 <div class="card-content flex-1">
