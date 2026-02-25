@@ -276,13 +276,19 @@ window.changeViewMode = function (mode) {
     render();
 }
 
-function render() {
-    window.grid.innerHTML = '';
-    const items = window.filteredData.slice(0, window.displayCount);
-    if (!items.length) { document.getElementById('emptyState').classList.remove('hidden'); return; }
-    document.getElementById('emptyState').classList.add('hidden');
+function render(append = false) {
+    if (!append) {
+        window.grid.innerHTML = '';
+        window._renderedCount = 0;
+    }
+    const startIndex = window._renderedCount || 0;
+    const items = window.filteredData.slice(startIndex, window.displayCount);
 
-    items.forEach((it, idx) => {
+    if (!append && !items.length) { document.getElementById('emptyState').classList.remove('hidden'); return; }
+    if (!append) document.getElementById('emptyState').classList.add('hidden');
+
+    items.forEach((it, loopIdx) => {
+        const idx = startIndex + loopIdx; // L'index VRAI dans filteredData
         const id = `${it.reference}_${it.fournisseur || it.fabricant || ''}`.toLowerCase();
         const isFav = window.favorites.includes(id), isNeed = window.needs.some(n => n.id === id);
 
@@ -297,7 +303,7 @@ function render() {
 
         const card = document.createElement('div');
         card.className = `item-card animate-fade ${window.currentView === 'list' ? 'flex-row items-center' : ''}`;
-        card.style.animationDelay = `${(idx % 40) * 15}ms`;
+        card.style.animationDelay = `${(loopIdx % 40) * 15}ms`;
 
         const q = window.searchInput.value.toLowerCase().trim();
         const safeImage = escapeHtml(it.image);
@@ -360,6 +366,7 @@ function render() {
         }
         window.grid.appendChild(card);
     });
+    window._renderedCount = Math.min(window.displayCount, window.filteredData.length);
     if (typeof lucide !== 'undefined') lucide.createIcons();
     document.getElementById('loadMoreContainer').classList.toggle('hidden', window.displayCount >= window.filteredData.length);
 }
@@ -537,4 +544,5 @@ window.fSerie.addEventListener('change', (e) => applyFilters(e.target));
 document.getElementById('resetFilters').addEventListener('click', () => { window.fFour.value = ""; window.fType.value = ""; window.fSerie.value = ""; window.searchInput.value = ""; applyFilters(); });
 document.getElementById('toggleFavFilter').addEventListener('click', () => { window.showOnlyFavs = !window.showOnlyFavs; document.getElementById('toggleFavFilter').classList.toggle('active', window.showOnlyFavs); applyFilters(); });
 document.getElementById('modeToggle').addEventListener('click', () => { window.isDarkMode = !window.isDarkMode; document.body.classList.toggle('light-mode', !window.isDarkMode); localStorage.setItem('theme', window.isDarkMode ? 'dark' : 'light'); });
-document.getElementById('loadMoreBtn').addEventListener('click', () => { window.displayCount += window.INCREMENT; render(); });
+document.getElementById('loadMoreBtn').addEventListener('click', () => { window.displayCount += window.INCREMENT; render(true); });
+

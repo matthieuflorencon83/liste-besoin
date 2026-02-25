@@ -4,7 +4,7 @@
     --card-hover: #16181d;
     --text-main: #fcfcfd;
     --text-muted: #94a3b8;
-    --border: rgba(255, 255, 255, 0.04);
+    --border: rgba(255, 255, 255, 0.08);
     --border-hover: rgba(99, 102, 241, 0.5);
     --indigo: #6366f1;
     --indigo-soft: rgba(99, 102, 241, 0.1);
@@ -22,7 +22,7 @@ body.light-mode {
     --card-hover: #f8fafc;
     --text-main: #0f172a;
     --text-muted: #64748b;
-    --border: rgba(0, 0, 0, 0.06);
+    --border: rgba(0, 0, 0, 0.12);
     --border-hover: rgba(79, 70, 229, 0.3);
     --indigo: #4f46e5;
     --indigo-soft: #eef2ff;

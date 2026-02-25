@@ -16,7 +16,7 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=116">
+    <link rel="stylesheet" href="style.css?v=117">
     <style>
         /* ======= CSS PRINT — Sprint 5 ======= */
         @media print {
@@ -645,9 +645,14 @@
         </div>
     </div>
 
-    <script src="src/db.js?v=7"></script>
-    <script src="src/state.js?v=7"></script>
-    <script src="src/calpinage.js?v=7"></script>
+    <!-- SAFELIST TAILWIND POUR LES CLASSES DYNAMIQUES JS -->
+    <div id="tw-safelist"
+        class="hidden bg-[var(--card)] bg-[var(--card-hover)] text-[var(--text-main)] text-[var(--text-muted)] border-[var(--border)] text-[var(--emerald)] text-[var(--amber)] focus:border-[var(--emerald)] focus:ring-[var(--emerald)] focus:border-[var(--indigo)] text-[var(--indigo)] bg-indigo-600/10 border-indigo-500/30 hover:bg-indigo-600/20 bg-amber-600/10 border-amber-500/30 hover:bg-amber-600/20 bg-[#050507]/95 bg-[var(--glass)] border-[var(--border-hover)]">
+    </div>
+
+    <script src="src/db.js?v=8"></script>
+    <script src="src/state.js?v=8"></script>
+    <script src="src/calpinage.js?v=8"></script>
     <script src="src/ui.js?v=5"></script>
     <script type="module" src="src/main.js?v=159"></script>
 </body>
