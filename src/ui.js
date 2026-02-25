@@ -1023,10 +1023,10 @@ window.renderNeeds = function () {
             ralDisplay = `<span class="text-[var(--text-muted)]">${item.decor}</span>`;
         }
 
-        const bgOddEven = index % 2 === 0 ? 'bg-white/[0.015]' : '';
+        const bgOddEven = index % 2 === 0 ? 'bg-[var(--border)]' : '';
         const rowBg = isSelected
-            ? 'bg-indigo-500/20'
-            : `${bgOddEven} hover:bg-white/[0.03] border-b border-white/[0.03] last:border-0`;
+            ? 'bg-[var(--indigo-soft)]'
+            : `${bgOddEven} hover:bg-[var(--card-hover)] border-b border-[var(--border)] last:border-0`;
 
         // Classe de la bordure gauche (indicateur couverture ou sélection)
         const borderLeft = isSelected ? 'border-l-indigo-500' : (coverageIndicator || 'border-l-transparent');
@@ -1162,23 +1162,23 @@ window.renderNeeds = function () {
             <!-- ACTIONS : menu déroulant -->
             <td class="p-2 w-16 text-right relative">
                 <button onclick="event.stopPropagation(); window.toggleNeedsActionMenu(${realIndex})" 
-                    class="p-2 text-zinc-500 hover:text-white hover:bg-[var(--card-hover)] rounded-lg transition-colors inline-block" title="Actions">
+                    class="p-2 text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--card-hover)] rounded-lg transition-colors inline-block" title="Actions">
                     <i data-lucide="more-vertical" class="w-4 h-4"></i>
                 </button>
                 
                 <!-- Menu dropdown -->
                 <div id="needsActionMenu_${realIndex}" class="hidden absolute right-10 top-1/2 -translate-y-1/2 z-50 min-w-[160px] bg-[var(--card)] border border-[var(--border)] rounded-xl shadow-2xl py-1 overflow-hidden" onclick="event.stopPropagation()">
-                    <button onclick="window.showArticleCard(${realIndex}); window.toggleNeedsActionMenu(${realIndex})" class="w-full px-4 py-2 text-left text-[11px] font-bold tracking-wide uppercase text-zinc-300 hover:text-indigo-400 hover:bg-indigo-500/10 flex items-center gap-3 transition-colors">
+                    <button onclick="window.showArticleCard(${realIndex}); window.toggleNeedsActionMenu(${realIndex})" class="w-full px-4 py-2 text-left text-[11px] font-bold tracking-wide uppercase text-[var(--text-muted)] hover:text-[var(--indigo)] hover:bg-[var(--indigo-soft)] flex items-center gap-3 transition-colors">
                         <i data-lucide="info" class="w-4 h-4"></i> Fiche technique
                     </button>
-                    <button onclick="window.toggleNoteRow(${realIndex}); window.toggleNeedsActionMenu(${realIndex})" class="w-full px-4 py-2 text-left text-[11px] font-bold tracking-wide uppercase ${item.note ? 'text-amber-400' : 'text-zinc-300 hover:text-amber-400'} hover:bg-amber-500/10 flex items-center gap-3 transition-colors">
+                    <button onclick="window.toggleNoteRow(${realIndex}); window.toggleNeedsActionMenu(${realIndex})" class="w-full px-4 py-2 text-left text-[11px] font-bold tracking-wide uppercase ${item.note ? 'text-[var(--amber)]' : 'text-[var(--text-muted)] hover:text-[var(--amber)]'} hover:bg-[var(--emerald-soft)] flex items-center gap-3 transition-colors">
                         <i data-lucide="${item.note ? 'message-square' : 'message-square-plus'}" class="w-4 h-4"></i> Note
                     </button>
-                    <button onclick="window.duplicateNeed(${realIndex}); window.toggleNeedsActionMenu(${realIndex})" class="w-full px-4 py-2 text-left text-[11px] font-bold tracking-wide uppercase text-zinc-300 hover:text-emerald-400 hover:bg-emerald-500/10 flex items-center gap-3 transition-colors">
+                    <button onclick="window.duplicateNeed(${realIndex}); window.toggleNeedsActionMenu(${realIndex})" class="w-full px-4 py-2 text-left text-[11px] font-bold tracking-wide uppercase text-[var(--text-muted)] hover:text-[var(--emerald)] hover:bg-[var(--emerald-soft)] flex items-center gap-3 transition-colors">
                         <i data-lucide="copy" class="w-4 h-4"></i> Dupliquer
                     </button>
-                    <div class="h-px bg-zinc-800 my-1"></div>
-                    <button onclick="window.deleteNeed(${realIndex}); window.toggleNeedsActionMenu(${realIndex})" class="w-full px-4 py-2 text-left text-[11px] font-bold tracking-wide uppercase text-red-500 hover:bg-red-500/10 flex items-center gap-3 transition-colors">
+                    <div class="h-px bg-[var(--border)] my-1"></div>
+                    <button onclick="window.deleteNeed(${realIndex}); window.toggleNeedsActionMenu(${realIndex})" class="w-full px-4 py-2 text-left text-[11px] font-bold tracking-wide uppercase text-[var(--rose)] hover:bg-rose-500/10 flex items-center gap-3 transition-colors">
                         <i data-lucide="trash-2" class="w-4 h-4"></i> Supprimer
                     </button>
                 </div>
@@ -1186,7 +1186,7 @@ window.renderNeeds = function () {
         </tr>
 
         <!-- NOTE ROW -->
-        <tr id="noteRow_${realIndex}" class="${item.note || window.activeNoteRow === realIndex ? '' : 'hidden'} bg-amber-950/10 border-b border-amber-500/10">
+        <tr id="noteRow_${realIndex}" class="${item.note || window.activeNoteRow === realIndex ? '' : 'hidden'} bg-[var(--emerald-soft)] border-b border-[var(--border)]">
             <td colspan="12" class="px-6 py-3">
                 <div class="flex items-start gap-3">
                     <i data-lucide="message-square" class="w-4 h-4 text-amber-400 mt-1 shrink-0"></i>
@@ -1195,7 +1195,7 @@ window.renderNeeds = function () {
                         onclick="event.stopPropagation()"
                         onchange="window.saveNote(${realIndex}, this.value)"
                         placeholder="Ajouter une note ou un commentaire sur cet article..."
-                        class="flex-1 bg-transparent border-none resize-none text-sm text-zinc-300 placeholder:text-zinc-600 focus:ring-0 outline-none leading-relaxed min-h-[2rem]"
+                        class="flex-1 bg-transparent border-none resize-none text-sm text-[var(--text-main)] placeholder:text-[var(--text-muted)] focus:ring-0 outline-none leading-relaxed min-h-[2rem]"
                         rows="2">${item.note || ''}</textarea>
                 </div>
             </td>
@@ -1326,13 +1326,13 @@ window.showArticleCard = function (realIndex) {
 
     const safeAlt = window.escapeHtml ? window.escapeHtml(item.designation) : String(item.designation).replace(/"/g, '&quot;');
     const imgHtml = item.image
-        ? `<img src="${item.image}" alt="${safeAlt}" class="w-full h-48 object-contain rounded-xl border border-zinc-800 bg-zinc-950" onerror="this.parentElement.innerHTML='<div class=\\'w-full h-32 flex items-center justify-center text-zinc-700\\'>Pas d&apos;image</div>'">`
-        : `<div class="w-full h-32 flex items-center justify-center text-zinc-700 border border-zinc-800 rounded-xl">
+        ? `<img src="${item.image}" alt="${safeAlt}" class="w-full h-48 object-contain rounded-xl border border-[var(--border)] bg-[var(--canvas)]" onerror="this.parentElement.innerHTML='<div class=\\'w-full h-32 flex items-center justify-center text-[var(--text-muted)]\\'>Pas d&apos;image</div>'">`
+        : `<div class="w-full h-32 flex items-center justify-center text-[var(--text-muted)] border border-[var(--border)] rounded-xl">
               <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
            </div>`;
 
-    const note = item.note ? `<div class="mt-4 p-3 bg-amber-500/10 border border-amber-500/20 rounded-xl text-sm text-amber-200 flex gap-2">
-        <span class="text-amber-400 shrink-0">💬</span> ${item.note}
+    const note = item.note ? `<div class="mt-4 p-3 bg-[var(--amber-soft)] border border-[var(--border)] rounded-xl text-sm text-[var(--text-main)] flex gap-2">
+        <span class="text-[var(--amber)] shrink-0">💬</span> ${item.note}
     </div>` : '';
 
     document.getElementById('articleCardContent').innerHTML = `

@@ -1,6 +1,3 @@
-import './state.js?v=157';
-import './calpinage.js?v=157';
-import './ui.js?v=157';
 import { initDB, getFromDB, saveToDB, clearCatalogDB } from './db.js?v=157';
 
 document.addEventListener('DOMContentLoaded', async () => {
