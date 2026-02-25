@@ -1239,26 +1239,26 @@ window.renderNeeds = function () {
         if (table) {
             let tfoot = table.querySelector('tfoot');
             if (!tfoot) { tfoot = document.createElement('tfoot'); table.appendChild(tfoot); }
-            tfoot.innerHTML = `<tr id="needsTotalRow" class="border-t-2 border-zinc-700 bg-[var(--card-hover)]">
-                <td colspan="8" class="px-4 py-3 text-right text-xs font-black text-zinc-500 uppercase tracking-widest">
+            tfoot.innerHTML = `<tr id="needsTotalRow" class="border-t-2 border-[var(--border)] bg-[var(--card-hover)]">
+                <td colspan="8" class="px-4 py-3 text-right text-xs font-black text-[var(--text-muted)] uppercase tracking-widest">
                     ${window.needs.length} article${window.needs.length > 1 ? 's' : ''}
                 </td>
-                <td class="p-3 text-center text-xs font-black text-white">${totalNeed}</td>
-                <td class="p-3 text-center text-xs text-zinc-500">—</td>
-                <td class="p-3 text-center text-xs font-black text-emerald-400">${totalCde}</td>
-                <td class="p-3 text-right text-sm font-black text-amber-400">${totalHT.toFixed(2)} €</td>
+                <td class="p-3 text-center text-xs font-black text-[var(--text-main)]">${totalNeed}</td>
+                <td class="p-3 text-center text-xs text-[var(--text-muted)]">—</td>
+                <td class="p-3 text-center text-xs font-black text-emerald-500">${totalCde}</td>
+                <td class="p-3 text-right text-sm font-black text-amber-500">${totalHT.toFixed(2)} €</td>
                 <td></td>
             </tr>`;
         }
     } else {
         totalRow.innerHTML = `
-            <td colspan="8" class="px-4 py-3 text-right text-xs font-black text-zinc-500 uppercase tracking-widest">
+            <td colspan="8" class="px-4 py-3 text-right text-xs font-black text-[var(--text-muted)] uppercase tracking-widest">
                 ${window.needs.length} article${window.needs.length > 1 ? 's' : ''}
             </td>
-            <td class="p-3 text-center text-xs font-black text-white">${totalNeed}</td>
-            <td class="p-3 text-center text-xs text-zinc-500">—</td>
-            <td class="p-3 text-center text-xs font-black text-emerald-400">${totalCde}</td>
-            <td class="p-3 text-right text-sm font-black text-amber-400">${totalHT.toFixed(2)} €</td>
+            <td class="p-3 text-center text-xs font-black text-[var(--text-main)]">${totalNeed}</td>
+            <td class="p-3 text-center text-xs text-[var(--text-muted)]">—</td>
+            <td class="p-3 text-center text-xs font-black text-emerald-500">${totalCde}</td>
+            <td class="p-3 text-right text-sm font-black text-amber-500">${totalHT.toFixed(2)} €</td>
             <td></td>
         `;
     }
