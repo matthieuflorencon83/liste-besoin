@@ -316,7 +316,7 @@ function render(append = false) {
         const safeFour = highlight(it.fournisseur || '-', q);
 
         const conditHtml = multiplier > 1 ? `
-            <div class="flex items-center gap-2 text-[8px] font-black text-indigo-500 underline underline-offset-4 decoration-indigo-500/20 mt-2 uppercase tracking-widest">
+            <div class="flex items-center gap-1.5 text-[9px] font-black text-indigo-500 uppercase tracking-widest whitespace-nowrap">
                 <i data-lucide="package" class="w-3 h-3 text-indigo-500"></i>
                 <span>LOT DE ${conditVal} ${safeUnit}</span>
             </div>` : '';
@@ -326,42 +326,71 @@ function render(append = false) {
             `<div class="img-container opacity-5"><i data-lucide="image" class="w-6 h-6"></i></div>`;
 
         if (window.currentView === 'list') {
+            // Ultra-compact List View card (64px height)
             card.innerHTML = `
-                <div class="flex items-center gap-6 w-full">
+                <div class="flex items-center w-full h-full text-sm">
                     ${img}
-                    <span class="mono shrink-0">${safeRef}</span>
-                    ${window.currentView !== 'mini' ? `<span class="badge uppercase shrink-0">${safeType}</span>` : ''}
-                    <span class="text-[8px] font-black text-indigo-500/40 uppercase tracking-[0.2em] shrink-0 w-32 truncate">${safeFour}</span>
-                    <h3 class="truncate flex-1">${safeDes}</h3>
-                    ${conditHtml}
-                    <div class="price-window.grid">
-                        <div class="flex flex-col"><span class="price-label">Catalogue</span><span class="price-value">${pxP}€</span></div>
-                        <div class="flex flex-col items-end"><span class="price-label text-emerald-500 font-black">Net HT</span><span class="price-remise">${pxR}€</span></div>
+                    <div class="flex-1 min-w-0 flex items-center py-1 px-4 gap-4">
+                        <div class="w-32 shrink-0 flex flex-col justify-center">
+                            <div class="mono text-[10px] font-bold text-indigo-400 truncate">${safeRef}</div>
+                            <div class="text-[9px] font-black text-indigo-500/50 uppercase truncate mt-0.5">${safeFour}</div>
+                        </div>
+                        <h3 class="flex-1 font-bold whitespace-nowrap overflow-hidden text-ellipsis text-[0.8rem]" title="${safeDesAttr}">${safeDes}</h3>
+                        <div class="w-20 shrink-0 text-center">
+                            <span class="badge uppercase">${safeType}</span>
+                        </div>
+                        <div class="w-32 shrink-0">
+                            ${conditHtml}
+                        </div>
+                        <div class="w-20 shrink-0 text-right">
+                            <div class="flex flex-col"><span class="price-value text-[10px] line-through">${pxP}€</span></div>
+                        </div>
+                        <div class="w-24 shrink-0 text-right">
+                            <div class="flex flex-col"><span class="price-remise text-[1.05rem]">${pxR}€</span></div>
+                        </div>
                     </div>
-                    <div class="relative flex flex-row gap-3 z-50">
-                        <button class="action-btn fav-btn ${isFav ? 'active' : ''}" onclick="toggleF(event, '${safeJsId}')"><i data-lucide="star" class="w-4 h-4 ${isFav ? 'fill-current' : ''}"></i></button>
-                        <button class="action-btn ${isNeed ? 'active' : ''}" onclick="toggleN(event, '${safeJsId}', ${idx})"><i data-lucide="${isNeed ? 'check-circle' : 'plus-circle'}" class="w-4 h-4"></i></button>
+                    <div class="flex items-center gap-2 shrink-0 border-l border-[var(--border)] px-3 h-full bg-[var(--card-hover)]">
+                        <button class="action-btn fav-btn ${isFav ? 'active' : ''} !rounded-full !w-7 !h-7" onclick="toggleF(event, '${safeJsId}')" title="Favori"><i data-lucide="star" class="w-3.5 h-3.5 ${isFav ? 'fill-current' : ''}"></i></button>
+                        <button class="action-btn ${isNeed ? 'active' : ''} !rounded-full !w-7 !h-7" onclick="toggleN(event, '${safeJsId}', ${idx})" title="Ajouter au besoin"><i data-lucide="${isNeed ? 'check-circle' : 'plus-circle'}" class="w-3.5 h-3.5"></i></button>
                     </div>
                 </div>`;
         } else {
+            // Grid views (compact/normal/mini)
+            const isMini = window.currentView === 'mini';
+            const isCompact = window.currentView === 'compact';
+
             card.innerHTML = `
-                <div class="absolute top-4 right-4 flex flex-col gap-3 z-50">
-                    <button class="action-btn fav-btn ${isFav ? 'active' : ''}" onclick="toggleF(event, '${safeJsId}')"><i data-lucide="star" class="w-4 h-4 ${isFav ? 'fill-current' : ''}"></i></button>
-                    <button class="action-btn ${isNeed ? 'active' : ''}" onclick="toggleN(event, '${safeJsId}', ${idx})"><i data-lucide="${isNeed ? 'check-circle' : 'plus-circle'}" class="w-4 h-4"></i></button>
+                <div class="${isMini ? 'p-2' : 'p-3'} border-b border-[var(--border)] flex justify-between items-start gap-2 shrink-0">
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center gap-2 ${isMini ? 'mb-0.5' : 'mb-1'} whitespace-nowrap overflow-hidden">
+                            <span class="mono ${isMini ? 'text-[9px]' : 'text-xs'} font-black text-indigo-400 shrink-0">${safeRef}</span>
+                            ${!isMini ? `<span class="badge uppercase shrink-0">${safeType}</span>` : ''}
+                        </div>
+                        <h3 class="${isMini ? 'text-[0.7rem]' : 'text-[0.95rem]'} font-bold leading-tight line-clamp-2" title="${safeDesAttr}">${safeDes}</h3>
+                        ${!isMini ? `<div class="text-[9px] font-black text-indigo-500/50 uppercase tracking-[0.1em] mt-1.5 truncate">${safeFour}</div>` : ''}
+                    </div>
+                    <div class="flex flex-col gap-1.5 shrink-0">
+                        <button class="action-btn fav-btn ${isFav ? 'active' : ''} !rounded-full ${isMini ? '!w-6 !h-6' : 'w-8 h-8'}" onclick="toggleF(event, '${safeJsId}')" title="Favori"><i data-lucide="star" class="${isMini ? 'w-3 h-3' : 'w-4 h-4'} ${isFav ? 'fill-current' : ''}"></i></button>
+                        <button class="action-btn ${isNeed ? 'active' : ''} !rounded-full ${isMini ? '!w-6 !h-6' : 'w-8 h-8'}" onclick="toggleN(event, '${safeJsId}', ${idx})" title="Ajouter au besoin"><i data-lucide="${isNeed ? 'check-circle' : 'plus-circle'}" class="${isMini ? 'w-3 h-3' : 'w-4 h-4'}"></i></button>
+                    </div>
                 </div>
                 ${img}
-                <div class="card-content flex-1">
-                    <div class="flex items-center gap-3 mb-2">
-                        <span class="mono">${safeRef}</span>
-                        ${window.currentView !== 'mini' ? `<span class="badge uppercase">${safeType}</span>` : ''}
+                <div class="${isMini ? 'p-2' : 'p-3'} mt-auto border-t border-[var(--border)] bg-[var(--card-hover)] flex ${(isCompact || isMini) ? 'flex-col justify-center items-center text-center gap-1' : 'justify-between items-end gap-2'} shrink-0">
+                    ${!(isCompact || isMini) ? `
+                    <div class="flex-1 min-w-0 flex items-center">
+                        ${conditHtml}
                     </div>
-                    <div class="text-[8px] font-black text-indigo-500/40 uppercase tracking-[0.2em] mb-2">${safeFour}</div>
-                    <h3>${safeDes}</h3>
-                    ${conditHtml}
-                    <div class="price-window.grid mt-auto">
-                        <div class="flex flex-col"><span class="price-label">Catalogue</span><span class="price-value">${pxP}€</span></div>
-                        <div class="flex flex-col items-end"><span class="price-label text-emerald-500 font-black">Net HT</span><span class="price-remise">${pxR}€</span></div>
+                    ` : ''}
+                    <div class="${(isCompact || isMini) ? 'flex items-end gap-4 justify-center' : 'text-right shrink-0'}">
+                        ${!isMini ? `<div class="flex flex-col"><span class="price-label">Catalogue</span><span class="price-value text-[10px] line-through mb-0.5">${pxP}€</span></div>` : ''}
+                        <div class="flex flex-col"><span class="price-label text-emerald-500 font-black">Net HT</span><span class="price-remise ${isMini ? 'text-sm' : 'text-[1.1rem]'} leading-none">${pxR}€</span></div>
                     </div>
+                    ${(isCompact || isMini) && multiplier > 1 ? `
+                    <div class="flex items-center justify-center gap-1.5 text-[9px] font-black text-indigo-500 uppercase tracking-widest whitespace-nowrap bg-indigo-500/10 px-2 py-1 rounded-md mt-0.5 w-full">
+                        <i data-lucide="package" class="w-3 h-3 text-indigo-500"></i>
+                        <span>${conditVal} ${safeUnit}</span>
+                    </div>
+                    ` : ''}
                 </div>`;
         }
         window.grid.appendChild(card);

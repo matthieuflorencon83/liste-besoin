@@ -555,7 +555,7 @@ function openExportModalV2() {
         }
 
         // Add to Calpinage list if it has cuts or is a profile
-        if (window.getIsProfil(item)) {
+        if (window.getIsProfil && window.getIsProfil(item)) {
             calpinageItems.push({ ...item, toOrder });
         }
     });
@@ -917,17 +917,19 @@ window.getPuPiece = function (item) {
         }
     }
 
-    const conditVal = parseFloat(item.longueur) || parseFloat(item.conditionnement) || 1;
-    const u = String(item.unit_condit || item.unit_vente || '').toUpperCase();
-    const mult = (u === 'M' || u === 'ML' || u === 'PC') ? conditVal : 1;
+    const mult = window.getMult(item);
     const px_base = parseFloat(item.px_remise) || parseFloat(item.px_public) || 0;
     return px_base * mult;
 };
 
 window.getMult = function (item) {
     const conditVal = parseFloat(item.longueur) || parseFloat(item.conditionnement) || 1;
-    const u = String(item.unit_condit || item.unit_vente || '').toUpperCase();
-    return (u === 'M' || u === 'ML' || u === 'PC') ? conditVal : 1;
+    // Analyse l'unité prix en testant tous les champs possibles
+    const u = String(item.unite___prix || item.unite_qte || item.unit_condit || item.unit_vente || '').toUpperCase();
+
+    // Directive utilisateur : "ca doit etre le prix remisé x par le conditionnement"
+    // Par exemple, même si l'unité est "BARRE", "UN" ou "M", appliquer le conditionnement comme multiplicateur
+    return conditVal;
 };
 
 window.renderNeeds = function () {
@@ -1149,7 +1151,7 @@ window.renderNeeds = function () {
                 ${(() => {
                 const toOrder = Math.max(0, (parseFloat(item.need) || 0) - (parseFloat(item.stock) || 0));
                 const prixU = window.getPuPiece(item);
-                const isPriceEstimated = window.isEstimatedPrice(item);
+                const isPriceEstimated = window.isEstimatedPrice ? window.isEstimatedPrice(item) : false;
                 const totalHT = toOrder * prixU;
                 const star = isPriceEstimated ? '*' : '';
 
@@ -1202,7 +1204,7 @@ window.renderNeeds = function () {
         </tr>
 
         <!-- EXPANSION ROW FOR CALPINAGE -->
-        <tr id="calpRow_${realIndex}" class="${(window.activeCalpinageId === String(item.id) || (window.isCalpinageMode && window.getIsProfil(item))) ? '' : 'hidden'} bg-[var(--card-hover)] border-b border-[var(--border)]">
+        <tr id="calpRow_${realIndex}" class="${(window.activeCalpinageId === String(item.id) || (window.isCalpinageMode && window.getIsProfil && window.getIsProfil(item))) ? '' : 'hidden'} bg-[var(--card-hover)] border-b border-[var(--border)]">
             <td colspan="12" class="p-0">
                 <div id="calpContainer_${realIndex}" class="p-4 border-l-2 border-orange-500"></div>
             </td>

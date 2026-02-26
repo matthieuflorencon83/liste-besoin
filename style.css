@@ -112,10 +112,12 @@ input:focus {
 
 .view-grid {
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 24px;
 }
 
 .view-compact {
     grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 20px;
 }
 
 .view-mini {
@@ -125,6 +127,7 @@ input:focus {
 
 .view-list {
     grid-template-columns: 1fr;
+    gap: 8px;
 }
 
 .table-input {
@@ -191,24 +194,24 @@ input:focus {
 .item-card {
     background: var(--card);
     border: 1px solid var(--border);
-    border-radius: 24px;
+    border-radius: 16px;
     display: flex;
     flex-direction: column;
-    transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+    transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
     position: relative;
-    overflow: hidden;
     padding: 0;
-    min-height: 440px;
     box-shadow: var(--shadow);
+    min-height: 340px;
+    overflow: hidden;
 }
 
 .view-compact .item-card {
-    min-height: 300px;
+    min-height: 240px;
 }
 
 .view-mini .item-card {
-    min-height: 200px;
-    border-radius: 18px;
+    border-radius: 12px;
+    min-height: 220px;
 }
 
 .item-card:hover {
@@ -218,93 +221,10 @@ input:focus {
     box-shadow: 0 40px 80px -20px rgba(0, 0, 0, 0.9);
 }
 
-/* LIST VIEW SPECIFIC */
-.view-list .item-card {
-    min-height: 75px;
-    flex-direction: row !important;
-    align-items: center;
-    padding: 0.5rem 1rem;
-    margin-bottom: 0.5rem;
-    border-radius: 12px;
-    gap: 1.5rem;
-}
-
-.view-list .img-container {
-    width: 70px;
-    height: 50px;
-    min-height: 50px;
-    flex: none;
-    padding: 0;
-    background: rgba(255, 255, 255, 0.02);
-    border-radius: 6px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.view-list .card-content {
-    flex-direction: row;
-    align-items: center;
-    padding: 0;
-    gap: 1rem;
-    width: 100%;
-    overflow: hidden;
-}
-
-.view-list .mono {
-    width: 45px;
-    flex: none;
-    margin-bottom: 0 !important;
-}
-
-.view-list .badge {
-    width: 80px;
-    flex: none;
-    text-align: center;
-}
-
-.view-list [class*="text-indigo-500/40"] {
-    width: 140px;
-    flex: none;
-    margin-bottom: 0 !important;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.view-list h3 {
-    font-size: 0.8rem;
-    flex: 1;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    margin-bottom: 0 !important;
-}
-
-.view-list .price-grid {
-    margin-top: 0;
-    margin-left: auto;
-    border-top: 0;
-    padding-top: 0;
-    display: flex;
-    gap: 1.5rem;
-    align-items: center;
-    min-width: fit-content;
-}
-
-.view-list .absolute.top-4.right-4 {
-    position: relative;
-    top: auto;
-    right: auto;
-    flex-direction: row !important;
-    gap: 0.5rem;
-    z-index: 50;
-}
-
 /* IMMERSIVE IMAGE CONCEPT */
 .img-container {
     flex: none;
-    height: 200px;
+    height: 160px;
     background: transparent;
     display: flex;
     align-items: center;
@@ -312,22 +232,17 @@ input:focus {
     overflow: hidden;
     position: relative;
     transition: 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
-    padding: 1.5rem;
+    padding: 1rem;
 }
 
 .view-compact .img-container {
-    height: 140px;
-    padding: 1rem;
+    height: 100px;
+    padding: 0.5rem;
 }
 
 .view-mini .img-container {
     height: 80px;
-    padding: 0.5rem 0.5rem;
-}
-
-.view-mini .img-container {
-    height: 60px;
-    padding: 0.25rem;
+    padding: 0.25rem 0.5rem;
 }
 
 .img-container img {
@@ -362,6 +277,78 @@ input:focus {
     color: #ff3b30;
     letter-spacing: 0.1em;
     text-transform: uppercase;
+}
+
+/* LIST VIEW SPECIFIC */
+.view-list .item-card {
+    min-height: 0;
+    height: 64px;
+    flex-direction: row !important;
+    align-items: stretch;
+    padding: 0;
+    margin-bottom: 0.5rem;
+    border-radius: 8px;
+    gap: 0;
+}
+
+.view-list .img-container {
+    width: 64px;
+    height: auto;
+    min-height: 100%;
+    flex: none;
+    padding: 0.25rem;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 8px 0 0 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.view-list .img-container img {
+    max-height: 80%;
+    max-width: 80%;
+}
+
+.view-list .card-content {
+    padding: 0.5rem 1rem;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    flex: 1;
+    gap: 0.5rem;
+}
+
+.view-list h3 {
+    font-size: 0.85rem;
+    margin-bottom: 0;
+}
+
+.view-list .price-grid {
+    margin-top: 0;
+    padding-top: 0;
+    border-top: none;
+    gap: 0.5rem;
+    grid-template-columns: auto auto;
+    align-items: center;
+}
+
+.view-list .price-label {
+    display: none;
+}
+
+.view-list .price-value {
+    font-size: 0.8rem;
+}
+
+.view-list .price-remise {
+    font-size: 1rem;
+}
+
+.view-list .action-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    flex-shrink: 0;
 }
 
 h3 {
