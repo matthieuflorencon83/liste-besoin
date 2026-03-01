@@ -132,27 +132,37 @@ class MyHandler(http.server.SimpleHTTPRequestHandler):
             }
 
             # Save json temp file
-            temp_json = os.path.join(BASE_DIR, "temp_new_article.json")
+            import uuid
+            temp_id = str(uuid.uuid4())
+            temp_json = os.path.join(BASE_DIR, f"temp_new_article_{temp_id}.json")
             with open(temp_json, "w", encoding='utf-8') as f:
                 json.dump(new_article, f, indent=4)
 
-            # Call Python Script to Add to Excel
-            # Using same python interpreter
-            print("Calling add_article_to_excel.py...")
-            subprocess.run([sys.executable, os.path.join(BASE_DIR, "scripts", "add_article_to_excel.py"), temp_json], check=True)
+            # Call Python Script to Add to Excel in background thread
+            import threading
+            def process_article(t_json):
+                try:
+                    print("Calling add_article_to_excel.py...")
+                    subprocess.run([sys.executable, os.path.join(BASE_DIR, "scripts", "add_article_to_excel.py"), t_json], check=True)
+                except Exception as ex:
+                    print(f"Error in add_article_to_excel background task: {ex}")
+                finally:
+                    # Remove temp file
+                    if os.path.exists(t_json):
+                        os.remove(t_json)
+                    try:
+                        # Regenerate data.js
+                        print("Regenerating data.js...")
+                        subprocess.run([sys.executable, os.path.join(BASE_DIR, "extract_data.py")], check=True)
+                    except Exception as ex:
+                        print(f"Error regenerating data: {ex}")
 
-            # Remove temp file
-            if os.path.exists(temp_json):
-                os.remove(temp_json)
+            threading.Thread(target=process_article, args=(temp_json,)).start()
 
-            # Regenerate data.js
-            print("Regenerating data.js...")
-            subprocess.run([sys.executable, os.path.join(BASE_DIR, "extract_data.py")], check=True)
-
-            self.send_response(200)
+            self.send_response(202)
             self.send_header('Content-type', 'application/json')
             self.end_headers()
-            self.wfile.write(json.dumps({'status': 'success', 'message': 'Article ajouté et base mise à jour.'}).encode('utf-8'))
+            self.wfile.write(json.dumps({'status': 'success', 'message': 'Article ajouté en file d\'attente. La base sera mise à jour dans quelques secondes.'}).encode('utf-8'))
 
         except Exception as e:
             print(f"Error: {e}")

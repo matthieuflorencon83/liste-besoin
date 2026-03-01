@@ -287,6 +287,8 @@ function render(append = false) {
     if (!append && !items.length) { document.getElementById('emptyState').classList.remove('hidden'); return; }
     if (!append) document.getElementById('emptyState').classList.add('hidden');
 
+    const fragment = document.createDocumentFragment();
+
     items.forEach((it, loopIdx) => {
         const idx = startIndex + loopIdx; // L'index VRAI dans filteredData
         const id = `${it.reference}_${it.fournisseur || it.fabricant || ''}`.toLowerCase();
@@ -322,7 +324,7 @@ function render(append = false) {
             </div>` : '';
 
         const img = it.image ?
-            `<div class="img-container" onclick="openVisualizer('${safeImage}')"><img src="${safeImage}" alt="${safeDesAttr}" onerror="this.style.display='none'"></div>` :
+            `<div class="img-container" onclick="openVisualizer('${safeImage}')"><img src="${safeImage}" alt="${safeDesAttr}" loading="lazy" onerror="this.style.display='none'"></div>` :
             `<div class="img-container opacity-5"><i data-lucide="image" class="w-6 h-6"></i></div>`;
 
         if (window.currentView === 'list') {
@@ -393,8 +395,11 @@ function render(append = false) {
                     ` : ''}
                 </div>`;
         }
-        window.grid.appendChild(card);
+        fragment.appendChild(card);
     });
+
+    window.grid.appendChild(fragment);
+
     window._renderedCount = Math.min(window.displayCount, window.filteredData.length);
     if (typeof lucide !== 'undefined') lucide.createIcons();
     document.getElementById('loadMoreContainer').classList.toggle('hidden', window.displayCount >= window.filteredData.length);
