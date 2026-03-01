@@ -166,6 +166,7 @@ class MyHandler(http.server.SimpleHTTPRequestHandler):
 if not os.path.exists(os.path.join(BASE_DIR, "scripts")):
     os.makedirs(os.path.join(BASE_DIR, "scripts"))
 
+socketserver.TCPServer.allow_reuse_address = True
 with socketserver.TCPServer(("", PORT), MyHandler) as httpd:
     print(f"Serveur Python actif sur le port {PORT}")
     print("Vous pouvez utiliser l'application.")

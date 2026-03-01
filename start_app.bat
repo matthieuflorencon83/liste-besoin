@@ -4,7 +4,7 @@ echo       Lancement de Arts Alu Zen...
 echo ==============================================
 echo.
 echo Fermeture de l'ancien serveur si existant...
-powershell -Command "Get-CimInstance Win32_Process | Where-Object {$_.CommandLine -like '*python*server.py*'} | ForEach-Object { Invoke-CimMethod -InputObject $_ -MethodName Terminate }"
+FOR /F "tokens=5" %%a IN ('netstat -a -n -o ^| findstr :8000') DO taskkill /PID %%a /F >nul 2>&1
 timeout /t 1 /nobreak >nul
 
 echo.
