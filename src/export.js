@@ -226,3 +226,272 @@ window.exportPDF = async function () {
     doc.save(filename);
     if (window.showToast) window.showToast(`✅ PDF généré : ${filename}`, 'indigo');
 };
+
+/* --- EXPORT / ORDER FORM SYSTEM V2 --- */
+// (Keep the existing V2 export functions)
+
+window.openExportModalV2 = function () {
+
+    const modal = document.getElementById('exportModal');
+    const tabsContainer = document.getElementById('exportTabs');
+    const chantier = document.getElementById('chantierRef').value || "Chantier Inconnu";
+
+    // 1. Group by Supplier (Standard BDC)
+    const groups = {};
+    const allItems = [];
+    const calpinageItems = [];
+
+    window.needs.forEach(item => {
+        const needVal = parseFloat(item.need) || 0;
+        const stockVal = parseFloat(item.stock) || 0;
+        const toOrder = Math.max(0, needVal - stockVal);
+
+        // Add to All Items list
+        allItems.push({ ...item, toOrder });
+
+        // Add to Supplier Groups if toOrder > 0
+        if (toOrder > 0) {
+            const supplier = item.fournisseur || "Autres";
+            if (!groups[supplier]) groups[supplier] = [];
+            groups[supplier].push({ ...item, toOrder });
+        }
+
+        // Add to Calpinage list if it has cuts or is a profile
+        if (window.getIsProfil && window.getIsProfil(item)) {
+            calpinageItems.push({ ...item, toOrder });
+        }
+    });
+
+    // Generate Tabs
+    tabsContainer.innerHTML = '';
+
+    // Helper to create tab
+    const createTab = (id, label, data, type = 'bdc') => {
+        const btn = document.createElement('div');
+        btn.className = `export-tab`;
+        btn.textContent = label;
+        btn.onclick = () => {
+            document.querySelectorAll('.export-tab').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            window.renderBDCV2(id, data, chantier, type);
+        };
+        return btn;
+    };
+
+    // A. Special Tabs
+    if (allItems.length > 0) {
+        const tabAll = createTab('ALL', `TOUT LE CHANTIER (${allItems.length})`, allItems, 'list');
+        tabsContainer.appendChild(tabAll);
+    }
+
+    if (calpinageItems.length > 0) {
+        const tabCalp = createTab('CALP', `DÉTAIL CALPINAGE (${calpinageItems.length})`, calpinageItems, 'calpinage');
+        tabsContainer.appendChild(tabCalp);
+    }
+
+    // Separator
+    if (Object.keys(groups).length > 0) {
+        const sep = document.createElement('div');
+        sep.className = 'my-2 border-t border-zinc-200';
+        tabsContainer.appendChild(sep);
+        const title = document.createElement('div');
+        title.className = 'px-4 py-1 text-[10px] font-bold text-zinc-400 uppercase tracking-wider';
+        title.textContent = 'Par Fournisseur (Besoin > Stock)';
+        tabsContainer.appendChild(title);
+    }
+
+    // B. Supplier Tabs
+    const suppliers = Object.keys(groups).sort();
+    suppliers.forEach(supplier => {
+        const tab = createTab(supplier, `${supplier} (${groups[supplier].length})`, groups[supplier], 'bdc');
+        tabsContainer.appendChild(tab);
+    });
+
+    // Default Selection
+    const firstTab = tabsContainer.querySelector('.export-tab');
+    if (firstTab) firstTab.click();
+
+    // Show Modal
+    modal.classList.remove('hidden');
+};
+
+window.renderBDCV2 = function (title, items, chantier, type) {
+    const container = document.getElementById('exportPreview');
+    const date = new Date().toLocaleDateString('fr-FR');
+
+    let contentHtml = '';
+
+    if (type === 'calpinage') {
+        const calpRows = items.map(item => {
+            let cutsHtml = '';
+
+            let extractedCuts = [];
+            let wasteText = '';
+
+            if (item.calpinageData && item.calpinageData.cuts) {
+                item.calpinageData.cuts.forEach(c => {
+                    for (let i = 0; i < c.quantity; i++) {
+                        extractedCuts.push(Math.round(c.length * 1000));
+                    }
+                });
+
+                if (item.calpinageData.lastSolution && item.calpinageData.lastSolution.length > 0) {
+                    let chutes = [];
+                    item.calpinageData.lastSolution.forEach(bar => {
+                        const total = bar.stockVariant.length;
+                        const waste = total - (bar.usedLength - 0.004);
+                        if (waste > 0) chutes.push(Math.round(waste * 1000));
+                    });
+                    if (chutes.length > 0) {
+                        wasteText = `<div style="margin-top: 2px; font-size: 10px; color: #d66;">Chutes: ${chutes.join('mm, ')}mm</div>`;
+                    }
+                }
+            } else if (item.cuts && item.cuts.length > 0) {
+                extractedCuts = item.cuts.filter(c => c > 0).map(c => c > 10 ? c : Math.round(c * 1000));
+            }
+
+            if (extractedCuts.length > 0) {
+                cutsHtml = `
+                    <div style="display: flex; flex-wrap: wrap; gap: 5px; margin-top: 5px;">
+                        ${extractedCuts.map(c => `
+                            <span style="padding: 2px 6px; background: #eee; border: 1px solid #ddd; border-radius: 4px; font-size: 10px;">
+                                ${c} mm
+                            </span>
+                        `).join('')}
+                    </div>
+                    ${wasteText}
+                `;
+            } else {
+                cutsHtml = `<span style="color: #999; font-style: italic; font-size: 10px;">Pas de coupe définie</span>`;
+            }
+
+            return `
+            <tr style="page-break-inside: avoid;">
+                <td style="padding-right: 15px;">
+                    <div style="font-weight: bold;">${item.reference}</div>
+                    <div style="font-size: 10px; color: #666;">${item.fournisseur}</div>
+                </td>
+                <td style="padding-right: 15px;">
+                    <div>${item.designation}</div>
+                    <div style="font-size: 10px; color: #666;">${item.ral || '-'}</div>
+                </td>
+                <td style="text-align: center;">${item.longueur || '-'}</td>
+                <td style="text-align: center; font-weight: bold;">${item.need}</td>
+                <td>${cutsHtml}</td>
+            </tr>`;
+        }).join('');
+
+        contentHtml = `
+            <table class="bdc-table">
+                <thead>
+                    <tr>
+                        <th style="width: 18%;">REF/FRN</th>
+                        <th style="width: 35%;">DÉSIGNATION/RAL</th>
+                        <th style="width: 8%; text-align: center;">LONG.</th>
+                        <th style="width: 8%; text-align: center;">BESOIN</th>
+                        <th>DÉTAIL DÉBITS (Coupes)</th>
+                    </tr>
+                </thead>
+                <tbody>${calpRows}</tbody>
+            </table>
+        `;
+    } else {
+        // Standard BDC or Full List
+        const isBdc = type === 'bdc';
+        let totalGlobalHT = 0;
+
+        const rows = items.map(item => {
+            const puPiece = window.getPuPiece(item);
+            const qty = isBdc ? item.toOrder : item.need;
+            const totalHT = qty * puPiece;
+            totalGlobalHT += totalHT;
+
+            return `
+            <tr>
+                <td>${item.reference}</td>
+                <td>${item.designation}</td>
+                <td style="text-align: center;">${item.ral || '-'}</td>
+                <td style="text-align: center;">${item.longueur || '-'} ${item.unit_condit || ''}</td>
+                ${!isBdc ? `<td style="text-align: center;">${item.need}</td>` : ''}
+                ${!isBdc ? `<td style="text-align: center;">${item.stock}</td>` : ''}
+                <td style="text-align: center; font-weight: bold; color: ${item.toOrder > 0 ? '#000' : '#ccc'};">
+                    ${item.toOrder}
+                </td>
+                <td style="text-align: right;">${puPiece.toFixed(2)} €</td>
+                <td style="text-align: right; font-weight: bold;">${totalHT.toFixed(2)} €</td>
+            </tr>
+            `;
+        }).join('');
+
+        contentHtml = `
+            <table class="bdc-table">
+                <thead>
+                    <tr>
+                        <th style="width: 18%;">RÉFÉRENCE</th>
+                        <th style="width: ${isBdc ? '32%' : '26%'};">DÉSIGNATION</th>
+                        <th style="width: 8%; text-align: center;">RAL</th>
+                        <th style="width: 10%; text-align: center;">CONDIT.</th>
+                        ${!isBdc ? `<th style="width: 7%; text-align: center;">BESOIN</th>` : ''}
+                        ${!isBdc ? `<th style="width: 7%; text-align: center;">STOCK</th>` : ''}
+                        <th style="width: 8%; text-align: center;">${isBdc ? 'QUANTITÉ' : 'CDE'}</th>
+                        <th style="width: 10%; text-align: right;">PU HT</th>
+                        <th style="width: 12%; text-align: right;">TOTAL HT</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${rows}
+                    <tr>
+                        <td colspan="${!isBdc ? 8 : 6}" style="text-align: right; font-weight: 900; padding-top: 15px; border-top: 2px solid #000;">TOTAL GÉNÉRAL HT</td>
+                        <td style="text-align: right; font-weight: 900; font-size: 16px; padding-top: 15px; border-top: 2px solid #000; color: #166534;">${totalGlobalHT.toFixed(2)} €</td>
+                    </tr>
+                </tbody>
+            </table>
+        `;
+    }
+
+    container.innerHTML = `
+        <div class="bdc-header" style="display: flex; justify-content: space-between; margin-bottom: 20px;">
+            <div>
+                <h1 style="font-size: 28px; font-weight: 900; margin-bottom: 8px; color: #1e1b4b; letter-spacing: -0.5px;">ARTS ALU</h1>
+                <div style="font-size: 10px; color: #4b5563; line-height: 1.5;">
+                    <p style="font-weight: bold; color: #1f2937;">Menuiserie Aluminium & PVC • Stores & Volets • Abris de Piscines</p>
+                    <p>Les Quatre Chemins - R.N.7, 83460 LES ARCS S/ARGENS</p>
+                    <p>Tél. 04 94 73 67 04 • Port : 06 61 63 33 67 / 06 11 35 75 09</p>
+                    <p>E-Mail: contact@artsalu.fr</p>
+                    <p style="font-size: 8px; margin-top: 6px; color: #9ca3af;">Arts Alu - Eurl au capital de 8000 € • Siret 48065874900027 • TVA Intracom FR61480658749</p>
+                </div>
+            </div>
+            <div style="text-align: right; display: flex; flex-col; align-items: flex-end;">
+                <div style="background: #f3f4f6; padding: 10px 15px; border-radius: 6px; border: 1px solid #e5e7eb; display: inline-block;">
+                    <p style="font-size: 14px; font-weight: 900; color: #111827; text-transform: uppercase;">CHANTIER : ${chantier}</p>
+                    <p style="font-size: 11px; color: #6b7280; margin-top: 4px;">Date : ${date}</p>
+                </div>
+                <div style="margin-top: 15px; float: right;">
+                    <p style="font-size: 14px; font-weight: 900; color: #4338ca; text-transform: uppercase; letter-spacing: 1px;">
+                        ${type === 'calpinage' ? 'DÉTAIL CALPINAGE' : (type === 'list' ? 'LISTE COMPLÈTE' : 'BON DE COMMANDE')}
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div style="margin-bottom: 30px; background: #f9f9f9; padding: 15px; border-radius: 8px;">
+            <p style="font-size: 10px; text-transform: uppercase; font-weight: bold; color: #999;">${type === 'bdc' ? 'FOURNISSEUR' : 'DOCUMENT'}</p>
+            <h2 style="font-size: 18px; font-weight: 800;">${type === 'bdc' ? title : (title === 'ALL' ? 'Tout le Chantier' : 'Feuille de Débits ')}</h2>
+        </div>
+
+        ${contentHtml}
+
+        <div style="margin-top: 50px; display: flex; justify-content: space-between; page-break-inside: avoid;">
+            <div style="width: 40%; border-top: 1px solid #ccc; padding-top: 10px;">
+                <p style="font-size: 10px; font-weight: bold;">Date et Signature ${type === 'bdc' ? 'Commandeur' : 'Chef Atelier'} :</p>
+            </div>
+            ${type === 'bdc' ? `
+            <div style="width: 40%; border-top: 1px solid #ccc; padding-top: 10px; text-align: right;">
+                <p style="font-size: 10px; font-weight: bold;">Bon pour accord :</p>
+            </div>` : ''}
+        </div>
+    `;
+};
+
+// Map the new function to the export action
+window.exportToCSV = window.openExportModalV2;
