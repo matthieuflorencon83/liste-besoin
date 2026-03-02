@@ -17,10 +17,10 @@ window.openManualAddModal = () => {
 
     // Populate Datalists with unique values
     try {
-        const allSuppliers = window.ART_DATA.map(i => i.fournisseur).filter(x => x && x.trim() !== '');
+        const allSuppliers = AppState.catalogData.map(i => i.fournisseur).filter(x => x && x.trim() !== '');
         const uniqueSuppliers = [...new Set(allSuppliers)].sort();
 
-        const allFamilies = window.ART_DATA.map(i => i.famille).filter(x => x && x.trim() !== '');
+        const allFamilies = AppState.catalogData.map(i => i.famille).filter(x => x && x.trim() !== '');
         const uniqueFamilies = [...new Set(allFamilies)].sort();
 
         const supList = document.getElementById('suppliersList');
@@ -107,7 +107,7 @@ window.submitManualArticle = async () => {
 // SPRINT 3 — FICHE ARTICLE RAPIDE
 // ============================================================
 window.showArticleCard = function (realIndex) {
-    const item = window.needs[realIndex];
+    const item = AppState.needs[realIndex];
     if (!item) return;
 
     const modal = document.getElementById('articleCardModal');
@@ -183,7 +183,7 @@ window.openBudgetChart = function () {
     // Regrouper par fournisseur
     const budgets = {};
     let totalGeneral = 0;
-    window.needs.forEach(item => {
+    AppState.needs.forEach(item => {
         const cde = Math.max(0, (parseFloat(item.need) || 0) - (parseFloat(item.stock) || 0));
         const total = cde * (parseFloat(item.px_public) || 0);
         if (total > 0) {

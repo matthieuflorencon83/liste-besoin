@@ -6,7 +6,7 @@
 // ============================================================
 window.exportExcel = function () {
     if (!window.XLSX) { alert('SheetJS non disponible — vérifiez votre connexion.'); return; }
-    if (!window.needs || window.needs.length === 0) { alert('Aucun article dans la liste des besoins.'); return; }
+    if (!AppState.needs || AppState.needs.length === 0) { alert('Aucun article dans la liste des besoins.'); return; }
 
     const chantier = document.getElementById('chantierRef')?.value || 'Chantier';
     const now = new Date();
@@ -14,7 +14,7 @@ window.exportExcel = function () {
 
     // --- Build rows ---
     const headers = ['#', 'Fournisseur', 'Référence', 'Désignation', 'RAL / Finition', 'Conditionnement', 'PU Pièce HT (€)', 'Besoin', 'Stock', 'À commander', 'Total HT (€)', 'Note'];
-    const rows = window.needs.map((item, i) => {
+    const rows = AppState.needs.map((item, i) => {
         const need = parseFloat(item.need) || 0;
         const stock = parseFloat(item.stock) || 0;
         const toOrder = Math.max(0, need - stock);
@@ -40,10 +40,10 @@ window.exportExcel = function () {
     });
 
     // Totals row
-    const totalNeed = window.needs.reduce((s, i) => s + (parseFloat(i.need) || 0), 0);
-    const totalStock = window.needs.reduce((s, i) => s + (parseFloat(i.stock) || 0), 0);
-    const totalCmd = window.needs.reduce((s, i) => s + Math.max(0, (parseFloat(i.need) || 0) - (parseFloat(i.stock) || 0)), 0);
-    const totalHT = window.needs.reduce((s, i) => {
+    const totalNeed = AppState.needs.reduce((s, i) => s + (parseFloat(i.need) || 0), 0);
+    const totalStock = AppState.needs.reduce((s, i) => s + (parseFloat(i.stock) || 0), 0);
+    const totalCmd = AppState.needs.reduce((s, i) => s + Math.max(0, (parseFloat(i.need) || 0) - (parseFloat(i.stock) || 0)), 0);
+    const totalHT = AppState.needs.reduce((s, i) => {
         const toOrder = Math.max(0, (parseFloat(i.need) || 0) - (parseFloat(i.stock) || 0));
         return s + toOrder * window.getPuPiece(i);
     }, 0);
@@ -80,7 +80,7 @@ window.exportPDF = async function () {
         alert('jsPDF non disponible — vérifiez votre connexion.');
         return;
     }
-    if (!window.needs || window.needs.length === 0) {
+    if (!AppState.needs || AppState.needs.length === 0) {
         alert('Aucun article dans la liste des besoins.');
         return;
     }
@@ -95,7 +95,7 @@ window.exportPDF = async function () {
 
     // Grouper par fournisseur (uniquement articles à commander)
     const groups = {};
-    window.needs.forEach(item => {
+    AppState.needs.forEach(item => {
         const need = parseFloat(item.need) || 0;
         const stock = parseFloat(item.stock) || 0;
         const toOrder = Math.max(0, need - stock);
@@ -241,7 +241,7 @@ window.openExportModalV2 = function () {
     const allItems = [];
     const calpinageItems = [];
 
-    window.needs.forEach(item => {
+    AppState.needs.forEach(item => {
         const needVal = parseFloat(item.need) || 0;
         const stockVal = parseFloat(item.stock) || 0;
         const toOrder = Math.max(0, needVal - stockVal);

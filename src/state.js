@@ -1,13 +1,13 @@
 window.INCREMENT = 52;
 window.groupedData = [];
-window.filteredData = [];
+AppState.filteredData = [];
 window.displayCount = window.INCREMENT;
-window.favorites = [];
-window.needs = [];
-window.isRalSelectionMode = false;
-window.selectedNeeds = new Set();
-try { window.favorites = JSON.parse(localStorage.getItem('art-favs') || '[]'); if (!Array.isArray(window.favorites)) window.favorites = []; } catch (e) { window.favorites = []; }
-try { window.needs = JSON.parse(localStorage.getItem('art-needs') || '[]'); if (!Array.isArray(window.needs)) window.needs = []; } catch (e) { window.needs = []; }
+AppState.favorites = [];
+AppState.needs = [];
+AppState.isRalSelectionMode = false;
+AppState.selectedNeeds = new Set();
+try { AppState.favorites = JSON.parse(localStorage.getItem('art-favs') || '[]'); if (!Array.isArray(AppState.favorites)) AppState.favorites = []; } catch (e) { AppState.favorites = []; }
+try { AppState.needs = JSON.parse(localStorage.getItem('art-needs') || '[]'); if (!Array.isArray(AppState.needs)) AppState.needs = []; } catch (e) { AppState.needs = []; }
 window.isDarkMode = localStorage.getItem('theme') !== 'light';
 window.showOnlyFavs = false;
 window.currentView = 'compact';
@@ -115,13 +115,13 @@ window.loadProject = (input) => {
             const data = JSON.parse(e.target.result);
 
             if (data.needs && Array.isArray(data.needs)) {
-                window.needs = data.needs;
-                localStorage.setItem('art-needs', JSON.stringify(window.needs));
+                AppState.needs = data.needs;
+                localStorage.setItem('art-needs', JSON.stringify(AppState.needs));
             }
 
             if (data.favorites && Array.isArray(data.favorites)) {
-                window.favorites = data.favorites;
-                localStorage.setItem('art-favs', JSON.stringify(window.favorites));
+                AppState.favorites = data.favorites;
+                localStorage.setItem('art-favs', JSON.stringify(AppState.favorites));
             }
 
             if (data.chantier) {
@@ -148,8 +148,8 @@ window.init = async function () {
         if (typeof lucide !== 'undefined') lucide.createIcons();
 
         // init est mtn appelé par main.js dès que le 1er chunk (Arcelor) est dispo.
-        if (!window.ART_DATA) window.ART_DATA = [];
-        window.groupedData = processData(window.ART_DATA);
+        if (!AppState.catalogData) AppState.catalogData = [];
+        window.groupedData = processData(AppState.catalogData);
 
         // Initial filter options setup
         updateFilterOptions();
@@ -170,14 +170,14 @@ window.init = async function () {
 
 // SPRINT 10 - Ajout progressif des données JSON
 window.appendCatalogData = function (newItems, isLastBatch = false) {
-    if (!window.ART_DATA) window.ART_DATA = [];
+    if (!AppState.catalogData) AppState.catalogData = [];
 
     // Check what is currently visible
-    const getVisibleIds = () => window.filteredData.slice(0, window.displayCount).map(it => `${it.reference}_${it.fournisseur || ''}`);
-    const currentVisibles = window.filteredData ? getVisibleIds() : [];
+    const getVisibleIds = () => AppState.filteredData.slice(0, window.displayCount).map(it => `${it.reference}_${it.fournisseur || ''}`);
+    const currentVisibles = AppState.filteredData ? getVisibleIds() : [];
 
-    window.ART_DATA = window.ART_DATA.concat(newItems);
-    window.groupedData = processData(window.ART_DATA);
+    AppState.catalogData = AppState.catalogData.concat(newItems);
+    window.groupedData = processData(AppState.catalogData);
 
     // Mettre à jour silencieusement les options des filtres
     updateFilterOptions();
@@ -185,14 +185,14 @@ window.appendCatalogData = function (newItems, isLastBatch = false) {
     const q = window.searchInput.value.toLowerCase().trim();
     const four = window.fFour.value, type = window.fType.value, serie = window.fSerie.value;
 
-    window.filteredData = window.groupedData.filter(item => {
+    AppState.filteredData = window.groupedData.filter(item => {
         const id = `${item.reference}_${item.fournisseur || item.fabricant || ''}`.toLowerCase();
-        if (window.showOnlyFavs && !window.favorites.includes(id)) return false;
+        if (window.showOnlyFavs && !AppState.favorites.includes(id)) return false;
         const matchSearch = !q || String(item.reference).toLowerCase().includes(q) || String(item.designation).toLowerCase().includes(q);
         return matchSearch && (!four || item.fournisseur === four) && (!type || item.type === type) && (!serie || item.serie === serie);
     });
 
-    document.getElementById('matchCount').textContent = window.filteredData.length;
+    document.getElementById('matchCount').textContent = AppState.filteredData.length;
 
     const newVisibles = getVisibleIds();
 
@@ -207,10 +207,10 @@ window.appendCatalogData = function (newItems, isLastBatch = false) {
         render(); // Ne refait le rendu que si les élèments visibles ont changé
     }
 
-    document.getElementById('loadMoreContainer').classList.toggle('hidden', window.displayCount >= window.filteredData.length);
+    document.getElementById('loadMoreContainer').classList.toggle('hidden', window.displayCount >= AppState.filteredData.length);
 
     if (isLastBatch) {
-        console.log("Catalogue complet chargé : " + window.ART_DATA.length + " articles");
+        console.log("Catalogue complet chargé : " + AppState.catalogData.length + " articles");
     }
 }
 
@@ -255,15 +255,15 @@ function applyFilters(sourceElement) {
     const q = window.searchInput.value.toLowerCase().trim();
     const four = window.fFour.value, type = window.fType.value, serie = window.fSerie.value;
 
-    window.filteredData = window.groupedData.filter(item => {
+    AppState.filteredData = window.groupedData.filter(item => {
         const id = `${item.reference}_${item.fournisseur || item.fabricant || ''}`.toLowerCase();
-        if (window.showOnlyFavs && !window.favorites.includes(id)) return false;
+        if (window.showOnlyFavs && !AppState.favorites.includes(id)) return false;
         const matchSearch = !q || String(item.reference).toLowerCase().includes(q) || String(item.designation).toLowerCase().includes(q);
         return matchSearch && (!four || item.fournisseur === four) && (!type || item.type === type) && (!serie || item.serie === serie);
     });
 
 
-    document.getElementById('matchCount').textContent = window.filteredData.length;
+    document.getElementById('matchCount').textContent = AppState.filteredData.length;
     window.displayCount = window.INCREMENT;
     render();
 }
@@ -282,7 +282,7 @@ function render(append = false) {
         window._renderedCount = 0;
     }
     const startIndex = window._renderedCount || 0;
-    const items = window.filteredData.slice(startIndex, window.displayCount);
+    const items = AppState.filteredData.slice(startIndex, window.displayCount);
 
     if (!append && !items.length) { document.getElementById('emptyState').classList.remove('hidden'); return; }
     if (!append) document.getElementById('emptyState').classList.add('hidden');
@@ -292,7 +292,7 @@ function render(append = false) {
     items.forEach((it, loopIdx) => {
         const idx = startIndex + loopIdx; // L'index VRAI dans filteredData
         const id = `${it.reference}_${it.fournisseur || it.fabricant || ''}`.toLowerCase();
-        const isFav = window.favorites.includes(id), isNeed = window.needs.some(n => n.id === id);
+        const isFav = AppState.favorites.includes(id), isNeed = AppState.needs.some(n => n.id === id);
 
         const conditVal = Number(it.condit || it.conditionnement || 1);
         const unitVente = String(it.unit_vente || '').toUpperCase();
@@ -400,24 +400,24 @@ function render(append = false) {
 
     window.grid.appendChild(fragment);
 
-    window._renderedCount = Math.min(window.displayCount, window.filteredData.length);
+    window._renderedCount = Math.min(window.displayCount, AppState.filteredData.length);
     if (typeof lucide !== 'undefined') lucide.createIcons();
-    document.getElementById('loadMoreContainer').classList.toggle('hidden', window.displayCount >= window.filteredData.length);
+    document.getElementById('loadMoreContainer').classList.toggle('hidden', window.displayCount >= AppState.filteredData.length);
 }
 
 window.toggleF = (e, id) => {
-    e.stopPropagation(); const i = window.favorites.indexOf(id);
-    if (i > -1) window.favorites.splice(i, 1); else window.favorites.push(id);
-    localStorage.setItem('art-favs', JSON.stringify(window.favorites));
+    e.stopPropagation(); const i = AppState.favorites.indexOf(id);
+    if (i > -1) AppState.favorites.splice(i, 1); else AppState.favorites.push(id);
+    localStorage.setItem('art-favs', JSON.stringify(AppState.favorites));
     updateFavCount(); if (window.showOnlyFavs) applyFilters(); else render();
 };
 
 window.toggleN = (e, id, idx) => {
     e.stopPropagation();
-    const it = window.filteredData[idx];
-    const i = window.needs.findIndex(n => n.id === id);
+    const it = AppState.filteredData[idx];
+    const i = AppState.needs.findIndex(n => n.id === id);
     if (i > -1) {
-        window.needs.splice(i, 1);
+        AppState.needs.splice(i, 1);
     } else {
         const des = (it.designation || '').toUpperCase();
         const type = (it.type || '').toUpperCase();
@@ -451,7 +451,7 @@ window.toggleN = (e, id, idx) => {
         // Nettoyage final des doubles espaces éventuels
         pureDesignation = pureDesignation.replace(/\s{2,}/g, ' ').trim();
 
-        window.needs.push({
+        AppState.needs.push({
             id,
             reference: it.reference,
             designation: pureDesignation,
@@ -466,7 +466,7 @@ window.toggleN = (e, id, idx) => {
             px_remise: it.px_remise || it.px_public || 0 // Store initial discounted price
         });
     }
-    localStorage.setItem('art-needs', JSON.stringify(window.needs));
+    localStorage.setItem('art-needs', JSON.stringify(AppState.needs));
     // Toast de confirmation (Sprint 6)
     const label = it ? (it.designation || it.reference || 'Article') : 'Article';
     if (i > -1) {
@@ -478,7 +478,7 @@ window.toggleN = (e, id, idx) => {
 };
 
 function updateFavCount() {
-    const c = window.favorites.length; window.favCountBadge.textContent = c; window.favCountBadge.classList.toggle('hidden', c === 0);
+    const c = AppState.favorites.length; window.favCountBadge.textContent = c; window.favCountBadge.classList.toggle('hidden', c === 0);
 }
 
 // ============================================================
@@ -518,19 +518,19 @@ window.switchView = (v) => {
 
 // renderNeeds supprimé de state.js (la bonne version est dans ui.js)
 
-window.updateNeedV = (i, f, v) => { window.needs[i][f] = parseInt(v) || 0; localStorage.setItem('art-needs', JSON.stringify(window.needs)); window.renderNeeds(); };
-window.removeN = (i) => { window.needs.splice(i, 1); localStorage.setItem('art-needs', JSON.stringify(window.needs)); window.renderNeeds(); };
+window.updateNeedV = (i, f, v) => { AppState.needs[i][f] = parseInt(v) || 0; localStorage.setItem('art-needs', JSON.stringify(AppState.needs)); window.renderNeeds(); };
+window.removeN = (i) => { AppState.needs.splice(i, 1); localStorage.setItem('art-needs', JSON.stringify(AppState.needs)); window.renderNeeds(); };
 window.deleteNeed = window.removeN; // Fix for generated HTML calling deleteNeed
-window.clearNeeds = () => { if (confirm("Supprimer toute la sélection ?")) { window.needs = []; localStorage.setItem('art-needs', "[]"); window.renderNeeds(); } };
+window.clearNeeds = () => { if (confirm("Supprimer toute la sélection ?")) { AppState.needs = []; localStorage.setItem('art-needs', "[]"); window.renderNeeds(); } };
 
 
 window.toggleSupplierSort = () => {
     if (window.supplierSortOrder === 'asc') {
         window.supplierSortOrder = 'desc';
-        window.needs.sort((a, b) => b.fournisseur.localeCompare(a.fournisseur));
+        AppState.needs.sort((a, b) => b.fournisseur.localeCompare(a.fournisseur));
     } else {
         window.supplierSortOrder = 'asc';
-        window.needs.sort((a, b) => a.fournisseur.localeCompare(b.fournisseur));
+        AppState.needs.sort((a, b) => a.fournisseur.localeCompare(b.fournisseur));
     }
     window.renderNeeds();
 

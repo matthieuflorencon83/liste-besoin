@@ -38,7 +38,7 @@ window.toggleCalpinageMode = () => {
 };
 
 window.toggleCalpinageRow = (id) => {
-    const idx = window.needs.findIndex(n => n.id === id);
+    const idx = AppState.needs.findIndex(n => n.id === id);
     if (idx === -1) return;
 
     if (window.activeCalpinageId === id) {
@@ -65,14 +65,14 @@ window.toggleCalpinageRow = (id) => {
 const CalpinageSystem = {
     initRow(idx) {
         try {
-            if (!window.needs[idx].calpinageData) {
-                window.needs[idx].calpinageData = { cuts: [], lastSolution: null };
+            if (!AppState.needs[idx].calpinageData) {
+                AppState.needs[idx].calpinageData = { cuts: [], lastSolution: null };
             }
             this.renderRowUI(idx);
 
             // Re-show last results if any
-            if (window.needs[idx].calpinageData.lastSolution) {
-                this.renderResults(idx, window.needs[idx].calpinageData.lastSolution);
+            if (AppState.needs[idx].calpinageData.lastSolution) {
+                this.renderResults(idx, AppState.needs[idx].calpinageData.lastSolution);
             }
         } catch (e) {
             console.error("Error initRow:", e);
@@ -83,7 +83,7 @@ const CalpinageSystem = {
 
     renderRowUI(idx) {
         try {
-            const item = window.needs[idx];
+            const item = AppState.needs[idx];
             const container = document.getElementById(`calpContainer_${idx}`);
             if (!container) return;
 
@@ -145,13 +145,13 @@ const CalpinageSystem = {
         const quantity = parseInt(qtyInput.value);
 
         if (length > 0 && quantity > 0) {
-            if (!window.needs[idx].calpinageData) window.needs[idx].calpinageData = { cuts: [] };
-            const cuts = window.needs[idx].calpinageData.cuts || [];
+            if (!AppState.needs[idx].calpinageData) AppState.needs[idx].calpinageData = { cuts: [] };
+            const cuts = AppState.needs[idx].calpinageData.cuts || [];
             cuts.push({ length: length / 1000, quantity });
             cuts.sort((a, b) => b.length - a.length);
-            window.needs[idx].calpinageData.cuts = cuts;
+            AppState.needs[idx].calpinageData.cuts = cuts;
 
-            localStorage.setItem('art-needs', JSON.stringify(window.needs));
+            localStorage.setItem('art-needs', JSON.stringify(AppState.needs));
 
             this.renderCutsTable(idx);
             lenInput.value = ""; qtyInput.value = "1"; lenInput.focus();
@@ -161,16 +161,16 @@ const CalpinageSystem = {
     },
 
     removeCut(idx, cutIdx) {
-        const cuts = window.needs[idx].calpinageData.cuts;
+        const cuts = AppState.needs[idx].calpinageData.cuts;
         cuts.splice(cutIdx, 1);
-        localStorage.setItem('art-needs', JSON.stringify(window.needs));
+        localStorage.setItem('art-needs', JSON.stringify(AppState.needs));
         this.renderCutsTable(idx);
     },
 
     renderCutsTable(idx) {
         const tbody = document.getElementById(`calpTable_${idx}`);
         if (!tbody) return;
-        const cuts = (window.needs[idx].calpinageData && window.needs[idx].calpinageData.cuts) ? window.needs[idx].calpinageData.cuts : [];
+        const cuts = (AppState.needs[idx].calpinageData && AppState.needs[idx].calpinageData.cuts) ? AppState.needs[idx].calpinageData.cuts : [];
         tbody.innerHTML = cuts.map((c, i) => `
             <tr class="border-b border-[var(--border)] last:border-0 hover:bg-[var(--border)] transition-colors">
                 <td class="p-2 text-[var(--indigo)] font-bold">${Math.round(c.length * 1000)}mm</td>
@@ -182,7 +182,7 @@ const CalpinageSystem = {
 
     optimize(idx) {
         try {
-            const item = window.needs[idx];
+            const item = AppState.needs[idx];
             const groups = this.getGroupedProfiles();
             const cleanRef = this.getCleanRoot(item.reference);
 
@@ -328,7 +328,7 @@ const CalpinageSystem = {
 
         // Replace one instance of originalCut with the two new ones
         const epsilon = 0.0001;
-        const cuts = window.needs[idx].calpinageData.cuts;
+        const cuts = AppState.needs[idx].calpinageData.cuts;
         const cIdx = cuts.findIndex(c => Math.abs(c.length - originalCut) < epsilon && c.quantity > 0);
         if (cIdx > -1) {
             if (cuts[cIdx].quantity > 1) {
@@ -349,8 +349,8 @@ const CalpinageSystem = {
             if (existB) existB.quantity++; else cuts.push({ length: vB, quantity: 1 });
 
             // Save and Refresh
-            window.needs[idx].calpinageData.cuts = cuts;
-            localStorage.setItem('art-needs', JSON.stringify(window.needs));
+            AppState.needs[idx].calpinageData.cuts = cuts;
+            localStorage.setItem('art-needs', JSON.stringify(AppState.needs));
             this.renderCutsTable(idx);
             this.optimize(idx);
         }
@@ -379,9 +379,9 @@ const CalpinageSystem = {
         html += `</div>`;
         // Serializing solution to pass it back to applyToRow
         // Save solution to prevent disappearance upon re-opening
-        if (!window.needs[idx].calpinageData) window.needs[idx].calpinageData = {};
-        window.needs[idx].calpinageData.lastSolution = solution;
-        localStorage.setItem('art-needs', JSON.stringify(window.needs));
+        if (!AppState.needs[idx].calpinageData) AppState.needs[idx].calpinageData = {};
+        AppState.needs[idx].calpinageData.lastSolution = solution;
+        localStorage.setItem('art-needs', JSON.stringify(AppState.needs));
 
         const solJson = JSON.stringify(solution).replace(/"/g, '&quot;');
         html += `<button onclick="CalpinageSystem.applyToRow(${idx}, '${solJson}')" class="px-3 py-1 bg-emerald-600 hover:bg-emerald-500 text-white rounded text-xs font-bold transition-colors shadow-lg shadow-emerald-600/20">APPLIQUER</button>`;
@@ -435,7 +435,7 @@ const CalpinageSystem = {
     applyToRow(idx, solutionJson) {
         try {
             const solution = JSON.parse(solutionJson.replace(/&quot;/g, '"'));
-            const originalItem = window.needs[idx];
+            const originalItem = AppState.needs[idx];
             const originalCalpData = originalItem.calpinageData;
 
             // 1. Group solution by explicit references (variants)
@@ -446,12 +446,12 @@ const CalpinageSystem = {
                 barsToOrder[ref]++;
             });
 
-            // 2. Add/Update items in window.needs
+            // 2. Add/Update items in AppState.needs
             // We remove the original generic row and replace it with specific bars
             const itemsToAdd = [];
 
             for (const [vRef, qty] of Object.entries(barsToOrder)) {
-                let itData = window.ART_DATA.find(it => {
+                let itData = AppState.catalogData.find(it => {
                     const refMatch = String(it.reference) === String(vRef);
                     const fourMatch = (it.fournisseur === originalItem.fournisseur);
                     const ralMatch = ((it.decor || '-') === (originalItem.ral || '-'));
@@ -461,7 +461,7 @@ const CalpinageSystem = {
 
                 // FALLBACK: If strict match fails, look for Ref + Supplier only (ignore RAL)
                 if (!itData) {
-                    itData = window.ART_DATA.find(it => {
+                    itData = AppState.catalogData.find(it => {
                         const refMatch = String(it.reference) === String(vRef);
                         const fourMatch = (it.fournisseur === originalItem.fournisseur);
                         return refMatch && fourMatch;
@@ -499,13 +499,13 @@ const CalpinageSystem = {
             }
 
             // Remove original
-            window.needs.splice(idx, 1);
+            AppState.needs.splice(idx, 1);
             let insertIndex = idx;
 
             // Insert new items
             itemsToAdd.forEach(newItem => {
                 // Check if existing to merge
-                const existing = window.needs.find(n => n.id === newItem.id);
+                const existing = AppState.needs.find(n => n.id === newItem.id);
                 // Calculate Cuts for this specific variant
                 const specificSolution = solution.filter(bar => String(bar.stockVariant.ref) === String(newItem.reference));
                 // ... (Reconstruct cuts logic)
@@ -529,12 +529,12 @@ const CalpinageSystem = {
                     // Let's just overwrite for simplicity in this specific flow
                     existing.calpinageData = newItem.calpinageData;
                 } else {
-                    window.needs.splice(insertIndex, 0, newItem);
+                    AppState.needs.splice(insertIndex, 0, newItem);
                     insertIndex++;
                 }
             });
 
-            localStorage.setItem('art-needs', JSON.stringify(window.needs));
+            localStorage.setItem('art-needs', JSON.stringify(AppState.needs));
             window.activeCalpinageId = null;
             localStorage.removeItem('art-active-calpinage-id');
             window.renderNeeds();
@@ -579,8 +579,8 @@ const CalpinageSystem = {
 
     getGroupedProfiles() {
         const groups = new Map();
-        // Use window.ART_DATA instead of window.groupedData to see all lengths
-        window.ART_DATA.forEach(item => {
+        // Use AppState.catalogData instead of window.groupedData to see all lengths
+        AppState.catalogData.forEach(item => {
             const des = (item.designation || '').toUpperCase();
             const type = (item.type || '').toUpperCase();
             const fam = (item.famille || '').toUpperCase();

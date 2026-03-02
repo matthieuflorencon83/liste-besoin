@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         clearTimeout(timeout);
 
         // On libère l'interface immédiatement avec les données prioritaires
-        window.ART_DATA = primaryData;
+        AppState.catalogData = primaryData;
         if (typeof window.init === 'function') window.init();
 
         // 4. Chargement paresseux (Lazy Loading) du reste en parallèle !

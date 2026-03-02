@@ -5,8 +5,8 @@ window.saveProject = () => {
     const data = {
         timestamp: new Date().toISOString(),
         chantier: chantierVal,
-        needs: window.needs,
-        favorites: window.favorites
+        needs: AppState.needs,
+        favorites: AppState.favorites
     };
 
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
@@ -23,7 +23,7 @@ window.saveProject = () => {
     // Historique des projets récents
     try {
         const hist = JSON.parse(localStorage.getItem('art-project-history') || '[]');
-        const entry = { name: defaultName, chantier: chantierVal, date: new Date().toISOString(), count: window.needs.length };
+        const entry = { name: defaultName, chantier: chantierVal, date: new Date().toISOString(), count: AppState.needs.length };
         const filtered = hist.filter(h => h.name !== entry.name);
         filtered.unshift(entry);
         localStorage.setItem('art-project-history', JSON.stringify(filtered.slice(0, 5)));
@@ -62,7 +62,7 @@ function openExportModal() {
 
     // Group by Supplier
     const groups = {};
-    window.needs.forEach(item => {
+    AppState.needs.forEach(item => {
         // Fix: Use item.need instead of item.qty and force number conversion
         const needVal = parseFloat(item.need) || 0;
         const stockVal = parseFloat(item.stock) || 0;
@@ -170,17 +170,17 @@ let currentRalFamily = 'std';
 
 window.toggleFinitionMode = function () {
     try {
-        console.log("Toggle Finition Mode. Current:", window.isRalSelectionMode);
+        console.log("Toggle Finition Mode. Current:", AppState.isRalSelectionMode);
 
         // 1. If not in mode -> Enter mode
-        if (!window.isRalSelectionMode) {
+        if (!AppState.isRalSelectionMode) {
             toggleRalSelectionMode();
             // alert("Mode Finition ACTIVÉ");
             return;
         }
 
         // 2. If in mode
-        const count = window.selectedNeeds.size;
+        const count = AppState.selectedNeeds.size;
 
         if (count > 0) {
             // If items selected -> Apply (Open Modal)
@@ -197,10 +197,10 @@ window.toggleFinitionMode = function () {
 }
 
 function toggleRalSelectionMode() {
-    window.isRalSelectionMode = !window.isRalSelectionMode;
+    AppState.isRalSelectionMode = !AppState.isRalSelectionMode;
     // Clear selection when exiting
-    if (!window.isRalSelectionMode) {
-        window.selectedNeeds.clear();
+    if (!AppState.isRalSelectionMode) {
+        AppState.selectedNeeds.clear();
     }
     updateRalModeUI();
     window.renderNeeds();
@@ -208,7 +208,7 @@ function toggleRalSelectionMode() {
 
 
 function updateRalModeUI() {
-    console.log("Updating UI. Mode:", window.isRalSelectionMode);
+    console.log("Updating UI. Mode:", AppState.isRalSelectionMode);
     const btn = document.getElementById('ralModeBtn');
     const btnText = document.getElementById('ralBtnText');
     const selectAllCheckbox = document.getElementById('selectAllCheckbox');
@@ -216,8 +216,8 @@ function updateRalModeUI() {
     // Safety check if elements exist
     if (!btn || !btnText) return;
 
-    if (window.isRalSelectionMode) {
-        const count = window.selectedNeeds.size;
+    if (AppState.isRalSelectionMode) {
+        const count = AppState.selectedNeeds.size;
 
         if (count > 0) {
             // Mode: Apply
@@ -258,40 +258,40 @@ function updateRalModeUI() {
 
     // Sync Select All checkbox state
     if (selectAllCheckbox) {
-        const count = window.selectedNeeds.size;
-        selectAllCheckbox.checked = (window.needs.length > 0 && count === window.needs.length);
-        selectAllCheckbox.indeterminate = (count > 0 && count < window.needs.length);
+        const count = AppState.selectedNeeds.size;
+        selectAllCheckbox.checked = (AppState.needs.length > 0 && count === AppState.needs.length);
+        selectAllCheckbox.indeterminate = (count > 0 && count < AppState.needs.length);
     }
 }
 
 // NEW FUNCTION
 window.toggleNeedSelection = function (id, isChecked) {
-    if (!window.isRalSelectionMode) return;
+    if (!AppState.isRalSelectionMode) return;
 
     // Ensure ID is string to match Map/Set keys
     const safeId = String(id);
 
     if (isChecked) {
-        window.selectedNeeds.add(safeId);
+        AppState.selectedNeeds.add(safeId);
     } else {
-        window.selectedNeeds.delete(safeId);
+        AppState.selectedNeeds.delete(safeId);
     }
 
     // Update UI (Button text)
     updateRalModeUI();
 
     // Optional: Log for debug
-    console.log("Selection updated:", window.selectedNeeds.size, window.selectedNeeds);
+    console.log("Selection updated:", AppState.selectedNeeds.size, AppState.selectedNeeds);
 }
 
 window.toggleSelectAll = function () {
-    if (!window.isRalSelectionMode) return; // Only work in mode
+    if (!AppState.isRalSelectionMode) return; // Only work in mode
 
-    const allSelected = window.selectedNeeds.size === window.needs.length && window.needs.length > 0;
-    window.selectedNeeds.clear();
+    const allSelected = AppState.selectedNeeds.size === AppState.needs.length && AppState.needs.length > 0;
+    AppState.selectedNeeds.clear();
 
     if (!allSelected) {
-        window.needs.forEach((item) => window.selectedNeeds.add(String(item.id)));
+        AppState.needs.forEach((item) => AppState.selectedNeeds.add(String(item.id)));
     }
 
     window.renderNeeds();
@@ -299,24 +299,24 @@ window.toggleSelectAll = function () {
 }
 
 window.toggleSelection = function (idx) {
-    if (!window.isRalSelectionMode) return;
+    if (!AppState.isRalSelectionMode) return;
 
     // Fix: Use ID instead of Index to match applyRalToSelection expectation
-    const item = window.needs[idx];
+    const item = AppState.needs[idx];
     if (!item) return;
     const id = String(item.id);
 
-    if (window.selectedNeeds.has(id)) {
-        window.selectedNeeds.delete(id);
+    if (AppState.selectedNeeds.has(id)) {
+        AppState.selectedNeeds.delete(id);
     } else {
-        window.selectedNeeds.add(id);
+        AppState.selectedNeeds.add(id);
     }
     window.renderNeeds();
     updateRalModeUI();
 }
 
 window.handleRowClick = function (e, idx) {
-    if (window.isRalSelectionMode) {
+    if (AppState.isRalSelectionMode) {
         // If in mode, clicking anywhere toggles selection (unless clicking delete or edit specific inputs)
         // Also ignore checkbox to prevent double toggle (onchange handles it)
         if (e.target.closest('button') ||
@@ -330,7 +330,7 @@ window.handleRowClick = function (e, idx) {
     // Normal mode: Expand row for Calpinage (only if it's a profile)
     if (e.target.closest('button') || e.target.closest('input')) return;
 
-    const item = window.needs[idx];
+    const item = AppState.needs[idx];
     if (item && window.getIsProfil && window.getIsProfil(item)) {
         window.toggleCalpinageRow(item.id);
     }
@@ -372,9 +372,9 @@ window.inferFamilyFromRal = (ral) => {
 };
 
 function openRalModal() {
-    if (window.selectedNeeds.size === 0) return;
+    if (AppState.selectedNeeds.size === 0) return;
 
-    document.getElementById('ralModalCount').textContent = window.selectedNeeds.size;
+    document.getElementById('ralModalCount').textContent = AppState.selectedNeeds.size;
     document.getElementById('ralModal').classList.remove('hidden');
 
     // Reset inputs directly without using selectRalFamily
@@ -407,12 +407,12 @@ window.applyRalToSelection = () => {
         const finish = document.getElementById('ralFinishSelect').value;
         const family = inferFamilyFromRal(ralCode);
 
-        if (window.selectedNeeds.size === 0) return;
+        if (AppState.selectedNeeds.size === 0) return;
 
         let count = 0;
-        window.needs.forEach(item => {
+        AppState.needs.forEach(item => {
             // Ensure ID comparison is safe (String vs Number)
-            if (window.selectedNeeds.has(String(item.id)) || window.selectedNeeds.has(item.id)) {
+            if (AppState.selectedNeeds.has(String(item.id)) || AppState.selectedNeeds.has(item.id)) {
                 item.ral = ralCode;
                 item.ral_finish = finish;
 
@@ -428,11 +428,11 @@ window.applyRalToSelection = () => {
             }
         });
 
-        localStorage.setItem('art-needs', JSON.stringify(window.needs));
+        localStorage.setItem('art-needs', JSON.stringify(AppState.needs));
 
         // Reset Logic
-        window.selectedNeeds.clear();
-        window.isRalSelectionMode = false;
+        AppState.selectedNeeds.clear();
+        AppState.isRalSelectionMode = false;
         closeRalModal();
         window.renderNeeds();
         alert(`${count} articles mis à jour avec la finition ${ralCode} (${finish}) et prix recalculés.`);
@@ -447,14 +447,14 @@ window.applyRalToSelection = () => {
  * Strategy: Exact Match > Family Match > Fallback Markup
  */
 window.findVariantPrice = (item, ralCode, finish, family) => {
-    if (!window.ART_DATA) return null;
+    if (!AppState.catalogData) return null;
 
     // 1. Identify the 'Root' reference (remove suffixes like TH if needed, though data.js usually has specific refs)
     // Actually, data.js has 'reference' like '7637TH'. We should look for other items with SAME reference
     // but DIVERGENT 'decor'.
 
     // Filter all variants of this article (same reference, same supplier)
-    const variants = window.ART_DATA.filter(it =>
+    const variants = AppState.catalogData.filter(it =>
         String(it.reference) === String(item.reference) &&
         (it.fournisseur === item.fournisseur || it.fabricant === item.fournisseur)
     );
@@ -542,11 +542,11 @@ window.getPuPiece = function (item) {
     if (item.px_piece !== undefined) return parseFloat(item.px_piece) || 0;
 
     // Rétro-compatibilité V142+ pour les articles en cache qui n'ont pas px_remise
-    if (item.px_remise === undefined && window.ART_DATA) {
-        const catItem = window.ART_DATA.find(a => String(a.reference) === String(item.reference) && String(a.decor || '') === String(item.ral || ''));
+    if (item.px_remise === undefined && AppState.catalogData) {
+        const catItem = AppState.catalogData.find(a => String(a.reference) === String(item.reference) && String(a.decor || '') === String(item.ral || ''));
         if (catItem) {
             item.px_remise = catItem.px_remise || catItem.px_public || 0;
-            if (window.needs) localStorage.setItem('art-needs', JSON.stringify(window.needs));
+            if (AppState.needs) localStorage.setItem('art-needs', JSON.stringify(AppState.needs));
         } else {
             item.px_remise = item.px_public || 0;
         }
@@ -575,7 +575,7 @@ window.renderNeeds = function () {
     const selectAllCheckbox = document.getElementById('selectAllCheckbox');
     if (selectAllCheckbox) {
         const th = document.getElementById('thSelectAllCheck') || selectAllCheckbox.parentElement.parentElement;
-        if (window.isRalSelectionMode) {
+        if (AppState.isRalSelectionMode) {
             th.classList.remove('opacity-0', 'pointer-events-none');
         } else {
             th.classList.add('opacity-0', 'pointer-events-none');
@@ -585,26 +585,26 @@ window.renderNeeds = function () {
     // Mettre à jour le badge de l'onglet Besoins
     const badge = document.getElementById('needsBadge');
     if (badge) {
-        const count = window.needs.length;
+        const count = AppState.needs.length;
         badge.textContent = count;
         badge.classList.toggle('hidden', count === 0);
     }
 
     // Filtrer si une recherche est active
-    const q = (window.needsFilterQuery || '').toLowerCase().trim();
+    const q = (AppState.needsFilterQuery || '').toLowerCase().trim();
     const displayedNeeds = q
-        ? window.needs.filter(item =>
+        ? AppState.needs.filter(item =>
             (item.reference || '').toLowerCase().includes(q) ||
             (item.designation || '').toLowerCase().includes(q) ||
             (item.fournisseur || '').toLowerCase().includes(q)
         )
-        : window.needs;
+        : AppState.needs;
 
     // Afficher le compteur de filtre
     const filterCount = document.getElementById('needsFilterCount');
     if (filterCount) {
-        if (q && displayedNeeds.length !== window.needs.length) {
-            filterCount.textContent = `${displayedNeeds.length} / ${window.needs.length}`;
+        if (q && displayedNeeds.length !== AppState.needs.length) {
+            filterCount.textContent = `${displayedNeeds.length} / ${AppState.needs.length}`;
             filterCount.classList.remove('hidden');
         } else {
             filterCount.classList.add('hidden');
@@ -612,8 +612,8 @@ window.renderNeeds = function () {
     }
 
     // Tri par colonne si actif
-    const sortCol = window.needsSortCol;
-    const sortDir = window.needsSortDir || 'asc';
+    const sortCol = AppState.needsSortCol;
+    const sortDir = AppState.needsSortDir || 'asc';
     let sortedNeeds = [...displayedNeeds];
     if (sortCol) {
         sortedNeeds.sort((a, b) => {
@@ -632,9 +632,9 @@ window.renderNeeds = function () {
     }
 
     tbody.innerHTML = sortedNeeds.map((item, index) => {
-        // Retrouver l'index réel dans window.needs pour les actions
-        const realIndex = window.needs.indexOf(item);
-        const isSelected = window.selectedNeeds.has(String(item.id));
+        // Retrouver l'index réel dans AppState.needs pour les actions
+        const realIndex = AppState.needs.indexOf(item);
+        const isSelected = AppState.selectedNeeds.has(String(item.id));
         const ref = item.reference || '-';
         const des = item.designation || '-';
 
@@ -669,7 +669,7 @@ window.renderNeeds = function () {
         const borderLeft = isSelected ? 'border-l-indigo-500' : (coverageIndicator || 'border-l-transparent');
 
         // Checkbox column cell
-        const checkboxCellClass = window.isRalSelectionMode
+        const checkboxCellClass = AppState.isRalSelectionMode
             ? 'opacity-100'
             : 'opacity-0 pointer-events-none';
 
@@ -854,8 +854,8 @@ window.renderNeeds = function () {
     }
 
     // Auto-init Calpinage if Global Mode or specific active
-    if (window.CalpinageSystem && window.needs) {
-        window.needs.forEach((it, i) => {
+    if (window.CalpinageSystem && AppState.needs) {
+        AppState.needs.forEach((it, i) => {
             if (window.activeCalpinageId === String(it.id) || (window.isCalpinageMode && window.getIsProfil && window.getIsProfil(it))) {
                 setTimeout(() => window.CalpinageSystem.initRow(i), 10);
             }
@@ -865,9 +865,9 @@ window.renderNeeds = function () {
     updateRalModeUI();
 
     // Ligne de total général
-    const totalNeed = window.needs.reduce((s, i) => s + (parseFloat(i.need) || 0), 0);
-    const totalCde = window.needs.reduce((s, i) => s + Math.max(0, (parseFloat(i.need) || 0) - (parseFloat(i.stock) || 0)), 0);
-    const totalHT = window.needs.reduce((s, i) => {
+    const totalNeed = AppState.needs.reduce((s, i) => s + (parseFloat(i.need) || 0), 0);
+    const totalCde = AppState.needs.reduce((s, i) => s + Math.max(0, (parseFloat(i.need) || 0) - (parseFloat(i.stock) || 0)), 0);
+    const totalHT = AppState.needs.reduce((s, i) => {
         const cde = Math.max(0, (parseFloat(i.need) || 0) - (parseFloat(i.stock) || 0));
         return s + cde * window.getPuPiece(i);
     }, 0);
@@ -881,7 +881,7 @@ window.renderNeeds = function () {
             if (!tfoot) { tfoot = document.createElement('tfoot'); table.appendChild(tfoot); }
             tfoot.innerHTML = `<tr id="needsTotalRow" class="border-t-2 border-[var(--border)] bg-[var(--card-hover)]">
                 <td colspan="8" class="px-4 py-3 text-right text-xs font-black text-[var(--text-muted)] uppercase tracking-widest">
-                    ${window.needs.length} article${window.needs.length > 1 ? 's' : ''}
+                    ${AppState.needs.length} article${AppState.needs.length > 1 ? 's' : ''}
                 </td>
                 <td class="p-3 text-center text-xs font-black text-[var(--text-main)]">${totalNeed}</td>
                 <td class="p-3 text-center text-xs text-[var(--text-muted)]">—</td>
@@ -893,7 +893,7 @@ window.renderNeeds = function () {
     } else {
         totalRow.innerHTML = `
             <td colspan="8" class="px-4 py-3 text-right text-xs font-black text-[var(--text-muted)] uppercase tracking-widest">
-                ${window.needs.length} article${window.needs.length > 1 ? 's' : ''}
+                ${AppState.needs.length} article${AppState.needs.length > 1 ? 's' : ''}
             </td>
             <td class="p-3 text-center text-xs font-black text-[var(--text-main)]">${totalNeed}</td>
             <td class="p-3 text-center text-xs text-[var(--text-muted)]">—</td>
@@ -911,7 +911,7 @@ window.renderNeeds = function () {
         return function (...a) { clearTimeout(t); t = setTimeout(() => fn(...a), delay); };
     }
     const _filterFn = function (query) {
-        window.needsFilterQuery = query;
+        AppState.needsFilterQuery = query;
         window.renderNeeds();
     };
     window.filterNeeds = debounceNeeds(_filterFn, 200);
@@ -937,9 +937,9 @@ window.toggleNoteRow = function (realIndex) {
 };
 
 window.saveNote = function (realIndex, value) {
-    if (window.needs[realIndex]) {
-        window.needs[realIndex].note = value.trim();
-        localStorage.setItem('art-needs', JSON.stringify(window.needs));
+    if (AppState.needs[realIndex]) {
+        AppState.needs[realIndex].note = value.trim();
+        localStorage.setItem('art-needs', JSON.stringify(AppState.needs));
         // Mettre à jour l'icône du bouton sans re-render complet
         const noteBtn = document.querySelector(`#noteRow_${realIndex}`)?.previousElementSibling?.querySelector('[title="Note"]');
         // simple re-render ciblé
@@ -955,13 +955,13 @@ window.saveNote = function (realIndex, value) {
 // SPRINT 7 — ÉDITION INLINE (saveNeedField + adjustNeedField)
 // ============================================================
 
-// Sauvegarde un champ modifié directement dans window.needs
+// Sauvegarde un champ modifié directement dans AppState.needs
 // et met à jour les totaux en bas du tableau sans re-render complet
 let _saveNeedDebounceTimer = null;
 window.saveNeedField = function (realIndex, field, value) {
-    if (!window.needs[realIndex]) return;
-    window.needs[realIndex][field] = value;
-    localStorage.setItem('art-needs', JSON.stringify(window.needs));
+    if (!AppState.needs[realIndex]) return;
+    AppState.needs[realIndex][field] = value;
+    localStorage.setItem('art-needs', JSON.stringify(AppState.needs));
 
     // Mettre à jour la ligne ORDER et TOTAL HT en live sans re-render global
     clearTimeout(_saveNeedDebounceTimer);
@@ -972,16 +972,16 @@ window.saveNeedField = function (realIndex, field, value) {
 
 // Incrémentation +/- fluide (boutons +/-)
 window.adjustNeedField = function (realIndex, field, delta) {
-    if (!window.needs[realIndex]) return;
-    const current = parseFloat(window.needs[realIndex][field]) || 0;
+    if (!AppState.needs[realIndex]) return;
+    const current = parseFloat(AppState.needs[realIndex][field]) || 0;
     const newVal = Math.max(0, current + delta);
-    window.needs[realIndex][field] = (field === 'px_public' || field === 'px_piece') ? newVal : Math.round(newVal);
-    localStorage.setItem('art-needs', JSON.stringify(window.needs));
+    AppState.needs[realIndex][field] = (field === 'px_public' || field === 'px_piece') ? newVal : Math.round(newVal);
+    localStorage.setItem('art-needs', JSON.stringify(AppState.needs));
 
     // MAJ directe du champ input sans re-render
     const inputId = field === 'need' ? `needInput_${realIndex}` : `stockInput_${realIndex}`;
     const input = document.getElementById(inputId);
-    if (input) input.value = window.needs[realIndex][field];
+    if (input) input.value = AppState.needs[realIndex][field];
 
     // Re-render avec debounce court pour les totaux
     clearTimeout(_saveNeedDebounceTimer);
@@ -1020,11 +1020,11 @@ document.addEventListener('click', function (e) {
 // SPRINT 5 — DUPLICATION DE LIGNE
 // ============================================================
 window.duplicateNeed = function (realIndex) {
-    const original = window.needs[realIndex];
+    const original = AppState.needs[realIndex];
     if (!original) return;
     const copy = { ...original, id: original.id + '_copy_' + Date.now(), note: '' };
-    window.needs.splice(realIndex + 1, 0, copy);
-    localStorage.setItem('art-needs', JSON.stringify(window.needs));
+    AppState.needs.splice(realIndex + 1, 0, copy);
+    localStorage.setItem('art-needs', JSON.stringify(AppState.needs));
     window.renderNeeds();
 };
 
@@ -1032,18 +1032,18 @@ window.duplicateNeed = function (realIndex) {
 // SPRINT 5 — TRI PAR COLONNE (appelé depuis les headers)
 // ============================================================
 window.sortNeedsBy = function (col) {
-    if (window.needsSortCol === col) {
-        window.needsSortDir = window.needsSortDir === 'asc' ? 'desc' : 'asc';
+    if (AppState.needsSortCol === col) {
+        AppState.needsSortDir = AppState.needsSortDir === 'asc' ? 'desc' : 'asc';
     } else {
-        window.needsSortCol = col;
-        window.needsSortDir = 'asc';
+        AppState.needsSortCol = col;
+        AppState.needsSortDir = 'asc';
     }
     // Mettre à jour les indicateurs visuels des headers
     document.querySelectorAll('[data-sort-col]').forEach(th => {
         const icon = th.querySelector('.sort-icon');
         if (!icon) return;
         if (th.dataset.sortCol === col) {
-            icon.textContent = window.needsSortDir === 'asc' ? ' ↑' : ' ↓';
+            icon.textContent = AppState.needsSortDir === 'asc' ? ' ↑' : ' ↓';
             th.classList.add('text-indigo-400');
         } else {
             icon.textContent = '';
