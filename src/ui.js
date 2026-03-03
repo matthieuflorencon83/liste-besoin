@@ -449,10 +449,6 @@ window.applyRalToSelection = () => {
 window.findVariantPrice = (item, ralCode, finish, family) => {
     if (!AppState.catalogData) return null;
 
-    // 1. Identify the 'Root' reference (remove suffixes like TH if needed, though data.js usually has specific refs)
-    // Actually, data.js has 'reference' like '7637TH'. We should look for other items with SAME reference
-    // but DIVERGENT 'decor'.
-
     // Filter all variants of this article (same reference, same supplier)
     const variants = AppState.catalogData.filter(it =>
         String(it.reference) === String(item.reference) &&
@@ -461,19 +457,16 @@ window.findVariantPrice = (item, ralCode, finish, family) => {
 
     if (variants.length === 0) return null;
 
-    // 2. Exact Match (e.g. User typed "9010", data has decor="9010")
-    // We treat 'ralCode' as the target decor.
+    // 1. Exact Match (e.g. User typed "9010", data has decor="9010")
     const exactMatch = variants.find(v => String(v.decor || '').toUpperCase() === String(ralCode).toUpperCase());
     if (exactMatch) return Number(exactMatch.px_public || 0);
 
-    // 2b. Composite Match (RAL + Finish, e.g. "9016" + "EM" -> "9016EM")
+    // 2. Composite Match (RAL + Finish, e.g. "9016" + "EM" -> "9016EM")
     if (finish) {
-        // Try strict concatenation (e.g. 9016EM)
         const compositeCode = (String(ralCode) + String(finish)).toUpperCase();
         const compositeMatch = variants.find(v => String(v.decor || '').toUpperCase() === compositeCode);
         if (compositeMatch) return Number(compositeMatch.px_public || 0);
 
-        // Try with MG prefix if it's MG (e.g. MG7016) because sometimes it's reversed
         if (finish === 'MG') {
             const mgPrefixCode = ('MG' + String(ralCode)).toUpperCase();
             const mgMatch = variants.find(v => String(v.decor || '').toUpperCase() === mgPrefixCode);
@@ -481,43 +474,48 @@ window.findVariantPrice = (item, ralCode, finish, family) => {
         }
     }
 
-    // 3. Family Mapping (Standard -> Look for 9010, etc)
+    // 3. Family Mapping (Directly query the variants for 'STANDARD', 'SPECIFIQ', 'AS20', 'BT')
     let targetDecor = null;
-    if (family === 'std') targetDecor = '9010'; // Standard often priced as 9010
-    else if (family === 'anod') targetDecor = 'AN0001'; // Anodisé often priced as AN0001 or AS20
-    else if (family === 'other') targetDecor = '9016EM'; // 'Other' often priced like Laqué Plus (9016EM)
+    const rTrimmed = String(ralCode).toUpperCase().trim();
 
-    if (targetDecor) {
-        const familyMatch = variants.find(v => String(v.decor || '').toUpperCase() === targetDecor);
-        if (familyMatch) return Number(familyMatch.px_public || 0);
-
-        // Try fallback for Anodisé (AS20) if AN0001 failed
-        if (family === 'anod') {
-            const altAnod = variants.find(v => String(v.decor || '').toUpperCase() === 'AS20');
-            if (altAnod) return Number(altAnod.px_public || 0);
-        }
-        // Try fallback for Other (SPECIFIQ) if 9016EM failed
-        if (family === 'other') {
-            const altSpec = variants.find(v => String(v.decor || '').toUpperCase() === 'SPECIFIQ');
-            if (altSpec) return Number(altSpec.px_public || 0);
-        }
+    if (['BT', 'BRUT', 'SANS'].includes(rTrimmed)) {
+        targetDecor = 'BT';
+    } else if (['9010', '9016', '7016', '9005', '9010EM', '9016EM', '2100'].includes(rTrimmed)) {
+        targetDecor = 'STANDARD';
+    } else if (rTrimmed.startsWith('AN') || rTrimmed.startsWith('AS') || rTrimmed.includes('NATUEL') || rTrimmed.includes('INOX')) {
+        targetDecor = 'AS20';
+    } else if (rTrimmed.startsWith('CHENE') || rTrimmed.includes('BOIS')) {
+        targetDecor = 'WOOD'; // Unlikely to find in Arcelor, but just in case
+    } else {
+        targetDecor = 'SPECIFIQ';
     }
 
-    // 4. If no variant found (Article Unique ?), apply Markup on Base Price
-    // We assume the current price in 'variants' might be one of them.
-    // Let's try to find a "Brut" or "BT" variant to use as base, otherwise use the item's current price (risky if already laqué).
+    // Attempt to find the matching family in the variants
+    let familyMatch = variants.find(v => {
+        const d = String(v.decor || '').toUpperCase().trim();
+        if (targetDecor === 'STANDARD') return d === 'STANDARD' || d === 'TARIF STANDARD' || d === '9010';
+        if (targetDecor === 'SPECIFIQ') return d === 'SPECIFIQ' || d === 'TARIF SPÉCIFIQUE' || d === 'TARIF SPECIFIQUE';
+        if (targetDecor === 'AS20') return d === 'AS20' || d === 'AN0001' || d === 'AS';
+        if (targetDecor === 'BT') return d === 'BT' || d === 'BRUT';
+        return d === targetDecor;
+    });
 
-    const brutVariant = variants.find(v => ['BT', 'BRUT', 'SANS'].includes(String(v.decor || '').toUpperCase())) || variants[0];
-    const basePrice = Number(brutVariant.px_public || 0);
-
-    if (basePrice > 0) {
-        if (family === 'std') return basePrice * 1.05; // +5%
-        if (family === 'other') return basePrice * 1.15; // +15%
-        if (family === 'anod') return basePrice * 1.25; // +25%
-        if (family === 'wood') return basePrice * 1.40; // +40%
+    // Fallbacks
+    if (!familyMatch && targetDecor === 'STANDARD') {
+        // If Standard not found, fallback to Specifique
+        familyMatch = variants.find(v => {
+            const d = String(v.decor || '').toUpperCase().trim();
+            return d === 'SPECIFIQ' || d === 'TARIF SPÉCIFIQUE' || d === 'TARIF SPECIFIQUE';
+        });
     }
 
-    return item.px_public; // No change if we can't calculate
+    if (familyMatch) {
+        return Number(familyMatch.px_public || 0);
+    }
+
+    // 4. Default: If absolutely no match found, do NOT make up a price using percentages.
+    // Return the item's current price.
+    return item.px_public;
 };
 
 

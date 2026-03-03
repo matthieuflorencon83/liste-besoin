@@ -28,6 +28,9 @@
     "coeff_conversion": null,
     "date_prix": null,
     "fournisseur": "BALITRAND",
+    "sous-famille": null,
+    "prix_public": null,
+    "poids_kg": null,
     "image": null
   },
   {
@@ -59,6 +62,9 @@
     "coeff_conversion": null,
     "date_prix": null,
     "fournisseur": "BALITRAND",
+    "sous-famille": null,
+    "prix_public": null,
+    "poids_kg": null,
     "image": null
   },
   {
@@ -90,6 +96,9 @@
     "coeff_conversion": null,
     "date_prix": null,
     "fournisseur": "BALITRAND",
+    "sous-famille": null,
+    "prix_public": null,
+    "poids_kg": null,
     "image": null
   },
   {
@@ -121,6 +130,9 @@
     "coeff_conversion": null,
     "date_prix": null,
     "fournisseur": "Balitrand",
+    "sous-famille": null,
+    "prix_public": null,
+    "poids_kg": null,
     "image": null
   },
   {
@@ -152,6 +164,9 @@
     "coeff_conversion": null,
     "date_prix": null,
     "fournisseur": "Balitrand",
+    "sous-famille": null,
+    "prix_public": null,
+    "poids_kg": null,
     "image": null
   },
   {
@@ -183,6 +198,9 @@
     "coeff_conversion": null,
     "date_prix": null,
     "fournisseur": "BALITRAND",
+    "sous-famille": null,
+    "prix_public": null,
+    "poids_kg": null,
     "image": null
   },
   {
@@ -214,6 +232,9 @@
     "coeff_conversion": null,
     "date_prix": null,
     "fournisseur": "BALITRAND",
+    "sous-famille": null,
+    "prix_public": null,
+    "poids_kg": null,
     "image": null
   },
   {
@@ -245,6 +266,9 @@
     "coeff_conversion": null,
     "date_prix": null,
     "fournisseur": "BALITRAND",
+    "sous-famille": null,
+    "prix_public": null,
+    "poids_kg": null,
     "image": null
   },
   {
@@ -276,6 +300,9 @@
     "coeff_conversion": null,
     "date_prix": null,
     "fournisseur": "BALITRAND",
+    "sous-famille": null,
+    "prix_public": null,
+    "poids_kg": null,
     "image": null
   },
   {
@@ -307,6 +334,9 @@
     "coeff_conversion": null,
     "date_prix": null,
     "fournisseur": "Balitrand",
+    "sous-famille": null,
+    "prix_public": null,
+    "poids_kg": null,
     "image": null
   },
   {
@@ -338,6 +368,9 @@
     "coeff_conversion": null,
     "date_prix": null,
     "fournisseur": "Balitrand",
+    "sous-famille": null,
+    "prix_public": null,
+    "poids_kg": null,
     "image": null
   }
 ]

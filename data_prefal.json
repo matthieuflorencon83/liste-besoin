@@ -28,6 +28,9 @@
     "coeff_conversion": null,
     "date_prix": null,
     "fournisseur": "PREFAL",
+    "sous-famille": null,
+    "prix_public": null,
+    "poids_kg": null,
     "image": null
   },
   {
@@ -59,6 +62,9 @@
     "coeff_conversion": null,
     "date_prix": null,
     "fournisseur": "PREFAL",
+    "sous-famille": null,
+    "prix_public": null,
+    "poids_kg": null,
     "image": null
   },
   {
@@ -90,6 +96,9 @@
     "coeff_conversion": null,
     "date_prix": null,
     "fournisseur": "PREFAL",
+    "sous-famille": null,
+    "prix_public": null,
+    "poids_kg": null,
     "image": null
   },
   {
@@ -121,6 +130,9 @@
     "coeff_conversion": null,
     "date_prix": null,
     "fournisseur": "PREFAL",
+    "sous-famille": null,
+    "prix_public": null,
+    "poids_kg": null,
     "image": null
   },
   {
@@ -152,6 +164,9 @@
     "coeff_conversion": null,
     "date_prix": null,
     "fournisseur": "PREFAL",
+    "sous-famille": null,
+    "prix_public": null,
+    "poids_kg": null,
     "image": null
   },
   {
@@ -183,6 +198,9 @@
     "coeff_conversion": null,
     "date_prix": null,
     "fournisseur": "PREFAL",
+    "sous-famille": null,
+    "prix_public": null,
+    "poids_kg": null,
     "image": null
   },
   {
@@ -214,6 +232,9 @@
     "coeff_conversion": null,
     "date_prix": null,
     "fournisseur": "PREFAL",
+    "sous-famille": null,
+    "prix_public": null,
+    "poids_kg": null,
     "image": null
   },
   {
@@ -245,6 +266,9 @@
     "coeff_conversion": null,
     "date_prix": null,
     "fournisseur": "PREFAL",
+    "sous-famille": null,
+    "prix_public": null,
+    "poids_kg": null,
     "image": null
   },
   {
@@ -276,6 +300,9 @@
     "coeff_conversion": null,
     "date_prix": null,
     "fournisseur": "PREFAL",
+    "sous-famille": null,
+    "prix_public": null,
+    "poids_kg": null,
     "image": null
   },
   {
@@ -307,6 +334,9 @@
     "coeff_conversion": null,
     "date_prix": null,
     "fournisseur": "PREFAL",
+    "sous-famille": null,
+    "prix_public": null,
+    "poids_kg": null,
     "image": null
   },
   {
@@ -338,6 +368,9 @@
     "coeff_conversion": null,
     "date_prix": null,
     "fournisseur": "PREFAL",
+    "sous-famille": null,
+    "prix_public": null,
+    "poids_kg": null,
     "image": null
   },
   {
@@ -369,6 +402,9 @@
     "coeff_conversion": null,
     "date_prix": null,
     "fournisseur": "PREFAL",
+    "sous-famille": null,
+    "prix_public": null,
+    "poids_kg": null,
     "image": null
   },
   {
@@ -400,6 +436,9 @@
     "coeff_conversion": null,
     "date_prix": null,
     "fournisseur": "PREFAL",
+    "sous-famille": null,
+    "prix_public": null,
+    "poids_kg": null,
     "image": null
   },
   {
@@ -431,6 +470,9 @@
     "coeff_conversion": null,
     "date_prix": null,
     "fournisseur": "PREFAL",
+    "sous-famille": null,
+    "prix_public": null,
+    "poids_kg": null,
     "image": null
   },
   {
@@ -462,6 +504,9 @@
     "coeff_conversion": null,
     "date_prix": null,
     "fournisseur": "PREFAL",
+    "sous-famille": null,
+    "prix_public": null,
+    "poids_kg": null,
     "image": null
   },
   {
@@ -493,6 +538,9 @@
     "coeff_conversion": null,
     "date_prix": null,
     "fournisseur": "PREFAL",
+    "sous-famille": null,
+    "prix_public": null,
+    "poids_kg": null,
     "image": "img_arcellor/INS 40240.jpg"
   },
   {
@@ -524,6 +572,9 @@
     "coeff_conversion": null,
     "date_prix": null,
     "fournisseur": "PREFAL",
+    "sous-famille": null,
+    "prix_public": null,
+    "poids_kg": null,
     "image": null
   },
   {
@@ -555,6 +606,9 @@
     "coeff_conversion": null,
     "date_prix": null,
     "fournisseur": "PREFAL",
+    "sous-famille": null,
+    "prix_public": null,
+    "poids_kg": null,
     "image": null
   },
   {
@@ -586,6 +640,9 @@
     "coeff_conversion": null,
     "date_prix": null,
     "fournisseur": "PREFAL",
+    "sous-famille": null,
+    "prix_public": null,
+    "poids_kg": null,
     "image": null
   },
   {
@@ -617,6 +674,9 @@
     "coeff_conversion": null,
     "date_prix": null,
     "fournisseur": "PREFAL",
+    "sous-famille": null,
+    "prix_public": null,
+    "poids_kg": null,
     "image": "img_arcellor/INS 7005.jpg"
   },
   {
@@ -648,6 +708,9 @@
     "coeff_conversion": null,
     "date_prix": null,
     "fournisseur": "PREFAL",
+    "sous-famille": null,
+    "prix_public": null,
+    "poids_kg": null,
     "image": "img_arcellor/INS 7007.jpg"
   },
   {
@@ -679,6 +742,9 @@
     "coeff_conversion": null,
     "date_prix": null,
     "fournisseur": "PREFAL",
+    "sous-famille": null,
+    "prix_public": null,
+    "poids_kg": null,
     "image": "img_arcellor/INS 7013.jpg"
   },
   {
@@ -710,6 +776,9 @@
     "coeff_conversion": null,
     "date_prix": null,
     "fournisseur": "PREFAL",
+    "sous-famille": null,
+    "prix_public": null,
+    "poids_kg": null,
     "image": "img_arcellor/INS 70201.jpg"
   },
   {
@@ -741,6 +810,9 @@
     "coeff_conversion": null,
     "date_prix": null,
     "fournisseur": "PREFAL",
+    "sous-famille": null,
+    "prix_public": null,
+    "poids_kg": null,
     "image": null
   },
   {
@@ -772,6 +844,9 @@
     "coeff_conversion": null,
     "date_prix": null,
     "fournisseur": "PREFAL",
+    "sous-famille": null,
+    "prix_public": null,
+    "poids_kg": null,
     "image": null
   },
   {
@@ -803,6 +878,9 @@
     "coeff_conversion": null,
     "date_prix": null,
     "fournisseur": "PREFAL",
+    "sous-famille": null,
+    "prix_public": null,
+    "poids_kg": null,
     "image": null
   },
   {
@@ -834,6 +912,9 @@
     "coeff_conversion": null,
     "date_prix": null,
     "fournisseur": "PREFAL",
+    "sous-famille": null,
+    "prix_public": null,
+    "poids_kg": null,
     "image": null
   },
   {
@@ -865,6 +946,9 @@
     "coeff_conversion": null,
     "date_prix": null,
     "fournisseur": "PREFAL",
+    "sous-famille": null,
+    "prix_public": null,
+    "poids_kg": null,
     "image": null
   },
   {
@@ -896,6 +980,9 @@
     "coeff_conversion": null,
     "date_prix": null,
     "fournisseur": "PREFAL",
+    "sous-famille": null,
+    "prix_public": null,
+    "poids_kg": null,
     "image": null
   },
   {
@@ -927,6 +1014,9 @@
     "coeff_conversion": null,
     "date_prix": null,
     "fournisseur": "PREFAL",
+    "sous-famille": null,
+    "prix_public": null,
+    "poids_kg": null,
     "image": null
   },
   {
@@ -958,6 +1048,9 @@
     "coeff_conversion": null,
     "date_prix": null,
     "fournisseur": "PREFAL",
+    "sous-famille": null,
+    "prix_public": null,
+    "poids_kg": null,
     "image": null
   },
   {
@@ -989,6 +1082,9 @@
     "coeff_conversion": null,
     "date_prix": null,
     "fournisseur": "PREFAL",
+    "sous-famille": null,
+    "prix_public": null,
+    "poids_kg": null,
     "image": null
   },
   {
@@ -1020,6 +1116,9 @@
     "coeff_conversion": null,
     "date_prix": null,
     "fournisseur": "PREFAL",
+    "sous-famille": null,
+    "prix_public": null,
+    "poids_kg": null,
     "image": null
   },
   {
@@ -1051,6 +1150,9 @@
     "coeff_conversion": null,
     "date_prix": null,
     "fournisseur": "PREFAL",
+    "sous-famille": null,
+    "prix_public": null,
+    "poids_kg": null,
     "image": null
   },
   {
@@ -1082,6 +1184,9 @@
     "coeff_conversion": null,
     "date_prix": null,
     "fournisseur": "PREFAL",
+    "sous-famille": null,
+    "prix_public": null,
+    "poids_kg": null,
     "image": null
   },
   {
@@ -1113,6 +1218,9 @@
     "coeff_conversion": null,
     "date_prix": null,
     "fournisseur": "PREFAL",
+    "sous-famille": null,
+    "prix_public": null,
+    "poids_kg": null,
     "image": null
   },
   {
@@ -1144,6 +1252,9 @@
     "coeff_conversion": null,
     "date_prix": null,
     "fournisseur": "PREFAL",
+    "sous-famille": null,
+    "prix_public": null,
+    "poids_kg": null,
     "image": null
   },
   {
@@ -1175,6 +1286,9 @@
     "coeff_conversion": null,
     "date_prix": null,
     "fournisseur": "PREFAL",
+    "sous-famille": null,
+    "prix_public": null,
+    "poids_kg": null,
     "image": "Installux/1.4-VERANDAS/1.4.3 - LUCIOLE EPINE & TUBULAIRE - CHENEAUX/7760TH.png"
   },
   {
@@ -1206,6 +1320,9 @@
     "coeff_conversion": null,
     "date_prix": null,
     "fournisseur": "PREFAL",
+    "sous-famille": null,
+    "prix_public": null,
+    "poids_kg": null,
     "image": null
   },
   {
@@ -1237,6 +1354,9 @@
     "coeff_conversion": null,
     "date_prix": null,
     "fournisseur": "PREFAL",
+    "sous-famille": null,
+    "prix_public": null,
+    "poids_kg": null,
     "image": null
   },
   {
@@ -1268,6 +1388,9 @@
     "coeff_conversion": null,
     "date_prix": null,
     "fournisseur": "PREFAL",
+    "sous-famille": null,
+    "prix_public": null,
+    "poids_kg": null,
     "image": "img_arcellor/INS 7011.jpg"
   },
   {
@@ -1299,6 +1422,9 @@
     "coeff_conversion": null,
     "date_prix": null,
     "fournisseur": "PREFAL",
+    "sous-famille": null,
+    "prix_public": null,
+    "poids_kg": null,
     "image": null
   },
   {
@@ -1330,6 +1456,9 @@
     "coeff_conversion": null,
     "date_prix": null,
     "fournisseur": "PREFAL",
+    "sous-famille": null,
+    "prix_public": null,
+    "poids_kg": null,
     "image": null
   },
   {
@@ -1361,6 +1490,9 @@
     "coeff_conversion": null,
     "date_prix": null,
     "fournisseur": "PREFAL",
+    "sous-famille": null,
+    "prix_public": null,
+    "poids_kg": null,
     "image": null
   },
   {
@@ -1392,6 +1524,9 @@
     "coeff_conversion": null,
     "date_prix": null,
     "fournisseur": "PREFAL",
+    "sous-famille": null,
+    "prix_public": null,
+    "poids_kg": null,
     "image": null
   }
 ]

@@ -1,5 +1,5 @@
 {
-  "version": "2026-02-25T21:31:45.608801",
+  "version": "2026-03-02T19:08:45.377765",
   "sources": [
     {
       "fournisseur": "ARCELOR (BERTON SICARD)",
@@ -75,7 +75,12 @@
       "fournisseur": "SEPALUMIC",
       "file": "data_sepalumic.json",
       "count": 13
+    },
+    {
+      "fournisseur": "INCONNU",
+      "file": "data_inconnu.json",
+      "count": 1
     }
   ],
-  "total_records": 17857
+  "total_records": 17858
 }
