@@ -16,7 +16,6 @@ window.AppState = {
     currentFamilyFilter: '',
     currentSupplierFilter: '',
     searchQuery: '',
-    needsFilterQuery: '',
     needsSortCol: 'fournisseur',
     needsSortDir: 'asc',
 

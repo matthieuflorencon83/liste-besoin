@@ -596,26 +596,8 @@ window.renderNeeds = function () {
         badge.classList.toggle('hidden', count === 0);
     }
 
-    // Filtrer si une recherche est active
-    const q = (AppState.needsFilterQuery || '').toLowerCase().trim();
-    const displayedNeeds = q
-        ? AppState.needs.filter(item =>
-            (item.reference || '').toLowerCase().includes(q) ||
-            (item.designation || '').toLowerCase().includes(q) ||
-            (item.fournisseur || '').toLowerCase().includes(q)
-        )
-        : AppState.needs;
-
-    // Afficher le compteur de filtre
-    const filterCount = document.getElementById('needsFilterCount');
-    if (filterCount) {
-        if (q && displayedNeeds.length !== AppState.needs.length) {
-            filterCount.textContent = `${displayedNeeds.length} / ${AppState.needs.length}`;
-            filterCount.classList.remove('hidden');
-        } else {
-            filterCount.classList.add('hidden');
-        }
-    }
+    // Base data
+    let displayedNeeds = AppState.needs;
 
     // Tri par colonne si actif
     const sortCol = AppState.needsSortCol;
@@ -910,18 +892,7 @@ window.renderNeeds = function () {
     }
 }
 
-    ;// Filtre rapide dans la vue Besoins (debounced) — Sprint 4
-(function () {
-    function debounceNeeds(fn, delay) {
-        let t;
-        return function (...a) { clearTimeout(t); t = setTimeout(() => fn(...a), delay); };
-    }
-    const _filterFn = function (query) {
-        AppState.needsFilterQuery = query;
-        window.renderNeeds();
-    };
-    window.filterNeeds = debounceNeeds(_filterFn, 200);
-})();
+
 
 // ============================================================
 // SPRINT 3 — NOTES PAR LIGNE
