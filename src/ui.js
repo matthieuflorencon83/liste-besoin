@@ -708,7 +708,7 @@ window.renderNeeds = function () {
                 if (!img) {
                     return `<div class="w-12 h-12 bg-[var(--card)] rounded-lg border border-white/5 flex items-center justify-center" title="Pas d'image"><i data-lucide="image-off" class="w-4 h-4 text-[var(--text-muted)] opacity-30"></i></div>`;
                 }
-                const safeImage = window.escapeHtml ? window.escapeHtml('img/' + img) : ('img/' + img).replace(/"/g, '&quot;');
+                const safeImage = window.escapeHtml ? window.escapeHtml(img) : img.replace(/"/g, '&quot;');
                 const safeImageAttr = safeImage.replace(/'/g, "\\'");
                 return `<img src="${safeImage}" loading="lazy" class="w-12 h-12 object-contain rounded-lg bg-white p-1 cursor-pointer hover:scale-150 transition-transform shadow-sm" onclick="window.openVisualizer('${safeImageAttr}', event)" title="Agrandir l'image" onerror="this.style.display='none'">`;
             })()}
