@@ -463,7 +463,8 @@ window.toggleN = (e, id, idx) => {
             need: 1,
             stock: 0,
             px_public: it.px_public || 0, // Store initial public price
-            px_remise: it.px_remise || it.px_public || 0 // Store initial discounted price
+            px_remise: it.px_remise || it.px_public || 0, // Store initial discounted price
+            image: it.image // Transfer image property to Needs list
         });
     }
     localStorage.setItem('art-needs', JSON.stringify(AppState.needs));

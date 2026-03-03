@@ -695,10 +695,20 @@ window.renderNeeds = function () {
             <!-- IMAGE -->
             <td class="p-2 w-16 text-center" onclick="event.stopPropagation()">
                 ${(() => {
-                if (!item.image) {
+                let img = item.image;
+                if (!img) {
+                    // Patch rétroactif pour les articles déjà dans la liste avant la mise à jour
+                    const catItem = AppState.catalogData.find(c => String(c.reference) === String(item.reference) && (c.fournisseur === item.fournisseur || !item.fournisseur));
+                    if (catItem && catItem.image) {
+                        item.image = catItem.image; // Save for later
+                        img = catItem.image;
+                    }
+                }
+
+                if (!img) {
                     return `<div class="w-12 h-12 bg-[var(--card)] rounded-lg border border-white/5 flex items-center justify-center" title="Pas d'image"><i data-lucide="image-off" class="w-4 h-4 text-[var(--text-muted)] opacity-30"></i></div>`;
                 }
-                const safeImage = encodeURI('img/' + item.image);
+                const safeImage = encodeURI('img/' + img);
                 // On échappe les apostrophes pour le onclick
                 const safeImageAttr = safeImage.replace(/'/g, "\\'");
                 return `<img src="${safeImage}" loading="lazy" class="w-12 h-12 object-contain rounded-lg bg-white p-1 cursor-pointer hover:scale-150 transition-transform shadow-sm" onclick="window.openVisualizer('${safeImageAttr}', event)" title="Agrandir l'image" onerror="this.style.display='none'">`;
