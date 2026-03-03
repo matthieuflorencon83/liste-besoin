@@ -425,6 +425,9 @@ window.applyRalToSelection = () => {
                         item.px_remise = Number(variantMatch.px_remise);
                     }
 
+                    // Force complete price recalculation (removing user overridden pieces)
+                    delete item.px_piece;
+
                     // Update packaging and unit attributes
                     const fields = ['unit_vente', 'condit', 'unit_condit', 'conditionnement', 'unite_qte', 'unite___prix', 'poids_kg', 'poids__kg_unit_'];
                     fields.forEach(f => {
@@ -689,6 +692,14 @@ window.renderNeeds = function () {
             <!-- REFERENCE -->
             <td class="p-4 w-48 font-mono text-[var(--indigo)] font-bold">${ref}</td>
 
+            <!-- IMAGE -->
+            <td class="p-2 w-16 text-center" onclick="event.stopPropagation()">
+                ${item.image
+                ? `<img src="${item.image}" class="w-12 h-12 object-contain rounded-lg bg-white p-1 cursor-pointer hover:scale-150 transition-transform shadow-sm" onclick="window.openVisualizer('${item.image}', event)" title="Agrandir l'image">`
+                : `<div class="w-12 h-12 bg-[var(--card)] rounded-lg border border-white/5 flex items-center justify-center" title="Pas d'image"><i data-lucide="image-off" class="w-4 h-4 text-[var(--text-muted)] opacity-30"></i></div>`
+            }
+            </td>
+
             <!-- DESIGNATION -->
             <td class="p-4">
                 <div class="text-sm font-medium text-[var(--text-main)] line-clamp-2">${des}</div>
@@ -868,7 +879,7 @@ window.renderNeeds = function () {
             let tfoot = table.querySelector('tfoot');
             if (!tfoot) { tfoot = document.createElement('tfoot'); table.appendChild(tfoot); }
             tfoot.innerHTML = `<tr id="needsTotalRow" class="border-t-2 border-[var(--border)] bg-[var(--card-hover)]">
-                <td colspan="8" class="px-4 py-3 text-right text-xs font-black text-[var(--text-muted)] uppercase tracking-widest">
+                <td colspan="9" class="px-4 py-3 text-right text-xs font-black text-[var(--text-muted)] uppercase tracking-widest">
                     ${AppState.needs.length} article${AppState.needs.length > 1 ? 's' : ''}
                 </td>
                 <td class="p-3 text-center text-xs font-black text-[var(--text-main)]">${totalNeed}</td>
@@ -880,7 +891,7 @@ window.renderNeeds = function () {
         }
     } else {
         totalRow.innerHTML = `
-            <td colspan="8" class="px-4 py-3 text-right text-xs font-black text-[var(--text-muted)] uppercase tracking-widest">
+            <td colspan="9" class="px-4 py-3 text-right text-xs font-black text-[var(--text-muted)] uppercase tracking-widest">
                 ${AppState.needs.length} article${AppState.needs.length > 1 ? 's' : ''}
             </td>
             <td class="p-3 text-center text-xs font-black text-[var(--text-main)]">${totalNeed}</td>
