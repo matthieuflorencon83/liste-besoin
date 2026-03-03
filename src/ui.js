@@ -416,12 +416,22 @@ window.applyRalToSelection = () => {
                 item.ral = ralCode;
                 item.ral_finish = finish;
 
-                // --- Auto-Pricing Logic ---
-                // We need to find the best price match for this new finish
-                // We pass the RAW ralCode logic (entered by user), the chosen finish (EM, MG, etc), and family info
-                const newPrice = findVariantPrice(item, ralCode, finish, family);
-                if (newPrice !== null) {
-                    item.px_public = newPrice;
+                // --- Auto-Pricing & Attributes Logic ---
+                // We find the matched variant object to update price, units and packaging
+                const variantMatch = findVariantMatch(item, ralCode, finish, family);
+                if (variantMatch) {
+                    item.px_public = Number(variantMatch.px_public || 0);
+                    if (variantMatch.px_remise !== undefined && variantMatch.px_remise !== null) {
+                        item.px_remise = Number(variantMatch.px_remise);
+                    }
+
+                    // Update packaging and unit attributes
+                    const fields = ['unit_vente', 'condit', 'unit_condit', 'conditionnement', 'unite_qte', 'unite___prix', 'poids_kg', 'poids__kg_unit_'];
+                    fields.forEach(f => {
+                        if (variantMatch[f] !== undefined && variantMatch[f] !== null) {
+                            item[f] = variantMatch[f];
+                        }
+                    });
                 }
 
                 count++;
@@ -435,7 +445,7 @@ window.applyRalToSelection = () => {
         AppState.isRalSelectionMode = false;
         closeRalModal();
         window.renderNeeds();
-        alert(`${count} articles mis à jour avec la finition ${ralCode} (${finish}) et prix recalculés.`);
+        alert(`${count} articles mis à jour avec la finition ${ralCode} (${finish}) et attributs recalculés.`);
     } catch (e) {
         console.error(e);
         alert("Erreur: " + e.message);
@@ -443,10 +453,10 @@ window.applyRalToSelection = () => {
 };
 
 /**
- * Finds the best price for an item based on the selected finish.
- * Strategy: Exact Match > Family Match > Fallback Markup
+ * Finds the best variant object for an item based on the selected finish.
+ * Strategy: Exact Match > Family Match > Fallback Specific
  */
-window.findVariantPrice = (item, ralCode, finish, family) => {
+window.findVariantMatch = (item, ralCode, finish, family) => {
     if (!AppState.catalogData) return null;
 
     // Filter all variants of this article (same reference, same supplier)
@@ -459,18 +469,18 @@ window.findVariantPrice = (item, ralCode, finish, family) => {
 
     // 1. Exact Match (e.g. User typed "9010", data has decor="9010")
     const exactMatch = variants.find(v => String(v.decor || '').toUpperCase() === String(ralCode).toUpperCase());
-    if (exactMatch) return Number(exactMatch.px_public || 0);
+    if (exactMatch) return exactMatch;
 
     // 2. Composite Match (RAL + Finish, e.g. "9016" + "EM" -> "9016EM")
     if (finish) {
         const compositeCode = (String(ralCode) + String(finish)).toUpperCase();
         const compositeMatch = variants.find(v => String(v.decor || '').toUpperCase() === compositeCode);
-        if (compositeMatch) return Number(compositeMatch.px_public || 0);
+        if (compositeMatch) return compositeMatch;
 
         if (finish === 'MG') {
             const mgPrefixCode = ('MG' + String(ralCode)).toUpperCase();
             const mgMatch = variants.find(v => String(v.decor || '').toUpperCase() === mgPrefixCode);
-            if (mgMatch) return Number(mgMatch.px_public || 0);
+            if (mgMatch) return mgMatch;
         }
     }
 
@@ -510,12 +520,10 @@ window.findVariantPrice = (item, ralCode, finish, family) => {
     }
 
     if (familyMatch) {
-        return Number(familyMatch.px_public || 0);
+        return familyMatch;
     }
 
-    // 4. Default: If absolutely no match found, do NOT make up a price using percentages.
-    // Return the item's current price.
-    return item.px_public;
+    return null;
 };
 
 
