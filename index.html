@@ -491,10 +491,10 @@
         <div
             class="relative w-[600px] max-h-[90vh] overflow-y-auto bg-[var(--canvas)] text-[var(--text-main)] border border-[var(--border)] rounded-2xl shadow-2xl">
             <!-- Header -->
-            <div class="p-6 border-b border-zinc-800 flex items-center justify-between">
+            <div class="p-4 border-b border-zinc-800 flex items-center justify-between">
                 <div>
                     <h2 class="text-xl font-bold">Ajouter un Article</h2>
-                    <p class="text-sm text-zinc-400 mt-1">Ajouter un article au catalogue (BDD locale)</p>
+                    <p class="text-xs text-zinc-400 mt-0.5">Ajouter un article au catalogue (BDD locale)</p>
                 </div>
                 <button onclick="window.closeManualAddModal()"
                     class="p-2 hover:bg-[var(--card-hover)] text-[var(--text-muted)] hover:text-[var(--text-main)] transition-all">
@@ -503,113 +503,163 @@
             </div>
 
             <!-- Form -->
-            <form id="manualAddForm" class="p-6 space-y-5" onsubmit="return false;">
+            <form id="manualAddForm" class="p-4 space-y-3" onsubmit="return false;">
 
                 <!-- Reference + Designation -->
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="space-y-2">
-                        <label class="text-xs font-bold text-zinc-500 uppercase tracking-widest">Référence *</label>
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="space-y-1.5">
+                        <label class="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Référence *</label>
                         <input type="text" name="reference" required placeholder="Ex: ALU-001"
-                            class="w-full bg-[var(--card)] border border-[var(--border)] rounded-xl px-4 py-3 text-sm font-bold placeholder:text-[var(--text-muted)] focus:border-indigo-500 outline-none uppercase">
+                            class="w-full bg-[var(--card)] border border-[var(--border)] rounded-lg px-3 py-2 text-sm font-bold placeholder:text-[var(--text-muted)] focus:border-indigo-500 outline-none uppercase">
                     </div>
-                    <div class="space-y-2">
-                        <label class="text-xs font-bold text-zinc-500 uppercase tracking-widest">Désignation</label>
+                    <div class="space-y-1.5">
+                        <label class="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Désignation</label>
                         <input type="text" name="designation" placeholder="Ex: Profil T 40x40"
-                            class="w-full bg-[var(--card)] border border-[var(--border)] rounded-xl px-4 py-3 text-sm placeholder:text-[var(--text-muted)] focus:border-indigo-500 outline-none">
+                            class="w-full bg-[var(--card)] border border-[var(--border)] rounded-lg px-3 py-2 text-sm placeholder:text-[var(--text-muted)] focus:border-indigo-500 outline-none">
                     </div>
                 </div>
 
                 <!-- Fournisseur + Famille -->
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="space-y-2">
-                        <label class="text-xs font-bold text-zinc-500 uppercase tracking-widest">Fournisseur *</label>
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="space-y-1.5">
+                        <label class="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Fournisseur
+                            *</label>
                         <input type="text" name="fournisseur" required list="suppliersList" placeholder="Ex: AKRAPLAST"
-                            class="w-full bg-[var(--card)] border border-[var(--border)] rounded-xl px-4 py-3 text-sm placeholder:text-[var(--text-muted)] focus:border-indigo-500 outline-none uppercase">
+                            class="w-full bg-[var(--card)] border border-[var(--border)] rounded-lg px-3 py-2 text-sm placeholder:text-[var(--text-muted)] focus:border-indigo-500 outline-none uppercase">
                         <datalist id="suppliersList"></datalist>
                     </div>
-                    <div class="space-y-2">
-                        <label class="text-xs font-bold text-zinc-500 uppercase tracking-widest">Famille</label>
+                    <div class="space-y-1.5">
+                        <label class="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Famille</label>
                         <input type="text" name="famille" list="familiesList" placeholder="Ex: PROFILÉ"
-                            class="w-full bg-[var(--card)] border border-[var(--border)] rounded-xl px-4 py-3 text-sm placeholder:text-[var(--text-muted)] focus:border-indigo-500 outline-none">
+                            class="w-full bg-[var(--card)] border border-[var(--border)] rounded-lg px-3 py-2 text-sm placeholder:text-[var(--text-muted)] focus:border-indigo-500 outline-none">
                         <datalist id="familiesList"></datalist>
                     </div>
                 </div>
 
                 <!-- Prix + Finition -->
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="space-y-2">
-                        <label class="text-xs font-bold text-zinc-500 uppercase tracking-widest">Prix (€)</label>
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="space-y-1.5">
+                        <label class="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Prix (€)</label>
                         <input type="number" name="prix" step="0.01" min="0" placeholder="0.00"
-                            class="w-full bg-[var(--card)] border border-[var(--border)] rounded-xl px-4 py-3 text-sm placeholder:text-[var(--text-muted)] focus:border-indigo-500 outline-none">
+                            class="w-full bg-[var(--card)] border border-[var(--border)] rounded-lg px-3 py-2 text-sm placeholder:text-[var(--text-muted)] focus:border-indigo-500 outline-none">
                     </div>
-                    <div class="space-y-2">
-                        <label class="text-xs font-bold text-zinc-500 uppercase tracking-widest">Finition / RAL</label>
+                    <div class="space-y-1.5">
+                        <label class="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Finition /
+                            RAL</label>
                         <input type="text" name="finition" placeholder="Ex: Anodisé, RAL 9010..."
-                            class="w-full bg-[var(--card)] border border-[var(--border)] rounded-xl px-4 py-3 text-sm placeholder:text-[var(--text-muted)] focus:border-indigo-500 outline-none">
+                            class="w-full bg-[var(--card)] border border-[var(--border)] rounded-lg px-3 py-2 text-sm placeholder:text-[var(--text-muted)] focus:border-indigo-500 outline-none">
                     </div>
                 </div>
 
                 <!-- Dimensions et Épaisseur -->
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="space-y-2">
-                        <label class="text-xs font-bold text-zinc-500 uppercase tracking-widest">Dimension (mm)</label>
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="space-y-1.5">
+                        <label class="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Dimension
+                            (mm)</label>
                         <input type="text" name="dimensions" placeholder="Ex: 2500x1200, Lg=6000..."
-                            class="w-full bg-[var(--card)] border border-[var(--border)] rounded-xl px-4 py-3 text-sm placeholder:text-[var(--text-muted)] focus:border-indigo-500 outline-none">
+                            class="w-full bg-[var(--card)] border border-[var(--border)] rounded-lg px-3 py-2 text-sm placeholder:text-[var(--text-muted)] focus:border-indigo-500 outline-none">
                     </div>
-                    <div class="space-y-2">
-                        <label class="text-xs font-bold text-zinc-500 uppercase tracking-widest">Épaisseur (mm)</label>
+                    <div class="space-y-1.5">
+                        <label class="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Épaisseur
+                            (mm)</label>
                         <input type="text" name="epaisseur" placeholder="Ex: 8, 24, 44..."
-                            class="w-full bg-[var(--card)] border border-[var(--border)] rounded-xl px-4 py-3 text-sm placeholder:text-[var(--text-muted)] focus:border-indigo-500 outline-none">
+                            class="w-full bg-[var(--card)] border border-[var(--border)] rounded-lg px-3 py-2 text-sm placeholder:text-[var(--text-muted)] focus:border-indigo-500 outline-none">
                     </div>
                 </div>
 
-                <div class="h-px bg-zinc-800 w-full my-4"></div>
+                <div class="h-px bg-zinc-800 w-full my-3"></div>
 
                 <!-- Ajout aux besoins -->
                 <div
-                    class="flex items-center justify-between p-4 bg-indigo-500/5 border border-indigo-500/20 rounded-xl">
+                    class="flex items-center justify-between p-3 bg-indigo-500/5 border border-indigo-500/20 rounded-xl">
                     <div class="flex items-center gap-3">
                         <input type="checkbox" id="autoAddToNeeds" name="autoAddToNeeds" checked
-                            class="w-5 h-5 rounded border-zinc-700 text-indigo-500 focus:ring-indigo-500 bg-[var(--card)] accent-indigo-500 cursor-pointer">
+                            class="w-4 h-4 rounded border-zinc-700 text-indigo-500 focus:ring-indigo-500 bg-[var(--card)] accent-indigo-500 cursor-pointer">
                         <label for="autoAddToNeeds" class="text-sm font-bold text-indigo-300 cursor-pointer">Ajouter à
-                            ma liste de besoins</label>
+                            ma liste</label>
                     </div>
                     <div class="flex items-center gap-2">
-                        <label class="text-xs font-bold text-zinc-500 uppercase tracking-widest">Qté</label>
+                        <label class="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Qté</label>
                         <input type="number" name="quantite_besoin" min="1" step="1" value="1" id="manualQtyInput"
-                            class="w-20 bg-[var(--card)] border border-[var(--border)] rounded-lg px-3 py-2 text-sm text-center font-bold focus:border-indigo-500 outline-none">
+                            class="w-16 bg-[var(--card)] border border-[var(--border)] rounded-lg px-2 py-1.5 text-sm text-center font-bold focus:border-indigo-500 outline-none">
                     </div>
                 </div>
 
                 <!-- Image Upload -->
-                <div class="space-y-2">
-                    <label class="text-xs font-bold text-zinc-500 uppercase tracking-widest">Photo (optionnelle)</label>
+                <div class="space-y-1.5">
+                    <label class="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Photo
+                        (optionnelle)</label>
                     <label class="block cursor-pointer">
                         <input type="file" name="image" accept="image/*" class="hidden"
                             onchange="previewManualImage(this)">
                         <div id="manualImgPlaceholder"
-                            class="w-full h-24 border-2 border-dashed border-zinc-700 rounded-xl flex items-center justify-center text-zinc-500 hover:border-indigo-500 transition-all">
-                            <div class="text-center">
-                                <i data-lucide="image-plus" class="w-6 h-6 mx-auto mb-1"></i>
+                            class="w-full h-16 border-2 border-dashed border-zinc-700 rounded-xl flex items-center justify-center text-zinc-500 hover:border-indigo-500 transition-all">
+                            <div class="text-center flex items-center justify-center gap-2">
+                                <i data-lucide="image-plus" class="w-5 h-5"></i>
                                 <span class="text-xs">Cliquer pour ajouter une image</span>
                             </div>
                         </div>
                     </label>
                     <div id="manualImgPreview" class="hidden">
-                        <img src="" alt="Aperçu" class="max-h-40 rounded-xl border border-zinc-700">
+                        <img src="" alt="Aperçu" class="max-h-24 rounded-xl border border-zinc-700 mx-auto">
                     </div>
                 </div>
 
             </form>
 
             <!-- Footer -->
-            <div class="p-6 border-t border-zinc-800 flex justify-end gap-3">
+            <div class="p-4 border-t border-zinc-800 flex justify-end gap-3">
                 <button onclick="window.closeManualAddModal()"
                     class="px-6 py-3 bg-[var(--card)] hover:bg-[var(--card-hover)] text-[var(--text-main)] border border-[var(--border)] rounded-xl text-xs font-bold transition-all">ANNULER</button>
                 <button id="submitManualBtn" onclick="window.submitManualArticle()"
                     class="px-8 py-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold transition-all shadow-lg shadow-indigo-600/20 flex items-center gap-2">
                     <i data-lucide="database" class="w-4 h-4"></i>
                     ENREGISTRER
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL EDIT NEED LINE (SPRINT 7) -->
+    <div id="editNeedModal" class="hidden fixed inset-0 z-[120] flex items-center justify-center">
+        <div class="absolute inset-0 bg-black/85 backdrop-blur-sm" onclick="window.closeEditNeedModal()"></div>
+        <div
+            class="relative w-[480px] bg-[var(--canvas)] text-[var(--text-main)] border border-[var(--border)] rounded-2xl shadow-2xl animate-fade">
+            <!-- Header -->
+            <div class="flex items-center justify-between p-4 border-b border-zinc-800">
+                <h2 class="text-sm font-black tracking-widest uppercase">Modifier la ligne</h2>
+                <button onclick="window.closeEditNeedModal()"
+                    class="p-2 hover:bg-[var(--card-hover)] text-[var(--text-muted)] hover:text-white transition-all rounded-lg">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <!-- Body -->
+            <div class="p-6 space-y-4">
+                <input type="hidden" id="editNeedIndex">
+
+                <div>
+                    <label
+                        class="block text-[10px] font-black tracking-widest uppercase text-[var(--text-muted)] mb-2">Référence</label>
+                    <input type="text" id="editNeedRef"
+                        class="w-full bg-[var(--card)] border border-[var(--border)] rounded-xl px-4 py-2 text-sm text-[var(--indigo)] font-mono font-bold focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 outline-none transition-all">
+                </div>
+
+                <div>
+                    <label
+                        class="block text-[10px] font-black tracking-widest uppercase text-[var(--text-muted)] mb-2">Désignation</label>
+                    <textarea id="editNeedDes" rows="3"
+                        class="w-full bg-[var(--card)] border border-[var(--border)] rounded-xl px-4 py-2 text-sm text-[var(--text-main)] focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 outline-none transition-all leading-relaxed"></textarea>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="p-4 border-t border-zinc-800 flex justify-end gap-3">
+                <button onclick="window.closeEditNeedModal()"
+                    class="px-6 py-2 bg-[var(--card)] hover:bg-[var(--card-hover)] text-[var(--text-main)] border border-[var(--border)] rounded-xl text-xs font-bold transition-all">ANNULER</button>
+                <button onclick="window.saveEditNeedModal()"
+                    class="px-8 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold transition-all shadow-lg shadow-indigo-600/20 flex items-center gap-2">
+                    <i data-lucide="check" class="w-4 h-4"></i> ENREGISTRER
                 </button>
             </div>
         </div>

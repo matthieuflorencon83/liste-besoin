@@ -689,15 +689,8 @@ window.renderNeeds = function () {
                 </div>
             </td>
 
-            <!-- REFERENCE - Editable inline -->
-            <td class="p-2 w-48 font-mono text-[var(--indigo)] font-bold" onclick="event.stopPropagation()">
-                <input type="text"
-                    value="${ref}"
-                    onclick="event.stopPropagation(); this.select()"
-                    onchange="window.saveNeedField(${realIndex}, 'reference', this.value)"
-                    class="w-full bg-transparent border-none font-mono text-[var(--indigo)] font-bold hover:bg-[var(--card-hover)] focus:bg-[var(--card)] focus:ring-1 focus:ring-indigo-500 rounded px-2 py-1 outline-none transition-colors"
-                    title="Cliquer pour modifier la référence">
-            </td>
+            <!-- REFERENCE -->
+            <td class="p-4 w-48 font-mono text-[var(--indigo)] font-bold">${ref}</td>
 
             <!-- IMAGE -->
             <td class="p-2 w-16 text-center" onclick="event.stopPropagation()">
@@ -721,14 +714,9 @@ window.renderNeeds = function () {
             })()}
             </td>
 
-            <!-- DESIGNATION - Editable inline -->
-            <td class="p-2" onclick="event.stopPropagation()">
-                <textarea
-                    onclick="event.stopPropagation(); this.select()"
-                    onchange="window.saveNeedField(${realIndex}, 'designation', this.value)"
-                    class="w-full bg-transparent border-none resize-none text-sm font-medium text-[var(--text-main)] hover:bg-[var(--card-hover)] focus:bg-[var(--card)] focus:ring-1 focus:ring-indigo-500 rounded px-2 py-1 outline-none transition-colors overflow-hidden leading-snug"
-                    rows="2"
-                    title="Cliquer pour modifier la désignation">${item.designation || '-'}</textarea>
+            <!-- DESIGNATION -->
+            <td class="p-4">
+                <div class="text-sm font-medium text-[var(--text-main)] line-clamp-2">${des}</div>
             </td>
 
             <!-- RAL / FINISH -->
@@ -838,6 +826,10 @@ window.renderNeeds = function () {
                     </button>
                     <button onclick="window.duplicateNeed(${realIndex}); window.toggleNeedsActionMenu(${realIndex})" class="w-full px-4 py-2 text-left text-[11px] font-bold tracking-wide uppercase text-[var(--text-muted)] hover:text-[var(--emerald)] hover:bg-[var(--emerald-soft)] flex items-center gap-3 transition-colors">
                         <i data-lucide="copy" class="w-4 h-4"></i> Dupliquer
+                    </button>
+                    <!-- SPRINT 7 : BOUTON MODIFIER -->
+                    <button onclick="window.openEditNeedModal(${realIndex}); window.toggleNeedsActionMenu(${realIndex})" class="w-full px-4 py-2 text-left text-[11px] font-bold tracking-wide uppercase text-[var(--text-muted)] hover:text-[var(--indigo)] hover:bg-[var(--indigo-soft)] flex items-center gap-3 transition-colors">
+                        <i data-lucide="edit-3" class="w-4 h-4"></i> Modifier
                     </button>
                     <div class="h-px bg-[var(--border)] my-1"></div>
                     <button onclick="window.deleteNeed(${realIndex}); window.toggleNeedsActionMenu(${realIndex})" class="w-full px-4 py-2 text-left text-[11px] font-bold tracking-wide uppercase text-[var(--rose)] hover:bg-rose-500/10 flex items-center gap-3 transition-colors">

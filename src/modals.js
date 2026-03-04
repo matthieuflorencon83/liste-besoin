@@ -111,7 +111,7 @@ window.submitManualArticle = async () => {
                 } catch (e) { }
             }
 
-            AppState.needs.push({
+            const newItem = {
                 id: tempId,
                 reference: ref,
                 designation: fullDes,
@@ -125,10 +125,18 @@ window.submitManualArticle = async () => {
                 px_public: parseFloat(formData.get('prix')) || 0,
                 px_remise: parseFloat(formData.get('prix')) || 0,
                 image: imgDataUrl // Image base64 temporaire
-            });
+            };
 
-            localStorage.setItem('art-needs', JSON.stringify(AppState.needs));
-            window.showToast(`✅ Article ajouté instantanément aux besoins`, 'indigo');
+            if (autoAdd) {
+                AppState.needs.push(newItem);
+                localStorage.setItem('art-needs', JSON.stringify(AppState.needs));
+                window.showToast(`✅ Article ajouté instantanément aux besoins`, 'indigo');
+            }
+
+            // SOLUTION CATALOGUE OPTIMISTE: On l'injecte dans le catalogue actuel
+            // pour qu'il soit trouvable immédiatement dans la recherche sans F5
+            AppState.catalogData.unshift(newItem);
+            if (typeof window.applyFilters === 'function') window.applyFilters();
 
             // Mettre à jour l'affichage
             if (typeof renderNeeds === 'function') renderNeeds();
@@ -343,3 +351,38 @@ function _histClickOutside(e) {
     const panel = document.getElementById('projectHistoryPanel');
     if (panel && !panel.contains(e.target)) panel.classList.add('hidden');
 }
+
+// ============================================================
+// SPRINT 7 — MODIFICATION DES LIGNES DES BESOINS
+// ============================================================
+window.openEditNeedModal = function (realIndex) {
+    const item = AppState.needs[realIndex];
+    if (!item) return;
+
+    document.getElementById('editNeedIndex').value = realIndex;
+    document.getElementById('editNeedRef').value = item.reference || '';
+    document.getElementById('editNeedDes').value = item.designation || '';
+
+    document.getElementById('editNeedModal').classList.remove('hidden');
+};
+
+window.closeEditNeedModal = function () {
+    document.getElementById('editNeedModal').classList.add('hidden');
+};
+
+window.saveEditNeedModal = function () {
+    const realIndex = document.getElementById('editNeedIndex').value;
+    if (realIndex === '') return;
+
+    const newRef = document.getElementById('editNeedRef').value;
+    const newDes = document.getElementById('editNeedDes').value;
+
+    AppState.needs[realIndex].reference = newRef;
+    AppState.needs[realIndex].designation = newDes;
+
+    // Sauvegarde et MAJ UI
+    localStorage.setItem('art-needs', JSON.stringify(AppState.needs));
+    window.renderNeeds();
+    window.closeEditNeedModal();
+    if (window.showToast) window.showToast('✅ Modifications de la ligne enregistrées', 'emerald');
+};
