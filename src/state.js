@@ -155,6 +155,7 @@ window.init = async function () {
         updateFilterOptions();
         applyFilters();
 
+        window.initScrollObserver();
         updateFavCount();
         const lo = document.getElementById('loadingOverlay');
         if (lo) {
@@ -324,7 +325,7 @@ function render(append = false) {
             </div>` : '';
 
         const img = it.image ?
-            `<div class="img-container" onclick="openVisualizer('${safeImage}')"><img src="${safeImage}" alt="${safeDesAttr}" loading="lazy" onerror="this.style.display='none'"></div>` :
+            `<div class="img-container" onclick="openVisualizer('${safeImage}')"><img src="${safeImage}" alt="${safeDesAttr}" loading="lazy" decoding="async" onerror="this.style.display='none'"></div>` :
             `<div class="img-container opacity-5"><i data-lucide="image" class="w-6 h-6"></i></div>`;
 
         if (window.currentView === 'list') {
@@ -398,12 +399,47 @@ function render(append = false) {
         fragment.appendChild(card);
     });
 
-    window.grid.appendChild(fragment);
+    requestAnimationFrame(() => {
+        window.grid.appendChild(fragment);
 
-    window._renderedCount = Math.min(window.displayCount, AppState.filteredData.length);
-    if (typeof lucide !== 'undefined') lucide.createIcons();
-    document.getElementById('loadMoreContainer').classList.toggle('hidden', window.displayCount >= AppState.filteredData.length);
+        window._renderedCount = Math.min(window.displayCount, AppState.filteredData.length);
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+
+        // Observer condition
+        const sentinel = document.getElementById('scrollSentinel');
+        if (sentinel) {
+            if (window.displayCount >= AppState.filteredData.length) {
+                sentinel.style.display = 'none';
+            } else {
+                sentinel.style.display = 'block';
+            }
+        }
+    });
 }
+
+// Initialisation de l'observateur pour l'Infinite Scrolling
+window.initScrollObserver = function () {
+    const sentinel = document.getElementById('scrollSentinel');
+    if (!sentinel) return;
+
+    if (window._scrollObserver) {
+        window._scrollObserver.disconnect();
+    }
+
+    window._scrollObserver = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting) {
+            if (window.displayCount < AppState.filteredData.length) {
+                // Requête de la frame suivante pour désengorger le main thread
+                requestAnimationFrame(() => {
+                    window.displayCount += window.INCREMENT;
+                    render(true);
+                });
+            }
+        }
+    }, { root: document.getElementById('itemsGrid'), rootMargin: '0px 0px 400px 0px' });
+
+    window._scrollObserver.observe(sentinel);
+};
 
 window.toggleF = (e, id) => {
     e.stopPropagation(); const i = AppState.favorites.indexOf(id);

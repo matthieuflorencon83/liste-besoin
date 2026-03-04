@@ -710,7 +710,7 @@ window.renderNeeds = function () {
                 }
                 const safeImage = window.escapeHtml ? window.escapeHtml(img) : img.replace(/"/g, '&quot;');
                 const safeImageAttr = safeImage.replace(/'/g, "\\'");
-                return `<img src="${safeImage}" loading="lazy" class="w-12 h-12 object-contain rounded-lg bg-white p-1 cursor-pointer hover:scale-150 transition-transform shadow-sm" onclick="window.openVisualizer('${safeImageAttr}', event)" title="Agrandir l'image" onerror="this.style.display='none'">`;
+                return `<img src="${safeImage}" loading="lazy" decoding="async" class="w-12 h-12 object-contain rounded-lg bg-white p-1 cursor-pointer hover:scale-150 transition-transform shadow-sm" onclick="window.openVisualizer('${safeImageAttr}', event)" title="Agrandir l'image" onerror="this.style.display='none'">`;
             })()}
             </td>
 
