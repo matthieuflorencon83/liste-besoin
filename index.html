@@ -549,12 +549,36 @@
                     </div>
                 </div>
 
-                <!-- Dimensions -->
-                <div class="space-y-2">
-                    <label class="text-xs font-bold text-zinc-500 uppercase tracking-widest">Dimensions /
-                        Conditionnement</label>
-                    <input type="text" name="dimensions" placeholder="Ex: 6000mm, barre de 6m..."
-                        class="w-full bg-[var(--card)] border border-[var(--border)] rounded-xl px-4 py-3 text-sm placeholder:text-[var(--text-muted)] focus:border-indigo-500 outline-none">
+                <!-- Dimensions et Épaisseur -->
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="space-y-2">
+                        <label class="text-xs font-bold text-zinc-500 uppercase tracking-widest">Dimension (mm)</label>
+                        <input type="text" name="dimensions" placeholder="Ex: 2500x1200, Lg=6000..."
+                            class="w-full bg-[var(--card)] border border-[var(--border)] rounded-xl px-4 py-3 text-sm placeholder:text-[var(--text-muted)] focus:border-indigo-500 outline-none">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-xs font-bold text-zinc-500 uppercase tracking-widest">Épaisseur (mm)</label>
+                        <input type="text" name="epaisseur" placeholder="Ex: 8, 24, 44..."
+                            class="w-full bg-[var(--card)] border border-[var(--border)] rounded-xl px-4 py-3 text-sm placeholder:text-[var(--text-muted)] focus:border-indigo-500 outline-none">
+                    </div>
+                </div>
+
+                <div class="h-px bg-zinc-800 w-full my-4"></div>
+
+                <!-- Ajout aux besoins -->
+                <div
+                    class="flex items-center justify-between p-4 bg-indigo-500/5 border border-indigo-500/20 rounded-xl">
+                    <div class="flex items-center gap-3">
+                        <input type="checkbox" id="autoAddToNeeds" name="autoAddToNeeds" checked
+                            class="w-5 h-5 rounded border-zinc-700 text-indigo-500 focus:ring-indigo-500 bg-[var(--card)] accent-indigo-500 cursor-pointer">
+                        <label for="autoAddToNeeds" class="text-sm font-bold text-indigo-300 cursor-pointer">Ajouter à
+                            ma liste de besoins</label>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <label class="text-xs font-bold text-zinc-500 uppercase tracking-widest">Qté</label>
+                        <input type="number" name="quantite_besoin" min="1" step="1" value="1" id="manualQtyInput"
+                            class="w-20 bg-[var(--card)] border border-[var(--border)] rounded-lg px-3 py-2 text-sm text-center font-bold focus:border-indigo-500 outline-none">
+                    </div>
                 </div>
 
                 <!-- Image Upload -->

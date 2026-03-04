@@ -77,26 +77,85 @@ window.submitManualArticle = async () => {
     try {
         const formData = new FormData(form);
 
-        // Use 8000 for Python Server. 
+        // --- OPTIMISTIC UI: Ajout immédiat aux besoins ---
+        const autoAdd = document.getElementById('autoAddToNeeds')?.checked;
+        if (autoAdd) {
+            const qty = parseInt(document.getElementById('manualQtyInput')?.value || '1', 10);
+            const ref = formData.get('reference') || '';
+            const des = formData.get('designation') || '';
+            const four = formData.get('fournisseur') || 'Manuel';
+
+            // Créer une désignation enrichie avec les nouvelles infos si présentes
+            const dim = formData.get('dimensions');
+            const ep = formData.get('epaisseur');
+            const ral = formData.get('finition');
+
+            let extraDes = [];
+            if (ep) extraDes.push(`Ép ${ep}mm`);
+            if (dim) extraDes.push(`Dim ${dim}`);
+            const fullDes = extraDes.length > 0 ? `${des} (${extraDes.join(', ')})`.trim() : des;
+
+            // Faux ID temporaire basé sur le timestamp
+            const tempId = `temp_${Date.now()}`;
+
+            // Lire temporairement l'image en base64 pour l'aperçu si sélectionnée
+            let imgDataUrl = '';
+            const imgInput = form.querySelector('input[type="file"]');
+            if (imgInput && imgInput.files && imgInput.files[0]) {
+                try {
+                    const reader = new FileReader();
+                    imgDataUrl = await new Promise((resolve) => {
+                        reader.onload = (e) => resolve(e.target.result);
+                        reader.readAsDataURL(imgInput.files[0]);
+                    });
+                } catch (e) { }
+            }
+
+            AppState.needs.push({
+                id: tempId,
+                reference: ref,
+                designation: fullDes,
+                fournisseur: four,
+                ral: ral || '-',
+                longueur: formData.get('dimensions') || 1, // Fallback legacy
+                unit_condit: 'U', // Unité par défaut
+                type: formData.get('famille') || 'Atypique',
+                need: qty,
+                stock: 0,
+                px_public: parseFloat(formData.get('prix')) || 0,
+                px_remise: parseFloat(formData.get('prix')) || 0,
+                image: imgDataUrl // Image base64 temporaire
+            });
+
+            localStorage.setItem('art-needs', JSON.stringify(AppState.needs));
+            window.showToast(`✅ Article ajouté instantanément aux besoins`, 'indigo');
+
+            // Mettre à jour l'affichage
+            if (typeof renderNeeds === 'function') renderNeeds();
+            if (typeof render === 'function') render();
+        }
+
+        // Fermer la modale tout de suite pour fluidifier l'expérience
+        window.closeManualAddModal();
+
+        // Use 8000 for Python Server. Fire and forget logic (no blocking).
         const apiUrl = '/api/add-article';
 
-        const response = await fetch(apiUrl, {
+        fetch(apiUrl, {
             method: 'POST',
             body: formData
+        }).then(res => res.json()).then(result => {
+            if (!result.status === 'success' && !result.message?.includes('attente')) {
+                console.warn("Retour serveur pour ajout manuel :", result);
+            }
+        }).catch(err => {
+            console.error("Erreur d'ajout en tâche de fond:", err);
+            window.showToast("⚠️ L'article n'a pas pu être inséré dans l'Excel (Serveur injoignable)", "zinc");
         });
-
-        const result = await response.json();
-
-        if (response.ok) {
-            alert('Article ajouté avec succès ! La page va se recharger.');
-            window.location.reload();
-        } else {
-            throw new Error(result.message || 'Erreur inconnue');
-        }
 
     } catch (e) {
         console.error(e);
-        alert("Erreur lors de l'enregistrement : " + e.message + "\nAssurez-vous que le serveur Python (start_app.bat) est bien lancé.");
+        alert("Erreur lors de l'enregistrement local : " + e.message);
     } finally {
         btn.innerHTML = originalText;
         btn.disabled = false;
