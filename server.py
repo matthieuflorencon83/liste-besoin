@@ -70,11 +70,13 @@ class MyHandler(http.server.SimpleHTTPRequestHandler):
             fam = form_data.get('famille')
             sous_famille = form_data.get('sous_famille')
             type_art = form_data.get('type')
-            ral = form_data.get('ral')
+            ral = form_data.get('finition') # Match HTML input name
             longueur = form_data.get('longueur')
             unite = form_data.get('unite')
             prix = form_data.get('prix')
             poids = form_data.get('poids')
+            dimension = form_data.get('dimensions') # Nouveau
+            epaisseur = form_data.get('epaisseur') # Nouveau
 
             if not ref or not four:
                 self.send_response(400)
@@ -128,6 +130,8 @@ class MyHandler(http.server.SimpleHTTPRequestHandler):
                 "unite": unite,
                 "prix": prix,
                 "poids": poids,
+                "dimension": dimension,
+                "epaisseur": epaisseur,
                 "image_name": image_name
             }
 

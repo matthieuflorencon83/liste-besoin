@@ -17,24 +17,26 @@ def add_to_excel(json_path):
         
         # 2. Check if file exists, if not create basic structure (unlikely but safe)
         if not os.path.exists(excel_path):
-            df = pd.DataFrame(columns=['REFERENCE', 'DESIGNATION', 'FOURNISSEUR', 'FAMILLE', 'SOUS-FAMILLE', 'TYPE', 'DECOR', 'CONDITIONNEMENT', 'UNIT_CONDIT', 'PRIX_PUBLIC', 'POIDS_KG'])
+            df = pd.DataFrame(columns=['REFERENCE', 'DESIGNATION', 'FOURNISSEUR', 'FAMILLE', 'SOUS-FAMILLE', 'TYPE', 'DECOR', 'CONDITIONNEMENT', 'UNIT_CONDIT', 'PRIX_PUBLIC', 'POIDS_KG', 'DIMENSION', 'EPAISSEUR'])
         else:
             # Read existing
             df = pd.read_excel(excel_path, engine='openpyxl')
 
         # 3. Create new row
         new_row = {
-            'REFERENCE': data['reference'],
-            'DESIGNATION': data['designation'],
-            'FOURNISSEUR': data['fournisseur'],
-            'FAMILLE': data['famille'],
-            'SOUS-FAMILLE': data['sous_famille'],
-            'TYPE': data['type'],
-            'DECOR': data['ral'], # We map RAL form field to DECOR column
-            'CONDITIONNEMENT': data['longueur'],
-            'UNIT_CONDIT': data['unite'],
-            'PRIX_PUBLIC': float(data['prix']) if data['prix'] else 0,
-            'POIDS_KG': float(data['poids']) if data['poids'] else 0
+            'REFERENCE': data.get('reference', ''),
+            'DESIGNATION': data.get('designation', ''),
+            'FOURNISSEUR': data.get('fournisseur', ''),
+            'FAMILLE': data.get('famille', ''),
+            'SOUS-FAMILLE': data.get('sous_famille', ''),
+            'TYPE': data.get('type', ''),
+            'DECOR': data.get('ral', ''), # We map RAL form field to DECOR column
+            'CONDITIONNEMENT': data.get('longueur', ''),
+            'UNIT_CONDIT': data.get('unite', ''),
+            'PRIX_PUBLIC': float(data.get('prix') or 0),
+            'POIDS_KG': float(data.get('poids') or 0),
+            'DIMENSION': data.get('dimension', ''),
+            'EPAISSEUR': data.get('epaisseur', '')
         }
 
         # 4. Append
