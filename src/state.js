@@ -405,14 +405,31 @@ function render(append = false) {
         window._renderedCount = Math.min(window.displayCount, AppState.filteredData.length);
         if (typeof lucide !== 'undefined') lucide.createIcons();
 
-        // Observer condition
-        const sentinel = document.getElementById('scrollSentinel');
-        if (sentinel) {
-            if (window.displayCount >= AppState.filteredData.length) {
-                sentinel.style.display = 'none';
-            } else {
-                sentinel.style.display = 'block';
-            }
+        // Gestion dynamique du Sentinel pour qu'il soit bien dans le parent qui défile
+        let sentinel = document.getElementById('scrollSentinel');
+        if (!sentinel) {
+            sentinel = document.createElement('div');
+            sentinel.id = 'scrollSentinel';
+            sentinel.className = 'w-full h-40 shrink-0 col-span-full'; // col-span-full prend toute la largeur de la grille
+
+            // Si on recrée l'élément, on doit relancer l'observateur
+            if (window._scrollObserver) window._scrollObserver.disconnect();
+        }
+
+        // On s'assure qu'il est toujours le dernier élément de la grille
+        window.grid.appendChild(sentinel);
+
+        if (window.displayCount >= AppState.filteredData.length) {
+            sentinel.style.display = 'none';
+        } else {
+            sentinel.style.display = 'block';
+        }
+
+        // Ré-attachement de l'observateur si besoin
+        if (window._scrollObserver) {
+            window._scrollObserver.observe(sentinel);
+        } else {
+            window.initScrollObserver();
         }
     });
 }
