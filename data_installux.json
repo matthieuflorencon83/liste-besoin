@@ -31,6 +31,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -65,6 +67,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": "Installux/1.4-VERANDAS/1.4.4 - LUCIOLE EPINE & TUBULAIRE - POTEAUX POUR STRUCTURE 50-26/7055TH.png"
   },
   {
@@ -99,6 +103,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": "Installux/2.0-PROFILS-STANDARDS/L1001002.png"
   },
   {
@@ -133,6 +139,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": "Installux/2.0-PROFILS-STANDARDS/L100202.png"
   },
   {
@@ -167,6 +175,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": "Installux/2.0-PROFILS-STANDARDS/L100502.png"
   },
   {
@@ -201,6 +211,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": "Installux/2.0-PROFILS-STANDARDS/L1010X2.png"
   },
   {
@@ -235,6 +247,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": "Installux/2.0-PROFILS-STANDARDS/L1515x2.png"
   },
   {
@@ -269,6 +283,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": "Installux/2.0-PROFILS-STANDARDS/L2015X2.png"
   },
   {
@@ -303,6 +319,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": "Installux/2.0-PROFILS-STANDARDS/L2020x2.png"
   },
   {
@@ -337,6 +355,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": "Installux/2.0-PROFILS-STANDARDS/L2510X2.png"
   },
   {
@@ -371,6 +391,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": "Installux/2.0-PROFILS-STANDARDS/L2525x2.png"
   },
   {
@@ -405,6 +427,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": "Installux/2.0-PROFILS-STANDARDS/L3015X2.png"
   },
   {
@@ -439,6 +463,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": "Installux/2.0-PROFILS-STANDARDS/L3030X2.png"
   },
   {
@@ -473,6 +499,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": "Installux/2.0-PROFILS-STANDARDS/L3520X2.png"
   },
   {
@@ -507,6 +535,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": "Installux/2.0-PROFILS-STANDARDS/L4020X2.png"
   },
   {
@@ -541,6 +571,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": "Installux/2.0-PROFILS-STANDARDS/L4040x2.png"
   },
   {
@@ -575,6 +607,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": "Installux/2.0-PROFILS-STANDARDS/L4545X2.png"
   },
   {
@@ -609,6 +643,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": "Installux/2.0-PROFILS-STANDARDS/L5020X2.png"
   },
   {
@@ -643,6 +679,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": "img_arcellor/INS L5050X2.jpg"
   },
   {
@@ -677,6 +715,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": "Installux/2.0-PROFILS-STANDARDS/L602018.png"
   },
   {
@@ -711,6 +751,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": "Installux/2.0-PROFILS-STANDARDS/L6030X2.png"
   },
   {
@@ -745,6 +787,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -779,6 +823,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": "Installux/2.0-PROFILS-STANDARDS/L6060x6.png"
   },
   {
@@ -813,6 +859,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": "Installux/2.0-PROFILS-STANDARDS/PL100X8.png"
   },
   {
@@ -847,6 +895,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": "Installux/2.0-PROFILS-STANDARDS/PL15X3.png"
   },
   {
@@ -881,6 +931,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": "Installux/2.0-PROFILS-STANDARDS/PL20X2.png"
   },
   {
@@ -915,6 +967,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": "Installux/2.0-PROFILS-STANDARDS/PL20X3.png"
   },
   {
@@ -949,6 +1003,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": "Installux/2.0-PROFILS-STANDARDS/PL25X3.png"
   },
   {
@@ -983,6 +1039,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": "Installux/2.0-PROFILS-STANDARDS/PL30X2.png"
   },
   {
@@ -1017,6 +1075,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": "Installux/2.0-PROFILS-STANDARDS/PL30X3.png"
   },
   {
@@ -1051,6 +1111,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": "Installux/2.0-PROFILS-STANDARDS/PL40X2.png"
   },
   {
@@ -1085,6 +1147,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -1119,6 +1183,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -1153,6 +1219,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": "Installux/2.0-PROFILS-STANDARDS/PL40X3.png"
   },
   {
@@ -1187,6 +1255,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": "Installux/2.0-PROFILS-STANDARDS/L8060X2.png"
   },
   {
@@ -1221,6 +1291,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": "Installux/2.0-PROFILS-STANDARDS/PL50X2.png"
   },
   {
@@ -1255,6 +1327,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": "Installux/1.6-PORTAIL-CLOTURE/PL50X8.png"
   },
   {
@@ -1289,6 +1363,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": "Installux/2.0-PROFILS-STANDARDS/PL60X2.png"
   },
   {
@@ -1323,6 +1399,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -1357,6 +1435,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -1391,6 +1471,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": "Installux/2.0-PROFILS-STANDARDS/PL80X8.png"
   }
 ]

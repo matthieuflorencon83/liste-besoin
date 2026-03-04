@@ -31,6 +31,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -65,6 +67,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -99,6 +103,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -133,6 +139,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -167,6 +175,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -201,6 +211,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -235,6 +247,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -269,6 +283,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -303,6 +319,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -337,6 +355,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -371,6 +391,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -405,6 +427,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -439,6 +463,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -473,6 +499,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -507,6 +535,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -541,6 +571,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": "img_arcellor/INS 40240.jpg"
   },
   {
@@ -575,6 +607,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -609,6 +643,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -643,6 +679,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -677,6 +715,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": "img_arcellor/INS 7005.jpg"
   },
   {
@@ -711,6 +751,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": "img_arcellor/INS 7007.jpg"
   },
   {
@@ -745,6 +787,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": "img_arcellor/INS 7013.jpg"
   },
   {
@@ -779,6 +823,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": "img_arcellor/INS 70201.jpg"
   },
   {
@@ -813,6 +859,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -847,6 +895,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -881,6 +931,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -915,6 +967,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -949,6 +1003,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -983,6 +1039,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -1017,6 +1075,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -1051,6 +1111,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -1085,6 +1147,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -1119,6 +1183,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -1153,6 +1219,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -1187,6 +1255,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -1221,6 +1291,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -1255,6 +1327,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -1289,6 +1363,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": "Installux/1.4-VERANDAS/1.4.3 - LUCIOLE EPINE & TUBULAIRE - CHENEAUX/7760TH.png"
   },
   {
@@ -1323,6 +1399,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -1357,6 +1435,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -1391,6 +1471,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": "img_arcellor/INS 7011.jpg"
   },
   {
@@ -1425,6 +1507,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -1459,6 +1543,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -1493,6 +1579,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -1527,6 +1615,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   }
 ]

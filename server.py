@@ -23,6 +23,8 @@ class MyHandler(http.server.SimpleHTTPRequestHandler):
     def do_POST(self):
         if self.path == '/api/add-article':
             self.handle_add_article()
+        elif self.path == '/api/edit-article-db':
+            self.handle_edit_article()
         else:
             self.send_error(404, "Endpoint not found")
 
@@ -170,6 +172,75 @@ class MyHandler(http.server.SimpleHTTPRequestHandler):
 
         except Exception as e:
             print(f"Error: {e}")
+            import traceback
+            traceback.print_exc()
+            self.send_response(500)
+            self.end_headers()
+            self.wfile.write(json.dumps({'status': 'error', 'message': str(e)}).encode('utf-8'))
+
+    def handle_edit_article(self):
+        try:
+            form_data, files = self.parse_multipart()
+
+            old_ref = form_data.get('old_reference')
+            old_four = form_data.get('old_fournisseur')
+
+            if not old_ref or not old_four:
+                self.send_response(400)
+                self.send_header('Content-type', 'application/json')
+                self.end_headers()
+                self.wfile.write(json.dumps({'status': 'error', 'message': 'Ancienne Référence et Fournisseur requis'}).encode('utf-8'))
+                return
+
+            print(f"Editing Article: {old_ref} (Fournisseur: {old_four})")
+
+            # Collect form data exactly like add_article
+            edit_data = {
+                'old_reference': old_ref,
+                'old_fournisseur': old_four,
+                'reference': form_data.get('reference', ''),
+                'designation': form_data.get('designation', ''),
+                'fournisseur': form_data.get('fournisseur', ''),
+                'famille': form_data.get('famille', ''),
+                'type': form_data.get('famille', ''),
+                'finition': form_data.get('finition', ''),
+                'prix': form_data.get('prix', ''),
+                'dimensions': form_data.get('dimensions', ''),
+                'epaisseur': form_data.get('epaisseur', '')
+            }
+
+            import uuid
+            temp_id = str(uuid.uuid4())
+            temp_json = os.path.join(BASE_DIR, f"temp_edit_article_{temp_id}.json")
+            with open(temp_json, "w", encoding='utf-8') as f:
+                json.dump(edit_data, f, indent=4)
+
+            # Background process to update Excel and regenerate data
+            import threading
+            def process_edit(t_json):
+                try:
+                    print(f"Calling edit_article_in_excel.py for {old_ref}...")
+                    subprocess.run([sys.executable, os.path.join(BASE_DIR, "scripts", "edit_article_in_excel.py"), t_json], check=True)
+                except Exception as ex:
+                    print(f"Error in edit_article_in_excel background task: {ex}")
+                finally:
+                    if os.path.exists(t_json):
+                        os.remove(t_json)
+                    try:
+                        print("Regenerating data.js...")
+                        subprocess.run([sys.executable, os.path.join(BASE_DIR, "extract_data.py")], check=True)
+                    except Exception as ex:
+                        print(f"Error regenerating data after edit: {ex}")
+
+            threading.Thread(target=process_edit, args=(temp_json,)).start()
+
+            self.send_response(202)
+            self.send_header('Content-type', 'application/json')
+            self.end_headers()
+            self.wfile.write(json.dumps({'status': 'success', 'message': 'Modification de l\'article en cours...'}).encode('utf-8'))
+
+        except Exception as e:
+            print(f"Error during edit: {e}")
             import traceback
             traceback.print_exc()
             self.send_response(500)

@@ -31,6 +31,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -65,6 +67,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -99,6 +103,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -133,6 +139,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -167,6 +175,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -201,6 +211,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -235,6 +247,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -269,6 +283,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -303,6 +319,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -337,6 +355,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -371,6 +391,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -405,6 +427,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -439,6 +463,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -473,6 +499,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -507,6 +535,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -541,6 +571,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -575,6 +607,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -609,6 +643,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -643,6 +679,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -677,6 +715,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -711,6 +751,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -745,6 +787,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -779,6 +823,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -813,6 +859,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -847,6 +895,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -881,6 +931,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -915,6 +967,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -949,6 +1003,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -983,6 +1039,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -1017,6 +1075,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -1051,6 +1111,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -1085,6 +1147,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -1119,6 +1183,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -1153,6 +1219,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -1187,6 +1255,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -1221,6 +1291,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -1255,6 +1327,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -1289,6 +1363,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -1323,6 +1399,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -1357,6 +1435,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -1391,6 +1471,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -1425,6 +1507,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -1459,6 +1543,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -1493,6 +1579,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -1527,6 +1615,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -1561,6 +1651,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -1595,6 +1687,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -1629,6 +1723,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -1663,6 +1759,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -1697,6 +1795,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -1731,6 +1831,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -1765,6 +1867,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -1799,6 +1903,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -1833,6 +1939,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -1867,6 +1975,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -1901,6 +2011,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -1935,6 +2047,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -1969,6 +2083,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -2003,6 +2119,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -2037,6 +2155,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -2071,6 +2191,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -2105,6 +2227,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -2139,6 +2263,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -2173,6 +2299,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -2207,6 +2335,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -2241,6 +2371,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -2275,6 +2407,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -2309,6 +2443,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -2343,6 +2479,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -2377,6 +2515,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -2411,6 +2551,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -2445,6 +2587,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -2479,6 +2623,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -2513,6 +2659,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -2547,6 +2695,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -2581,6 +2731,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -2615,6 +2767,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -2649,6 +2803,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -2683,6 +2839,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -2717,6 +2875,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -2751,6 +2911,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -2785,6 +2947,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -2819,6 +2983,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -2853,6 +3019,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -2887,6 +3055,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -2921,6 +3091,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -2955,6 +3127,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -2989,6 +3163,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -3023,6 +3199,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -3057,6 +3235,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -3091,6 +3271,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -3125,6 +3307,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -3159,6 +3343,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -3193,6 +3379,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -3227,6 +3415,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -3261,6 +3451,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -3295,6 +3487,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -3329,6 +3523,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -3363,6 +3559,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -3397,6 +3595,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -3431,6 +3631,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -3465,6 +3667,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -3499,6 +3703,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -3533,6 +3739,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -3567,6 +3775,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -3601,6 +3811,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -3635,6 +3847,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -3669,6 +3883,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -3703,6 +3919,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -3737,6 +3955,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -3771,6 +3991,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -3805,6 +4027,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -3839,6 +4063,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -3873,6 +4099,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -3907,6 +4135,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -3941,6 +4171,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -3975,6 +4207,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -4009,6 +4243,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -4043,6 +4279,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -4077,6 +4315,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -4111,6 +4351,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -4145,6 +4387,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -4179,6 +4423,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -4213,6 +4459,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -4247,6 +4495,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -4281,6 +4531,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -4315,6 +4567,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -4349,6 +4603,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -4383,6 +4639,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -4417,6 +4675,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -4451,6 +4711,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -4485,6 +4747,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -4519,6 +4783,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -4553,6 +4819,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -4587,6 +4855,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": "Installux/1.1-OUVRANTS-CLASSIQUES/1.1.1 - COMETE 50/5050.png"
   },
   {
@@ -4621,6 +4891,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -4655,6 +4927,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": "Installux/1.1-OUVRANTS-CLASSIQUES/1.1.1 - COMETE 50/5050.png"
   },
   {
@@ -4689,6 +4963,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -4723,6 +4999,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -4757,6 +5035,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -4791,6 +5071,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -4825,6 +5107,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -4859,6 +5143,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -4893,6 +5179,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -4927,6 +5215,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -4961,6 +5251,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -4995,6 +5287,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -5029,6 +5323,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -5063,6 +5359,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   },
   {
@@ -5097,6 +5395,8 @@
     "sous-famille": null,
     "prix_public": null,
     "poids_kg": null,
+    "dimension": null,
+    "epaisseur": null,
     "image": null
   }
 ]

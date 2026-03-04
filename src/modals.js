@@ -386,3 +386,139 @@ window.saveEditNeedModal = function () {
     window.closeEditNeedModal();
     if (window.showToast) window.showToast('✅ Modifications de la ligne enregistrées', 'emerald');
 };
+
+// ============================================================
+// MODIFICATION D'UN ARTICLE DANS LA BDD CATALOGUE
+// ============================================================
+let currentArticleToEdit = null;
+window.isCatalogEditMode = false;
+
+window.toggleCatalogEditMode = function () {
+    window.isCatalogEditMode = !window.isCatalogEditMode;
+    const btn = document.getElementById('btnToggleCatalogEdit');
+    if (btn) {
+        if (window.isCatalogEditMode) {
+            btn.classList.add('bg-amber-500/20', 'border-amber-500', 'text-amber-500');
+            btn.classList.remove('bg-[var(--card)]', 'border-[var(--border)]', 'text-[var(--emerald)]');
+            if (window.showToast) window.showToast("Mode modification activé : Cliquez sur un article à modifier", "amber");
+        } else {
+            btn.classList.remove('bg-amber-500/20', 'border-amber-500', 'text-amber-500');
+            btn.classList.add('bg-[var(--card)]', 'border-[var(--border)]', 'text-[var(--emerald)]');
+            if (window.showToast) window.showToast("Mode modification désactivé", "gray");
+        }
+    }
+};
+
+window.handleCatalogItemClick = function (item) {
+    if (window.isCatalogEditMode) {
+        window.openEditCatalogArticleModal(item);
+    }
+    // Sinon, on ne fait rien de particulier au clic global sur la carte (comportement d'origine)
+};
+
+window.openEditCatalogArticleModal = function (item = null) {
+    const modal = document.getElementById('editCatalogArticleModal');
+    if (!modal) return;
+
+    modal.classList.remove('hidden');
+
+    // Si on a directement cliqué sur un article, on l'affiche, sinon on cache
+    if (item) {
+        window.selectCatalogArticleToEdit(item);
+    } else {
+        document.getElementById('editCatalogForm').classList.add('hidden');
+        document.getElementById('submitEditCatalogBtn').disabled = true;
+        currentArticleToEdit = null;
+    }
+
+    // Remplir les datalists si elles existent
+    const suppliersList = document.getElementById('suppliersListEdit');
+    if (suppliersList && AppState.suppliers) {
+        suppliersList.innerHTML = AppState.suppliers.map(s => `<option value="${s}">`).join('');
+    }
+};
+
+window.closeEditCatalogArticleModal = function () {
+    const modal = document.getElementById('editCatalogArticleModal');
+    if (modal) modal.classList.add('hidden');
+};
+
+window.selectCatalogArticleToEdit = function (item) {
+    currentArticleToEdit = item;
+
+    document.getElementById('editCatalogOldReference').value = item.reference || '';
+    document.getElementById('editCatalogOldFournisseur').value = item.fournisseur || '';
+
+    document.getElementById('editCatRef').value = item.reference || '';
+    document.getElementById('editCatDes').value = item.designation || '';
+    document.getElementById('editCatFour').value = item.fournisseur || '';
+    document.getElementById('editCatFam').value = item.type || '';
+    document.getElementById('editCatPrix').value = item.px_public || item.px_remise || '';
+    document.getElementById('editCatFinition').value = item.ral || '';
+    document.getElementById('editCatDim').value = item.dimension || item.longueur || '';
+    document.getElementById('editCatEp').value = item.epaisseur || '';
+
+    document.getElementById('editCatalogForm').classList.remove('hidden');
+    document.getElementById('submitEditCatalogBtn').disabled = false;
+};
+
+window.submitEditCatalogArticle = async function () {
+    const form = document.getElementById('editCatalogForm');
+    if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+    }
+
+    const btn = document.getElementById('submitEditCatalogBtn');
+    const originalText = btn.innerHTML;
+    btn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> ENREGISTREMENT...`;
+    btn.disabled = true;
+
+    try {
+        const formData = new FormData(form);
+        const data = Object.fromEntries(formData.entries());
+
+        // Optimistic Update
+        const index = AppState.catalogData.findIndex(i =>
+            i.reference === data.old_reference && i.fournisseur === data.old_fournisseur
+        );
+
+        const updatedItem = {
+            ...currentArticleToEdit,
+            reference: data.reference,
+            designation: data.designation,
+            fournisseur: data.fournisseur,
+            type: data.famille,
+            px_public: parseFloat(data.prix) || 0,
+            px_remise: parseFloat(data.prix) || 0,
+            ral: data.finition || '-',
+            dimension: data.dimensions,
+            epaisseur: data.epaisseur
+        };
+
+        if (index !== -1) {
+            AppState.catalogData[index] = updatedItem;
+        }
+
+        if (typeof window.applyFilters === 'function') window.applyFilters();
+
+        const response = await fetch('/api/edit-article-db', {
+            method: 'POST',
+            body: formData
+        });
+
+        if (!response.ok) throw new Error('Erreur réseau');
+
+        if (window.showToast) window.showToast('✅ Article modifié avec succès', 'emerald');
+        window.closeEditCatalogArticleModal();
+
+        // Réinitaliser lucide si existant
+        if (window.lucide) window.lucide.createIcons();
+
+    } catch (e) {
+        console.error(e);
+        alert("Erreur lors de la modification. Veuillez réessayer.");
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+    }
+};

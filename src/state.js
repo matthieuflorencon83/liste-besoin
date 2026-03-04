@@ -305,8 +305,9 @@ function render(append = false) {
         const safeJsId = id.replace(/'/g, "\\'");
 
         const card = document.createElement('div');
-        card.className = `item-card animate-fade ${window.currentView === 'list' ? 'flex-row items-center' : ''}`;
+        card.className = `item-card animate-fade ${window.currentView === 'list' ? 'flex-row items-center' : ''} cursor-pointer`;
         card.style.animationDelay = `${(loopIdx % 40) * 15}ms`;
+        card.onclick = () => window.handleCatalogItemClick(it);
 
         const q = window.searchInput.value.toLowerCase().trim();
         const safeImage = escapeHtml(it.image);
@@ -325,7 +326,7 @@ function render(append = false) {
             </div>` : '';
 
         const img = it.image ?
-            `<div class="img-container" onclick="openVisualizer('${safeImage}')"><img src="${safeImage}" alt="${safeDesAttr}" loading="lazy" decoding="async" onerror="this.style.display='none'"></div>` :
+            `<div class="img-container" onclick="openVisualizer('${safeImage}', event)"><img src="${safeImage}" alt="${safeDesAttr}" loading="lazy" decoding="async" onerror="this.style.display='none'"></div>` :
             `<div class="img-container opacity-5"><i data-lucide="image" class="w-6 h-6"></i></div>`;
 
         if (window.currentView === 'list') {
@@ -597,7 +598,8 @@ window.toggleSupplierSort = () => {
     }
 };
 
-window.openVisualizer = (s) => {
+window.openVisualizer = (s, e) => {
+    if (e) e.stopPropagation();
     if (!s) return;
     const m = document.getElementById('imageModal');
     const img = document.getElementById('modalImage');
