@@ -460,7 +460,6 @@ window.initScrollObserver = function () {
 };
 
 window.toggleF = (e, id) => {
-    if (window.isCatalogEditMode) return;
     e.stopPropagation(); const i = AppState.favorites.indexOf(id);
     if (i > -1) AppState.favorites.splice(i, 1); else AppState.favorites.push(id);
     localStorage.setItem('art-favs', JSON.stringify(AppState.favorites));
@@ -468,7 +467,6 @@ window.toggleF = (e, id) => {
 };
 
 window.toggleN = (e, id, idx) => {
-    if (window.isCatalogEditMode) return;
     e.stopPropagation();
     const it = AppState.filteredData[idx];
     const i = AppState.needs.findIndex(n => n.id === id);
@@ -601,7 +599,6 @@ window.toggleSupplierSort = () => {
 };
 
 window.openVisualizer = (s, e) => {
-    if (window.isCatalogEditMode) return;
     if (e) e.stopPropagation();
     if (!s) return;
     const m = document.getElementById('imageModal');
