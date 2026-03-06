@@ -4,10 +4,10 @@
 // MANUAL ADD SYSTEM (DATABASE)
 // ============================================================
 
-console.log("MANUAL ADD SYSTEM LOADED"); // Debug
+
 
 window.openManualAddModal = () => {
-    console.log("Opening Manual Add Modal"); // Debug
+
     const modal = document.getElementById('manualAddModal');
     if (!modal) {
         alert("Erreur: La modale 'manualAddModal' est introuvable dans le HTML.");

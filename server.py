@@ -7,6 +7,9 @@ import subprocess
 import sys
 import email.parser
 import email.policy
+import uuid
+import threading
+import traceback
 
 PORT = 8000
 
@@ -17,7 +20,12 @@ EXCEL_path = os.path.join(BASE_DIR, "BDD Arts Alu 2026.xlsx")
 
 class MyHandler(http.server.SimpleHTTPRequestHandler):
     def end_headers(self):
-        self.send_header('Access-Control-Allow-Origin', '*')
+        origin = self.headers.get('Origin', '')
+        allowed_origins = ['http://localhost:8000', 'http://127.0.0.1:8000']
+        if origin in allowed_origins:
+            self.send_header('Access-Control-Allow-Origin', origin)
+        else:
+            self.send_header('Access-Control-Allow-Origin', 'http://localhost:8000')
         super().end_headers()
 
     def do_POST(self):
@@ -138,14 +146,12 @@ class MyHandler(http.server.SimpleHTTPRequestHandler):
             }
 
             # Save json temp file
-            import uuid
             temp_id = str(uuid.uuid4())
             temp_json = os.path.join(BASE_DIR, f"temp_new_article_{temp_id}.json")
             with open(temp_json, "w", encoding='utf-8') as f:
                 json.dump(new_article, f, indent=4)
 
             # Call Python Script to Add to Excel in background thread
-            import threading
             def process_article(t_json):
                 try:
                     print("Calling add_article_to_excel.py...")
@@ -172,7 +178,6 @@ class MyHandler(http.server.SimpleHTTPRequestHandler):
 
         except Exception as e:
             print(f"Error: {e}")
-            import traceback
             traceback.print_exc()
             self.send_response(500)
             self.end_headers()
@@ -209,14 +214,12 @@ class MyHandler(http.server.SimpleHTTPRequestHandler):
                 'epaisseur': form_data.get('epaisseur', '')
             }
 
-            import uuid
             temp_id = str(uuid.uuid4())
             temp_json = os.path.join(BASE_DIR, f"temp_edit_article_{temp_id}.json")
             with open(temp_json, "w", encoding='utf-8') as f:
                 json.dump(edit_data, f, indent=4)
 
             # Background process to update Excel and regenerate data
-            import threading
             def process_edit(t_json):
                 try:
                     print(f"Calling edit_article_in_excel.py for {old_ref}...")
@@ -241,7 +244,6 @@ class MyHandler(http.server.SimpleHTTPRequestHandler):
 
         except Exception as e:
             print(f"Error during edit: {e}")
-            import traceback
             traceback.print_exc()
             self.send_response(500)
             self.end_headers()

@@ -170,7 +170,7 @@ let currentRalFamily = 'std';
 
 window.toggleFinitionMode = function () {
     try {
-        console.log("Toggle Finition Mode. Current:", AppState.isRalSelectionMode);
+
 
         // 1. If not in mode -> Enter mode
         if (!AppState.isRalSelectionMode) {
@@ -208,7 +208,7 @@ function toggleRalSelectionMode() {
 
 
 function updateRalModeUI() {
-    console.log("Updating UI. Mode:", AppState.isRalSelectionMode);
+
     const btn = document.getElementById('ralModeBtn');
     const btnText = document.getElementById('ralBtnText');
     const selectAllCheckbox = document.getElementById('selectAllCheckbox');
@@ -281,7 +281,7 @@ window.toggleNeedSelection = function (id, isChecked) {
     updateRalModeUI();
 
     // Optional: Log for debug
-    console.log("Selection updated:", AppState.selectedNeeds.size, AppState.selectedNeeds);
+
 }
 
 window.toggleSelectAll = function () {
