@@ -4,6 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Gestion de catalogue et listes de besoins pour Arts Alu — menuiserie aluminium">
+    <meta name="theme-color" content="#6366f1">
+    <link rel="manifest" href="manifest.json">
     <meta http-equiv="Content-Security-Policy"
         content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://unpkg.com https://cdn.sheetjs.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob:;">
     <title>Arts Alu | Catalogue Premium [V3.6]</title>
@@ -290,6 +293,20 @@
                             </div>
                         </div>
                     </div>
+                    <!-- Barre de recherche besoins -->
+                    <div class="relative">
+                        <div
+                            class="flex items-center bg-[var(--card)] border border-[var(--border)] hover:border-[var(--indigo)]/50 rounded-2xl px-4 py-2 transition-all focus-within:border-[var(--indigo)] focus-within:ring-4 focus-within:ring-[var(--indigo)]/10">
+                            <i data-lucide="search" class="w-4 h-4 text-[var(--text-muted)] mr-3"></i>
+                            <input type="text" id="needsSearch" placeholder="Rechercher dans les besoins..."
+                                class="bg-transparent !border-0 !p-0 text-sm text-[var(--text-main)] placeholder:text-[var(--text-muted)] focus:ring-0 min-w-[200px]"
+                                oninput="window.filterNeeds(this.value)">
+                        </div>
+                    </div>
+                    <!-- Auto-save indicator -->
+                    <span id="autoSaveIndicator"
+                        class="text-[10px] text-emerald-500 font-bold opacity-0 transition-opacity duration-500">✓
+                        Auto-sauvegardé</span>
                     <div class="flex gap-4">
                         <button id="ralModeBtn" onclick="window.toggleFinitionMode()"
                             class="flex items-center gap-2 px-6 py-3 bg-[var(--card)] hover:bg-[var(--card-hover)] text-[var(--text-main)] rounded-lg text-xs font-bold transition-all border border-[var(--border)] shadow-sm">
@@ -842,6 +859,12 @@
     <script src="src/ral.js?v=133"></script>
     <script src="src/ui.js?v=133"></script>
     <script type="module" src="src/main.js?v=133"></script>
+    <script>
+        // Enregistrement du Service Worker PWA
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js').catch(() => { });
+        }
+    </script>
 </body>
 
 </html>

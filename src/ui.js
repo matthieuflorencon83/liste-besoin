@@ -1,3 +1,5 @@
+// ui.js — Interface besoins (nettoyé — RAL dans ral.js, Export dans export.js)
+
 window.saveProject = () => {
     const chantierVal = document.getElementById('chantierRef') ? document.getElementById('chantierRef').value : '';
     const defaultName = chantierVal ? `Projet_${chantierVal.replace(/[^a-z0-9]/gi, '_')}` : 'Projet_ArtsAlu';
@@ -34,9 +36,6 @@ window.saveChantier = (v) => {
     localStorage.setItem('art-chantier', v);
 };
 
-// Initialisation supprimée car le bouton est supprimé
-// window.init();
-
 // Initialize main button state
 if (window.isCalpinageMode) {
     const btn = document.getElementById('mainCalpinageBtn');
@@ -52,497 +51,39 @@ if (cRef) {
     const el = document.getElementById('chantierRef');
     if (el) el.value = cRef;
 }
-/* --- EXPORT / ORDER FORM SYSTEM --- */
 
-function openExportModal() {
-    const modal = document.getElementById('exportModal');
-    const tabsContainer = document.getElementById('exportTabs');
-    const previewContainer = document.getElementById('exportPreview');
-    const chantier = document.getElementById('chantierRef').value || "Chantier Inconnu";
+// ============================================================
+// AUTO-SAVE — Sauvegarde automatique toutes les 2 minutes
+// ============================================================
+let _autoSaveTimer = null;
+let _lastAutoSaveHash = '';
 
-    // Group by Supplier
-    const groups = {};
-    AppState.needs.forEach(item => {
-        // Fix: Use item.need instead of item.qty and force number conversion
-        const needVal = parseFloat(item.need) || 0;
-        const stockVal = parseFloat(item.stock) || 0;
-        const toOrder = Math.max(0, needVal - stockVal);
-
-        if (toOrder > 0) {
-            const supplier = item.fournisseur || "Autres";
-            if (!groups[supplier]) groups[supplier] = [];
-            groups[supplier].push({ ...item, toOrder });
+function startAutoSave() {
+    if (_autoSaveTimer) clearInterval(_autoSaveTimer);
+    _autoSaveTimer = setInterval(() => {
+        if (!AppState.needs || AppState.needs.length === 0) return;
+        const hash = JSON.stringify(AppState.needs);
+        if (hash === _lastAutoSaveHash) return; // Pas de changement
+        _lastAutoSaveHash = hash;
+        localStorage.setItem('art-needs', hash);
+        // Flash discret de l'indicateur
+        const indicator = document.getElementById('autoSaveIndicator');
+        if (indicator) {
+            indicator.classList.remove('opacity-0');
+            indicator.textContent = '✓ Auto-sauvegardé';
+            setTimeout(() => indicator.classList.add('opacity-0'), 2000);
         }
-    });
-
-    if (Object.keys(groups).length === 0) {
-        alert("Aucun article à commander (Besoin <= Stock partout).");
-        return;
-    }
-
-    // Generate Tabs
-    tabsContainer.innerHTML = '';
-    const suppliers = Object.keys(groups).sort();
-    let activeSupplier = suppliers[0];
-
-    suppliers.forEach(supplier => {
-        const btn = document.createElement('div');
-        btn.className = `export-tab ${supplier === activeSupplier ? 'active' : ''}`;
-        btn.textContent = `${supplier} (${groups[supplier].length})`;
-        btn.onclick = () => {
-            document.querySelectorAll('.export-tab').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            renderBDC(supplier, groups[supplier], chantier);
-        };
-        tabsContainer.appendChild(btn);
-    });
-
-    // Render Initial BDC
-    renderBDC(activeSupplier, groups[activeSupplier], chantier);
-
-    // Show Modal
-    modal.classList.remove('hidden');
+    }, 120000); // 2 minutes
 }
+startAutoSave();
 
-function renderBDC(supplier, items, chantier) {
-    const container = document.getElementById('exportPreview');
-    const date = new Date().toLocaleDateString('fr-FR');
-
-    const rows = items.map(item => `
-        <tr>
-            <td>${item.reference}</td>
-            <td>${item.designation}</td>
-            <td>${item.decor || '-'}</td>
-            <td>${item.conditionnement || '-'}</td>
-            <td style="text-align: center; font-size: 1.1em; font-weight: bold;">${item.toOrder}</td>
-        </tr>
-    `).join('');
-
-    container.innerHTML = `
-        <div class="bdc-header">
-            <div>
-                <h1 style="font-size: 24px; font-weight: 900; margin-bottom: 5px;">ARTS ALU</h1>
-                <p style="font-size: 12px; color: #666;">BON DE COMMANDE</p>
-            </div>
-            <div style="text-align: right;">
-                <p style="font-weight: bold; font-size: 14px;">CHANTIER : ${chantier}</p>
-                <p style="font-size: 12px;">Date : ${date}</p>
-            </div>
-        </div>
-
-        <div style="margin-bottom: 30px; background: #f9f9f9; padding: 15px; border-radius: 8px;">
-            <p style="font-size: 10px; text-transform: uppercase; font-weight: bold; color: #999;">FOURNISSEUR</p>
-            <h2 style="font-size: 18px; font-weight: 800;">${supplier}</h2>
-        </div>
-
-        <table class="bdc-table">
-            <thead>
-                <tr>
-                    <th style="width: 20%;">RÉFÉRENCE</th>
-                    <th>DÉSIGNATION</th>
-                    <th style="width: 15%;">RAL</th>
-                    <th style="width: 15%;">CONDIT.</th>
-                    <th style="width: 10%; text-align: center;">QTÉ</th>
-                </tr>
-            </thead>
-            <tbody>
-                ${rows}
-            </tbody>
-        </table>
-
-        <div style="margin-top: 50px; display: flex; justify-content: space-between; page-break-inside: avoid;">
-            <div style="width: 40%; border-top: 1px solid #ccc; padding-top: 10px;">
-                <p style="font-size: 10px; font-weight: bold;">Date et Signature Commandeur :</p>
-            </div>
-            <div style="width: 40%; border-top: 1px solid #ccc; padding-top: 10px; text-align: right;">
-                <p style="font-size: 10px; font-weight: bold;">Bon pour accord :</p>
-            </div>
-        </div>
-    `;
-}
-
-
-// ... existing code ...
-
-/* --- BATCH RAL MANAGEMENT --- */
-
-let currentRalFamily = 'std';
-
-window.toggleFinitionMode = function () {
-    try {
-
-
-        // 1. If not in mode -> Enter mode
-        if (!AppState.isRalSelectionMode) {
-            toggleRalSelectionMode();
-            // alert("Mode Finition ACTIVÉ");
-            return;
-        }
-
-        // 2. If in mode
-        const count = AppState.selectedNeeds.size;
-
-        if (count > 0) {
-            // If items selected -> Apply (Open Modal)
-            openRalModal();
-        } else {
-            // If no items selected -> Cancel (Exit mode)
-            toggleRalSelectionMode();
-            // alert("Mode Finition DÉSACTIVÉ");
-        }
-    } catch (e) {
-        alert("Erreur Finition: " + e.message);
-        console.error(e);
-    }
-}
-
-function toggleRalSelectionMode() {
-    AppState.isRalSelectionMode = !AppState.isRalSelectionMode;
-    // Clear selection when exiting
-    if (!AppState.isRalSelectionMode) {
-        AppState.selectedNeeds.clear();
-    }
-    updateRalModeUI();
+// ============================================================
+// RECHERCHE DANS LES BESOINS
+// ============================================================
+window.filterNeeds = function (query) {
+    AppState.needsSearchQuery = query.trim().toLowerCase();
     window.renderNeeds();
-}
-
-
-function updateRalModeUI() {
-
-    const btn = document.getElementById('ralModeBtn');
-    const btnText = document.getElementById('ralBtnText');
-    const selectAllCheckbox = document.getElementById('selectAllCheckbox');
-
-    // Safety check if elements exist
-    if (!btn || !btnText) return;
-
-    if (AppState.isRalSelectionMode) {
-        const count = AppState.selectedNeeds.size;
-
-        if (count > 0) {
-            // Mode: Apply
-            btn.className = "flex items-center gap-2 px-6 py-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-bold transition-all border border-indigo-600 shadow-sm shadow-indigo-500/20";
-            btnText.textContent = `APPLIQUER (${count})`;
-
-            // Allow clicking to Apply
-        } else {
-            // Mode: Active but empty (Cancel option)
-            btn.className = "flex items-center gap-2 px-6 py-3 bg-zinc-700 hover:bg-zinc-600 text-zinc-300 rounded-lg text-xs font-bold transition-all border border-zinc-600 shadow-sm";
-            btnText.textContent = "ANNULER";
-        }
-
-        // Show Select All Checkbox header
-        if (selectAllCheckbox) {
-            const th = document.getElementById('thSelectAllCheck') || selectAllCheckbox.parentElement.parentElement;
-            th.classList.remove('opacity-0', 'pointer-events-none');
-        }
-
-    } else {
-        // Mode: Default (Inactive)
-        btn.className = "flex items-center gap-2 px-6 py-3 bg-white hover:bg-zinc-50 text-zinc-900 rounded-lg text-xs font-bold transition-all border border-zinc-200 shadow-sm";
-        btnText.textContent = "FINITIONS";
-
-        // Ensure icon is purple
-        const icon = btn.querySelector('svg') || btn.querySelector('i');
-        if (icon) {
-            icon.classList.remove('text-white', 'text-zinc-300');
-            icon.classList.add('text-purple-600');
-        }
-
-        // Hide Select All Checkbox header
-        if (selectAllCheckbox) {
-            const th = document.getElementById('thSelectAllCheck') || selectAllCheckbox.parentElement.parentElement;
-            th.classList.add('opacity-0', 'pointer-events-none');
-        }
-    }
-
-    // Sync Select All checkbox state
-    if (selectAllCheckbox) {
-        const count = AppState.selectedNeeds.size;
-        selectAllCheckbox.checked = (AppState.needs.length > 0 && count === AppState.needs.length);
-        selectAllCheckbox.indeterminate = (count > 0 && count < AppState.needs.length);
-    }
-}
-
-// NEW FUNCTION
-window.toggleNeedSelection = function (id, isChecked) {
-    if (!AppState.isRalSelectionMode) return;
-
-    // Ensure ID is string to match Map/Set keys
-    const safeId = String(id);
-
-    if (isChecked) {
-        AppState.selectedNeeds.add(safeId);
-    } else {
-        AppState.selectedNeeds.delete(safeId);
-    }
-
-    // Update UI (Button text)
-    updateRalModeUI();
-
-    // Optional: Log for debug
-
-}
-
-window.toggleSelectAll = function () {
-    if (!AppState.isRalSelectionMode) return; // Only work in mode
-
-    const allSelected = AppState.selectedNeeds.size === AppState.needs.length && AppState.needs.length > 0;
-    AppState.selectedNeeds.clear();
-
-    if (!allSelected) {
-        AppState.needs.forEach((item) => AppState.selectedNeeds.add(String(item.id)));
-    }
-
-    window.renderNeeds();
-    updateRalModeUI();
-}
-
-window.toggleSelection = function (idx) {
-    if (!AppState.isRalSelectionMode) return;
-
-    // Fix: Use ID instead of Index to match applyRalToSelection expectation
-    const item = AppState.needs[idx];
-    if (!item) return;
-    const id = String(item.id);
-
-    if (AppState.selectedNeeds.has(id)) {
-        AppState.selectedNeeds.delete(id);
-    } else {
-        AppState.selectedNeeds.add(id);
-    }
-    window.renderNeeds();
-    updateRalModeUI();
-}
-
-window.handleRowClick = function (e, idx) {
-    if (AppState.isRalSelectionMode) {
-        // If in mode, clicking anywhere toggles selection (unless clicking delete or edit specific inputs)
-        // Also ignore checkbox to prevent double toggle (onchange handles it)
-        if (e.target.closest('button') ||
-            e.target.closest('input[type="number"]') ||
-            e.target.closest('input[type="checkbox"]')) return;
-
-        window.toggleSelection(idx);
-        return; // Stop further processing (like expansion) if in selection mode
-    }
-
-    // Normal mode: Expand row for Calpinage (only if it's a profile)
-    if (e.target.closest('button') || e.target.closest('input')) return;
-
-    const item = AppState.needs[idx];
-    if (item && window.getIsProfil && window.getIsProfil(item)) {
-        window.toggleCalpinageRow(item.id);
-    }
 };
-
-
-/* --- RAL MODAL --- */
-
-// --- RAL COLORS MAPPING ---
-const RAL_COLORS = {
-    '1013': '#e3d9c6', '1015': '#e6d2b5', '2100': '#5e605d', '3004': '#6b3531',
-    '7012': '#595f61', '7015': '#51565c', '7016': '#383e42', '7021': '#2f3234',
-    '7022': '#4d4d4b', '7035': '#d7d7d7', '7039': '#6c6960', '8014': '#49392d',
-    '8019': '#3d3635', '9005': '#0a0a0a', '9006': '#a5a5a5', '9007': '#8f8f8f',
-    '9010': '#f3f1e9', '9016': '#f6f9f6', '9016EM': '#f6f9f6', '9010EM': '#f3f1e9'
-};
-
-window.updateRalPreview = (val) => {
-    const code = val.trim().toUpperCase();
-    const preview = document.getElementById('ralPreview');
-    if (!preview) return;
-
-    if (RAL_COLORS[code]) {
-        preview.style.backgroundColor = RAL_COLORS[code];
-        preview.innerHTML = '';
-        // Add light/dark text contrast logic if needed, but for now simple block
-    } else {
-        preview.style.backgroundColor = '#27272a'; // Zinc-800
-        preview.innerHTML = '<span class="text-xs text-zinc-600 font-mono">?</span>';
-    }
-};
-
-window.inferFamilyFromRal = (ral) => {
-    const r = ral.toUpperCase();
-    if (['9010', '9016', '7016', '9005', '9010EM', '9016EM', '2100'].includes(r)) return 'std';
-    if (r.startsWith('AN') || r.includes('NATUEL') || r.includes('INOX')) return 'anod';
-    if (r.startsWith('CHENE') || r.includes('BOIS')) return 'wood';
-    return 'other';
-};
-
-function openRalModal() {
-    if (AppState.selectedNeeds.size === 0) return;
-
-    document.getElementById('ralModalCount').textContent = AppState.selectedNeeds.size;
-    document.getElementById('ralModal').classList.remove('hidden');
-
-    // Reset inputs directly without using selectRalFamily
-    const ralInput = document.getElementById('ralCodeInput');
-    if (ralInput) {
-        ralInput.value = '';
-        updateRalPreview('');
-    } else {
-        console.warn('ralCodeInput not found');
-    }
-
-    const finishSelect = document.getElementById('ralFinishSelect');
-    if (finishSelect) {
-        finishSelect.value = 'Brillant';
-    }
-}
-
-window.closeRalModal = function () {
-    document.getElementById('ralModal').classList.add('hidden');
-}
-
-// selectRalFamily removed as requested
-
-
-
-
-window.applyRalToSelection = () => {
-    try {
-        const ralCode = document.getElementById('ralCodeInput').value.trim() || '-';
-        const finish = document.getElementById('ralFinishSelect').value;
-        const family = inferFamilyFromRal(ralCode);
-
-        if (AppState.selectedNeeds.size === 0) return;
-
-        let count = 0;
-        AppState.needs.forEach(item => {
-            // Ensure ID comparison is safe (String vs Number)
-            if (AppState.selectedNeeds.has(String(item.id)) || AppState.selectedNeeds.has(item.id)) {
-                item.ral = ralCode;
-                item.ral_finish = finish;
-
-                // --- Auto-Pricing & Attributes Logic ---
-                // We find the matched variant object to update price, units and packaging
-                const variantMatch = findVariantMatch(item, ralCode, finish, family);
-                if (variantMatch) {
-                    item.px_public = Number(variantMatch.px_public || 0);
-                    if (variantMatch.px_remise !== undefined && variantMatch.px_remise !== null) {
-                        item.px_remise = Number(variantMatch.px_remise);
-                    }
-
-                    // Force complete price recalculation (removing user overridden pieces)
-                    delete item.px_piece;
-
-                    // Update packaging and unit attributes
-                    const fields = ['unit_vente', 'condit', 'unit_condit', 'conditionnement', 'unite_qte', 'unite___prix', 'poids_kg', 'poids__kg_unit_'];
-                    fields.forEach(f => {
-                        if (variantMatch[f] !== undefined && variantMatch[f] !== null) {
-                            item[f] = variantMatch[f];
-                        }
-                    });
-                }
-
-                count++;
-            }
-        });
-
-        localStorage.setItem('art-needs', JSON.stringify(AppState.needs));
-
-        // Reset Logic
-        AppState.selectedNeeds.clear();
-        AppState.isRalSelectionMode = false;
-        closeRalModal();
-        window.renderNeeds();
-        alert(`${count} articles mis à jour avec la finition ${ralCode} (${finish}) et attributs recalculés.`);
-    } catch (e) {
-        console.error(e);
-        alert("Erreur: " + e.message);
-    }
-};
-
-/**
- * Finds the best variant object for an item based on the selected finish.
- * Strategy: Exact Match > Family Match > Fallback Specific
- */
-window.findVariantMatch = (item, ralCode, finish, family) => {
-    if (!AppState.catalogData) return null;
-
-    // Filter all variants of this article (same reference, same supplier)
-    const variants = AppState.catalogData.filter(it =>
-        String(it.reference) === String(item.reference) &&
-        (it.fournisseur === item.fournisseur || it.fabricant === item.fournisseur)
-    );
-
-    if (variants.length === 0) return null;
-
-    // 1. Exact Match (e.g. User typed "9010", data has decor="9010")
-    const exactMatch = variants.find(v => String(v.decor || '').toUpperCase() === String(ralCode).toUpperCase());
-    if (exactMatch) return exactMatch;
-
-    // 2. Composite Match (RAL + Finish, e.g. "9016" + "EM" -> "9016EM")
-    if (finish) {
-        const compositeCode = (String(ralCode) + String(finish)).toUpperCase();
-        const compositeMatch = variants.find(v => String(v.decor || '').toUpperCase() === compositeCode);
-        if (compositeMatch) return compositeMatch;
-
-        if (finish === 'MG') {
-            const mgPrefixCode = ('MG' + String(ralCode)).toUpperCase();
-            const mgMatch = variants.find(v => String(v.decor || '').toUpperCase() === mgPrefixCode);
-            if (mgMatch) return mgMatch;
-        }
-    }
-
-    // 3. Family Mapping (Directly query the variants for 'STANDARD', 'SPECIFIQ', 'AS20', 'BT')
-    let targetDecor = null;
-    const rTrimmed = String(ralCode).toUpperCase().trim();
-
-    if (['BT', 'BRUT', 'SANS'].includes(rTrimmed)) {
-        targetDecor = 'BT';
-    } else if (['9010', '9016', '7016', '9005', '9010EM', '9016EM', '2100'].includes(rTrimmed)) {
-        targetDecor = 'STANDARD';
-    } else if (rTrimmed.startsWith('AN') || rTrimmed.startsWith('AS') || rTrimmed.includes('NATUEL') || rTrimmed.includes('INOX')) {
-        targetDecor = 'AS20';
-    } else if (rTrimmed.startsWith('CHENE') || rTrimmed.includes('BOIS')) {
-        targetDecor = 'WOOD'; // Unlikely to find in Arcelor, but just in case
-    } else {
-        targetDecor = 'SPECIFIQ';
-    }
-
-    // Attempt to find the matching family in the variants
-    let familyMatch = variants.find(v => {
-        const d = String(v.decor || '').toUpperCase().trim();
-        if (targetDecor === 'STANDARD') return d === 'STANDARD' || d === 'TARIF STANDARD' || d === '9010';
-        if (targetDecor === 'SPECIFIQ') return d === 'SPECIFIQ' || d === 'TARIF SPÉCIFIQUE' || d === 'TARIF SPECIFIQUE';
-        if (targetDecor === 'AS20') return d === 'AS20' || d === 'AN0001' || d === 'AS';
-        if (targetDecor === 'BT') return d === 'BT' || d === 'BRUT';
-        return d === targetDecor;
-    });
-
-    // Fallbacks
-    if (!familyMatch && targetDecor === 'STANDARD') {
-        // If Standard not found, fallback to Specifique
-        familyMatch = variants.find(v => {
-            const d = String(v.decor || '').toUpperCase().trim();
-            return d === 'SPECIFIQ' || d === 'TARIF SPÉCIFIQUE' || d === 'TARIF SPECIFIQUE';
-        });
-    }
-
-    if (familyMatch) {
-        return familyMatch;
-    }
-
-    return null;
-};
-
-
-// Supprimé : fonction en double (la bonne est dans state.js)
-
-// ... existing export functions ...
-
-/* --- EXPORT / ORDER FORM SYSTEM V2 --- */
-// Les fonctions openExportModalV2 et renderBDCV2 ont été migrées vers export.js
-
-
-
-// Les fonctions de la modale d'ajout manuel ont été déplacées vers modals.js
-
-
-
 
 // ============================================================
 // HELPERS POUR LE PRIX DE LA PIÈCE
@@ -568,11 +109,9 @@ window.getPuPiece = function (item) {
 
 window.getMult = function (item) {
     const conditVal = parseFloat(item.longueur) || parseFloat(item.conditionnement) || 1;
-    // Analyse l'unité prix en testant tous les champs possibles
     const u = String(item.unite___prix || item.unite_qte || item.unit_condit || item.unit_vente || '').toUpperCase();
 
     // Directive utilisateur : "ca doit etre le prix remisé x par le conditionnement"
-    // Par exemple, même si l'unité est "BARRE", "UN" ou "M", appliquer le conditionnement comme multiplicateur
     return conditVal;
 };
 
@@ -601,6 +140,19 @@ window.renderNeeds = function () {
 
     // Base data
     let displayedNeeds = AppState.needs;
+
+    // Filtre de recherche dans les besoins
+    const searchQ = (AppState.needsSearchQuery || '').toLowerCase();
+    if (searchQ) {
+        displayedNeeds = displayedNeeds.filter(item => {
+            const ref = (item.reference || '').toLowerCase();
+            const des = (item.designation || '').toLowerCase();
+            const four = (item.fournisseur || '').toLowerCase();
+            const ral = (item.ral || item.decor || '').toLowerCase();
+            const note = (item.note || '').toLowerCase();
+            return ref.includes(searchQ) || des.includes(searchQ) || four.includes(searchQ) || ral.includes(searchQ) || note.includes(searchQ);
+        });
+    }
 
     // Tri par colonne si actif
     const sortCol = AppState.needsSortCol;
@@ -666,7 +218,12 @@ window.renderNeeds = function () {
 
         return `
         <tr onclick="window.handleRowClick(event, ${realIndex})" 
-            class="group transition-all cursor-pointer ${rowBg} border-l-2 ${borderLeft}">
+            draggable="true"
+            ondragstart="window.onNeedDragStart(event, ${realIndex})"
+            ondragover="window.onNeedDragOver(event)"
+            ondragend="window.onNeedDragEnd(event)"
+            ondrop="window.onNeedDrop(event, ${realIndex})"
+            class="group transition-all cursor-grab active:cursor-grabbing ${rowBg} border-l-2 ${borderLeft}">
 
             <!-- # (numéro de ligne) -->
             <td class="p-2 w-8 text-center text-[10px] font-black text-[var(--text-muted)] select-none">${index + 1}</td>
@@ -697,10 +254,9 @@ window.renderNeeds = function () {
                 ${(() => {
                 let img = item.image;
                 if (!img) {
-                    // Patch rétroactif pour les articles déjà dans la liste avant la mise à jour
                     const catItem = AppState.catalogData.find(c => String(c.reference) === String(item.reference) && (c.fournisseur === item.fournisseur || !item.fournisseur));
                     if (catItem && catItem.image) {
-                        item.image = catItem.image; // Save for later
+                        item.image = catItem.image;
                         img = catItem.image;
                     }
                 }
@@ -753,7 +309,7 @@ window.renderNeeds = function () {
                <div class="text-xs text-[var(--text-muted)] font-mono font-bold">${item.longueur || item.conditionnement || 1} ${String(item.unit_condit || item.unit_vente || 'U').toUpperCase()}</div>
             </td>
 
-            <!-- BESOIN — Éditable inline PREMIUM (Sprint 7) -->
+            <!-- BESOIN — Éditable inline -->
             <td class="p-2 w-32 text-center" onclick="event.stopPropagation()">
                 <div class="inline-flex items-center justify-center gap-2">
                     <button onclick="event.stopPropagation(); window.adjustNeedField(${realIndex}, 'need', -1)"
@@ -771,7 +327,7 @@ window.renderNeeds = function () {
                 </div>
             </td>
 
-            <!-- STOCK — Éditable inline PREMIUM (Sprint 7) -->
+            <!-- STOCK — Éditable inline -->
             <td class="p-2 w-32 text-center" onclick="event.stopPropagation()">
                 <div class="inline-flex items-center justify-center gap-2">
                     <button onclick="event.stopPropagation(); window.adjustNeedField(${realIndex}, 'stock', -1)"
@@ -827,7 +383,7 @@ window.renderNeeds = function () {
                     <button onclick="window.duplicateNeed(${realIndex}); window.toggleNeedsActionMenu(${realIndex})" class="w-full px-4 py-2 text-left text-[11px] font-bold tracking-wide uppercase text-[var(--text-muted)] hover:text-[var(--emerald)] hover:bg-[var(--emerald-soft)] flex items-center gap-3 transition-colors">
                         <i data-lucide="copy" class="w-4 h-4"></i> Dupliquer
                     </button>
-                    <!-- SPRINT 7 : BOUTON MODIFIER -->
+                    <!-- BOUTON MODIFIER -->
                     <button onclick="window.openEditNeedModal(${realIndex}); window.toggleNeedsActionMenu(${realIndex})" class="w-full px-4 py-2 text-left text-[11px] font-bold tracking-wide uppercase text-[var(--text-muted)] hover:text-[var(--indigo)] hover:bg-[var(--indigo-soft)] flex items-center gap-3 transition-colors">
                         <i data-lucide="edit-3" class="w-4 h-4"></i> Modifier
                     </button>
@@ -864,7 +420,7 @@ window.renderNeeds = function () {
         `;
     }).join('');
 
-    // Re-init icons — ciblé sur tbody uniquement (optimisation Sprint 4)
+    // Re-init icons — ciblé sur tbody uniquement
     if (typeof lucide !== 'undefined') {
         const tbody = document.getElementById('needsTableBody');
         if (tbody) lucide.createIcons({ nameAttr: 'data-lucide', nodes: [tbody] });
@@ -924,7 +480,7 @@ window.renderNeeds = function () {
 
 
 // ============================================================
-// SPRINT 3 — NOTES PAR LIGNE
+// NOTES PAR LIGNE
 // ============================================================
 window.toggleNoteRow = function (realIndex) {
     if (window.activeNoteRow === realIndex) {
@@ -933,7 +489,6 @@ window.toggleNoteRow = function (realIndex) {
         window.activeNoteRow = realIndex;
     }
     window.renderNeeds();
-    // Focus sur la textarea après rendu
     if (window.activeNoteRow !== null) {
         setTimeout(() => {
             const ta = document.getElementById(`noteInput_${realIndex}`);
@@ -946,37 +501,26 @@ window.saveNote = function (realIndex, value) {
     if (AppState.needs[realIndex]) {
         AppState.needs[realIndex].note = value.trim();
         localStorage.setItem('art-needs', JSON.stringify(AppState.needs));
-        // Mettre à jour l'icône du bouton sans re-render complet
-        const noteBtn = document.querySelector(`#noteRow_${realIndex}`)?.previousElementSibling?.querySelector('[title="Note"]');
-        // simple re-render ciblé
         window.renderNeeds();
     }
 };
 
-// Les fonctions showArticleCard et closeArticleCard ont été déplacées vers modals.js
-
-// Les fonctions openBudgetChart et closeBudgetChart ont été déplacées vers modals.js
-
 // ============================================================
-// SPRINT 7 — ÉDITION INLINE (saveNeedField + adjustNeedField)
+// ÉDITION INLINE (saveNeedField + adjustNeedField)
 // ============================================================
 
-// Sauvegarde un champ modifié directement dans AppState.needs
-// et met à jour les totaux en bas du tableau sans re-render complet
 let _saveNeedDebounceTimer = null;
 window.saveNeedField = function (realIndex, field, value) {
     if (!AppState.needs[realIndex]) return;
     AppState.needs[realIndex][field] = value;
     localStorage.setItem('art-needs', JSON.stringify(AppState.needs));
 
-    // Mettre à jour la ligne ORDER et TOTAL HT en live sans re-render global
     clearTimeout(_saveNeedDebounceTimer);
     _saveNeedDebounceTimer = setTimeout(() => {
         window.renderNeeds();
     }, 600);
 };
 
-// Incrémentation +/- fluide (boutons +/-)
 window.adjustNeedField = function (realIndex, field, delta) {
     if (!AppState.needs[realIndex]) return;
     const current = parseFloat(AppState.needs[realIndex][field]) || 0;
@@ -989,24 +533,21 @@ window.adjustNeedField = function (realIndex, field, delta) {
     const input = document.getElementById(inputId);
     if (input) input.value = AppState.needs[realIndex][field];
 
-    // Re-render avec debounce court pour les totaux
     clearTimeout(_saveNeedDebounceTimer);
     _saveNeedDebounceTimer = setTimeout(() => {
         window.renderNeeds();
     }, 500);
 };
 
-// Afficher ou masquer le menu d'actions (3 petits points)
+// Menu d'actions (3 petits points)
 window.toggleNeedsActionMenu = function (realIndex) {
     const allMenus = document.querySelectorAll('[id^="needsActionMenu_"]');
     const targetMenu = document.getElementById(`needsActionMenu_${realIndex}`);
 
-    // Fermer tous les autres
     allMenus.forEach(m => {
         if (m !== targetMenu) m.classList.add('hidden');
     });
 
-    // Basculer celui-ci
     if (targetMenu) {
         targetMenu.classList.toggle('hidden');
     }
@@ -1023,7 +564,7 @@ document.addEventListener('click', function (e) {
 });
 
 // ============================================================
-// SPRINT 5 — DUPLICATION DE LIGNE
+// DUPLICATION DE LIGNE
 // ============================================================
 window.duplicateNeed = function (realIndex) {
     const original = AppState.needs[realIndex];
@@ -1035,7 +576,7 @@ window.duplicateNeed = function (realIndex) {
 };
 
 // ============================================================
-// SPRINT 5 — TRI PAR COLONNE (appelé depuis les headers)
+// TRI PAR COLONNE
 // ============================================================
 window.sortNeedsBy = function (col) {
     if (AppState.needsSortCol === col) {
@@ -1044,7 +585,6 @@ window.sortNeedsBy = function (col) {
         AppState.needsSortCol = col;
         AppState.needsSortDir = 'asc';
     }
-    // Mettre à jour les indicateurs visuels des headers
     document.querySelectorAll('[data-sort-col]').forEach(th => {
         const icon = th.querySelector('.sort-icon');
         if (!icon) return;
@@ -1059,13 +599,10 @@ window.sortNeedsBy = function (col) {
     window.renderNeeds();
 };
 
-// Les fonctions d'historique de projet ont été déplacées vers modals.js
-
 // ============================================================
-// SPRINT 5 — RACCOURCIS CLAVIER
+// RACCOURCIS CLAVIER
 // ============================================================
 document.addEventListener('keydown', function (e) {
-    // Ignorer si focus dans un input ou textarea
     const tag = document.activeElement?.tagName;
     if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') {
         if (e.key === 'Escape') document.activeElement.blur();
@@ -1076,7 +613,6 @@ document.addEventListener('keydown', function (e) {
     if (e.ctrlKey && e.key === 's') {
         e.preventDefault();
         window.saveProject();
-        // Flash visuel
         const btn = document.querySelector('[onclick="window.saveProject()"]');
         if (btn) { btn.classList.add('ring-2', 'ring-emerald-500'); setTimeout(() => btn.classList.remove('ring-2', 'ring-emerald-500'), 800); }
         return;
@@ -1104,4 +640,51 @@ document.addEventListener('keydown', function (e) {
     }
 });
 
+// ============================================================
+// DRAG & DROP — RÉORDONNER LES BESOINS
+// ============================================================
+let _draggedIndex = null;
+
+window.onNeedDragStart = function (e, realIndex) {
+    _draggedIndex = realIndex;
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', realIndex);
+    // Style visuel
+    setTimeout(() => {
+        e.target.closest('tr').classList.add('opacity-30');
+    }, 0);
+};
+
+window.onNeedDragOver = function (e) {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    const row = e.target.closest('tr');
+    if (row) {
+        // Retirer le highlight des autres
+        document.querySelectorAll('#needsTableBody tr.drag-over').forEach(r => r.classList.remove('drag-over', 'border-t-2', 'border-t-indigo-500'));
+        row.classList.add('drag-over', 'border-t-2', 'border-t-indigo-500');
+    }
+};
+
+window.onNeedDragEnd = function (e) {
+    const row = e.target.closest('tr');
+    if (row) row.classList.remove('opacity-30');
+    document.querySelectorAll('#needsTableBody tr.drag-over').forEach(r => r.classList.remove('drag-over', 'border-t-2', 'border-t-indigo-500'));
+    _draggedIndex = null;
+};
+
+window.onNeedDrop = function (e, targetIndex) {
+    e.preventDefault();
+    if (_draggedIndex === null || _draggedIndex === targetIndex) return;
+
+    // Réordonner
+    const item = AppState.needs.splice(_draggedIndex, 1)[0];
+    AppState.needs.splice(targetIndex, 0, item);
+    localStorage.setItem('art-needs', JSON.stringify(AppState.needs));
+
+    _draggedIndex = null;
+    window.renderNeeds();
+};
+
 // Fin ui.js
+
