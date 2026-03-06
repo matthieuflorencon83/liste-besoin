@@ -202,7 +202,7 @@ class MyHandler(http.server.SimpleHTTPRequestHandler):
                 'designation': form_data.get('designation', ''),
                 'fournisseur': form_data.get('fournisseur', ''),
                 'famille': form_data.get('famille', ''),
-                'type': form_data.get('famille', ''),
+                'type': form_data.get('type', ''),
                 'finition': form_data.get('finition', ''),
                 'prix': form_data.get('prix', ''),
                 'dimensions': form_data.get('dimensions', ''),

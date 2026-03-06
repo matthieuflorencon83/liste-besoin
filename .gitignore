@@ -9,3 +9,15 @@ debug_meplat.py
 *.xlsx
 *.xlsm
 node_modules/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Fichiers temporaires serveur
+temp_*.json
+
+# Données catalogue volumineuses (générées par extract_data.py)
+data.json
+data_*.json
+catalog_index.json
