@@ -184,7 +184,7 @@ window.exportPDF = async function () {
                     i + 1,
                     it.reference || '-',
                     it.designation || '-',
-                    [it.ral, it.finition].filter(Boolean).join(' ') || '-',
+                    [it.ral, it.ral_finish].filter(Boolean).join(' ') || '-',
                     `${conditVal} ${u}`,
                     puPiece > 0 ? `${puPiece.toFixed(2)} €` : '-',
                     it.need,
@@ -373,7 +373,7 @@ window.renderBDCV2 = function (title, items, chantier, type) {
                 </td>
                 <td style="padding-right: 15px;">
                     <div>${item.designation}</div>
-                    <div style="font-size: 10px; color: #666;">${[item.ral, item.finition].filter(Boolean).join(' ') || '-'}</div>
+                    <div style="font-size: 10px; color: #666;">${[item.ral, item.ral_finish].filter(Boolean).join(' ') || '-'}</div>
                 </td>
                 <td style="text-align: center;">${item.longueur || '-'}</td>
                 <td style="text-align: center; font-weight: bold;">${item.need}</td>
@@ -410,7 +410,7 @@ window.renderBDCV2 = function (title, items, chantier, type) {
             <tr>
                 <td>${item.reference}</td>
                 <td>${item.designation}</td>
-                <td style="text-align: center;">${[item.ral, item.finition].filter(Boolean).join(' ') || '-'}</td>
+                <td style="text-align: center;">${[item.ral, item.ral_finish].filter(Boolean).join(' ') || '-'}</td>
                 <td style="text-align: center;">${item.longueur || '-'} ${item.unit_condit || ''}</td>
                 ${!isBdc ? `<td style="text-align: center;">${item.need}</td>` : ''}
                 ${!isBdc ? `<td style="text-align: center;">${item.stock}</td>` : ''}
@@ -451,7 +451,11 @@ window.renderBDCV2 = function (title, items, chantier, type) {
 
     container.innerHTML = `
         <div class="bdc-header" style="background: #ffffff; padding: 10px 0 20px 0; display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 25px; border-bottom: 3px solid #059669;">
-            <img src="images/logo_arts_alu.png" alt="Arts Alu" style="height: 140px; object-fit: contain;">
+            <div style="position: relative; width: 280px; height: 140px;">
+                <img src="images/logo_arts_alu.png" alt="Arts Alu" style="position: absolute; top:0; left:0; width: 100%; height: 100%; object-fit: contain;">
+                <img src="images/logo_arts_alu.png" alt="" style="position: absolute; top:0; left:0; width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply;">
+                <img src="images/logo_arts_alu.png" alt="" style="position: absolute; top:0; left:0; width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply;">
+            </div>
             <div style="text-align: right; margin-top: 10px;">
                 <p style="font-size: 26px; font-weight: 900; color: #1e293b; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">
                     ${type === 'calpinage' ? 'DÉTAIL CALPINAGE' : (type === 'list' ? 'LISTE COMPLÈTE' : 'BON DE COMMANDE')}
