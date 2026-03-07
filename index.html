@@ -141,44 +141,47 @@
                         </button>
 
                         <!-- Contenu du menu (visible au survol) -->
-                        <div
-                            class="hidden absolute top-12 left-0 z-[100] w-56 bg-[var(--card)] border border-[var(--border)] rounded-2xl shadow-2xl py-2 flex-col group-hover:flex transform origin-top-left transition-all">
+                        <div class="hidden absolute top-full left-0 z-[100] pt-2 group-hover:block">
+                            <div
+                                class="w-56 bg-[var(--card)] border border-[var(--border)] rounded-2xl shadow-2xl py-2 flex flex-col transform origin-top-left transition-all">
 
-                            <button onclick="document.getElementById('projectFileInput').click()"
-                                class="flex items-center gap-3 w-full px-5 py-3 text-left hover:bg-[var(--card-hover)] text-zinc-200 transition-colors">
-                                <i data-lucide="folder-open" class="w-4 h-4 text-indigo-400"></i>
-                                <span class="text-xs font-bold uppercase tracking-wider">Ouvrir un projet...</span>
-                            </button>
+                                <button onclick="document.getElementById('projectFileInput').click()"
+                                    class="flex items-center gap-3 w-full px-5 py-3 text-left hover:bg-[var(--card-hover)] text-zinc-200 transition-colors">
+                                    <i data-lucide="folder-open" class="w-4 h-4 text-indigo-400"></i>
+                                    <span class="text-xs font-bold uppercase tracking-wider">Ouvrir un projet...</span>
+                                </button>
 
-                            <button onclick="window.openProjectHistory()"
-                                class="flex items-center gap-3 w-full px-5 py-3 text-left hover:bg-[var(--card-hover)] text-zinc-400 transition-colors">
-                                <i data-lucide="history" class="w-4 h-4 text-zinc-500"></i>
-                                <span class="text-[10px] font-bold uppercase tracking-wider">Historique récents</span>
-                            </button>
+                                <button onclick="window.openProjectHistory()"
+                                    class="flex items-center gap-3 w-full px-5 py-3 text-left hover:bg-[var(--card-hover)] text-zinc-400 transition-colors">
+                                    <i data-lucide="history" class="w-4 h-4 text-zinc-500"></i>
+                                    <span class="text-[10px] font-bold uppercase tracking-wider">Historique
+                                        récents</span>
+                                </button>
 
-                            <div class="h-px bg-[var(--border)] w-full w-[calc(100%-24px)] mx-auto my-1"></div>
+                                <div class="h-px bg-[var(--border)] w-full w-[calc(100%-24px)] mx-auto my-1"></div>
 
-                            <button onclick="window.saveProject()"
-                                class="flex items-center gap-3 w-full px-5 py-3 text-left hover:bg-emerald-500/10 text-emerald-400 transition-colors">
-                                <i data-lucide="save" class="w-4 h-4"></i>
-                                <span class="text-xs font-bold uppercase tracking-wider">Enregistrer</span>
-                            </button>
+                                <button onclick="window.saveProject()"
+                                    class="flex items-center gap-3 w-full px-5 py-3 text-left hover:bg-emerald-500/10 text-emerald-400 transition-colors">
+                                    <i data-lucide="save" class="w-4 h-4"></i>
+                                    <span class="text-xs font-bold uppercase tracking-wider">Enregistrer</span>
+                                </button>
 
-                            <div class="h-px bg-[var(--border)] w-full w-[calc(100%-24px)] mx-auto my-1"></div>
+                                <div class="h-px bg-[var(--border)] w-full w-[calc(100%-24px)] mx-auto my-1"></div>
 
-                            <button onclick="window.openExportModalV2()"
-                                class="flex items-center gap-3 w-full px-5 py-3 text-left hover:bg-indigo-500/10 text-indigo-400 transition-colors">
-                                <i data-lucide="download" class="w-4 h-4"></i>
-                                <span class="text-xs font-bold uppercase tracking-wider">Exporter (PDF)</span>
-                            </button>
+                                <button onclick="window.openExportModalV2()"
+                                    class="flex items-center gap-3 w-full px-5 py-3 text-left hover:bg-indigo-500/10 text-indigo-400 transition-colors">
+                                    <i data-lucide="download" class="w-4 h-4"></i>
+                                    <span class="text-xs font-bold uppercase tracking-wider">Exporter (PDF)</span>
+                                </button>
 
-                            <div class="h-px bg-[var(--border)] w-full w-[calc(100%-24px)] mx-auto my-1"></div>
+                                <div class="h-px bg-[var(--border)] w-full w-[calc(100%-24px)] mx-auto my-1"></div>
 
-                            <button onclick="window.clearNeeds()"
-                                class="flex items-center gap-3 w-full px-5 py-3 text-left hover:bg-red-500/10 text-red-400 transition-colors">
-                                <i data-lucide="trash-2" class="w-4 h-4"></i>
-                                <span class="text-xs font-bold uppercase tracking-wider">Vider la liste</span>
-                            </button>
+                                <button onclick="window.clearNeeds()"
+                                    class="flex items-center gap-3 w-full px-5 py-3 text-left hover:bg-red-500/10 text-red-400 transition-colors">
+                                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                    <span class="text-xs font-bold uppercase tracking-wider">Vider la liste</span>
+                                </button>
+                            </div>
                         </div>
 
                         <!-- Panel historique -->
@@ -851,14 +854,14 @@
     </div>
 
     <!-- Scripts classiques (ordre important) -->
-    <script src="src/store.js?v=145"></script>
-    <script src="src/state.js?v=145"></script>
-    <script src="src/calpinage.js?v=145"></script>
-    <script src="src/export.js?v=145"></script>
-    <script src="src/modals.js?v=145"></script>
-    <script src="src/ral.js?v=145"></script>
-    <script src="src/ui.js?v=145"></script>
-    <script type="module" src="src/main.js?v=145"></script>
+    <script src="src/store.js?v=146"></script>
+    <script src="src/state.js?v=146"></script>
+    <script src="src/calpinage.js?v=146"></script>
+    <script src="src/export.js?v=146"></script>
+    <script src="src/modals.js?v=146"></script>
+    <script src="src/ral.js?v=146"></script>
+    <script src="src/ui.js?v=146"></script>
+    <script type="module" src="src/main.js?v=146"></script>
     <script>
         // Inscription (Registration) du Service Worker
         if ('serviceWorker' in navigator) {
