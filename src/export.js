@@ -451,11 +451,7 @@ window.renderBDCV2 = function (title, items, chantier, type) {
 
     container.innerHTML = `
         <div class="bdc-header" style="background: #ffffff; padding: 10px 0 20px 0; display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 25px; border-bottom: 3px solid #059669;">
-            <div style="position: relative; width: 280px; height: 140px;">
-                <img src="images/logo_arts_alu.png" alt="Arts Alu" style="position: absolute; top:0; left:0; width: 100%; height: 100%; object-fit: contain;">
-                <img src="images/logo_arts_alu.png" alt="" style="position: absolute; top:0; left:0; width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply;">
-                <img src="images/logo_arts_alu.png" alt="" style="position: absolute; top:0; left:0; width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply;">
-            </div>
+            <img src="images/logo_arts_alu_color.png" alt="Arts Alu" style="height: 180px; object-fit: contain;">
             <div style="text-align: right; margin-top: 10px;">
                 <p style="font-size: 26px; font-weight: 900; color: #1e293b; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">
                     ${type === 'calpinage' ? 'DÉTAIL CALPINAGE' : (type === 'list' ? 'LISTE COMPLÈTE' : 'BON DE COMMANDE')}
