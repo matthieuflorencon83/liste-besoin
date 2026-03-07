@@ -1,13 +1,19 @@
 window.INCREMENT = 52;
 window.groupedData = [];
-AppState.filteredData = [];
+if (typeof AppState !== 'undefined') {
+    AppState.filteredData = [];
+} else {
+    console.error('ERREUR CRITIQUE: AppState non défini — store.js non chargé avant state.js');
+}
 window.displayCount = window.INCREMENT;
-AppState.favorites = [];
-AppState.needs = [];
-AppState.isRalSelectionMode = false;
-AppState.selectedNeeds = new Set();
-try { AppState.favorites = JSON.parse(localStorage.getItem('art-favs') || '[]'); if (!Array.isArray(AppState.favorites)) AppState.favorites = []; } catch (e) { AppState.favorites = []; }
-try { AppState.needs = JSON.parse(localStorage.getItem('art-needs') || '[]'); if (!Array.isArray(AppState.needs)) AppState.needs = []; } catch (e) { AppState.needs = []; }
+if (typeof AppState !== 'undefined') {
+    AppState.favorites = [];
+    AppState.needs = [];
+    AppState.isRalSelectionMode = false;
+    AppState.selectedNeeds = new Set();
+    try { AppState.favorites = JSON.parse(localStorage.getItem('art-favs') || '[]'); if (!Array.isArray(AppState.favorites)) AppState.favorites = []; } catch (e) { AppState.favorites = []; }
+    try { AppState.needs = JSON.parse(localStorage.getItem('art-needs') || '[]'); if (!Array.isArray(AppState.needs)) AppState.needs = []; } catch (e) { AppState.needs = []; }
+}
 window.isDarkMode = localStorage.getItem('theme') !== 'light';
 window.showOnlyFavs = false;
 window.currentView = 'compact';
