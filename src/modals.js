@@ -1,4 +1,5 @@
-// modals.js - Déport de la logique des modales (Ajout Manuel, Fiche Article, Budget, Historique)
+// modals.js — Modales (ES6 Module)
+import { AppState } from './store.js';
 
 // ============================================================
 // MANUAL ADD SYSTEM (DATABASE)

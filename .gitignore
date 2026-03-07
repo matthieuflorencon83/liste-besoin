@@ -9,6 +9,7 @@ debug_meplat.py
 *.xlsx
 *.xlsm
 node_modules/
+dist/
 
 # Python cache
 __pycache__/

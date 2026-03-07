@@ -1,4 +1,5 @@
-// ui.js — Interface besoins (nettoyé — RAL dans ral.js, Export dans export.js)
+// ui.js — Interface besoins (ES6 Module)
+import { AppState } from './store.js';
 
 window.saveProject = () => {
     const chantierVal = document.getElementById('chantierRef') ? document.getElementById('chantierRef').value : '';

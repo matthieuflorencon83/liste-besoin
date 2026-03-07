@@ -1,6 +1,6 @@
-// store.js - State Management Centralisé
+// store.js - State Management Centralisé (ES6 Module)
 
-window.AppState = {
+export const AppState = {
     needs: [],
     catalogData: [],
     filteredData: [],
@@ -16,6 +16,7 @@ window.AppState = {
     currentFamilyFilter: '',
     currentSupplierFilter: '',
     searchQuery: '',
+    needsSearchQuery: '',
     needsSortCol: 'fournisseur',
     needsSortDir: 'asc',
 
@@ -25,7 +26,6 @@ window.AppState = {
 
     // Methods
     init() {
-        // Load initial state from local storage if needed
         try {
             const savedNeeds = localStorage.getItem('art-needs');
             if (savedNeeds) {
@@ -60,4 +60,7 @@ window.AppState = {
 };
 
 // Initialize early
-window.AppState.init();
+AppState.init();
+
+// Rétro-compatibilité : expose sur window pour les scripts inline
+window.AppState = AppState;

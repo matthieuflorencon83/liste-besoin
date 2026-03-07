@@ -1,0 +1,23 @@
+{
+  "name": "liste-de-besoin",
+  "version": "3.7.0",
+  "private": true,
+  "type": "module",
+  "description": "Catalogue & Liste de Besoins — Arts Alu",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/matthieuflorencon83/liste-besoin.git"
+  },
+  "devDependencies": {
+    "jsdom": "^26.0.0",
+    "vite": "^6.2.0",
+    "vitest": "^3.0.0"
+  }
+}

@@ -850,15 +850,8 @@
         class="hidden bg-[var(--card)] bg-[var(--card-hover)] text-[var(--text-main)] text-[var(--text-muted)] border-[var(--border)] text-[var(--emerald)] text-[var(--amber)] focus:border-[var(--emerald)] focus:ring-[var(--emerald)] focus:border-[var(--indigo)] text-[var(--indigo)] bg-indigo-600/10 border-indigo-500/30 hover:bg-indigo-600/20 bg-amber-600/10 border-amber-500/30 hover:bg-amber-600/20 bg-[#050507]/95 bg-[var(--glass)] border-[var(--border-hover)]">
     </div>
 
-    <script src="src/db.js?v=133"></script>
-    <script src="src/store.js?v=133"></script>
-    <script src="src/state.js?v=133"></script>
-    <script src="src/calpinage.js?v=133"></script>
-    <script src="src/export.js?v=133"></script>
-    <script src="src/modals.js?v=133"></script>
-    <script src="src/ral.js?v=133"></script>
-    <script src="src/ui.js?v=133"></script>
-    <script type="module" src="src/main.js?v=133"></script>
+    <!-- Vite Entry Point — tous les modules sont importés via main.js -->
+    <script type="module" src="/src/main.js"></script>
     <script>
         // Enregistrement du Service Worker PWA
         if ('serviceWorker' in navigator) {
