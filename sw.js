@@ -1,5 +1,6 @@
 // Service Worker — Arts Alu Zen PWA
-const CACHE_NAME = 'arts-alu-zen-v2';
+// Stratégie : Network First — le réseau est prioritaire, le cache sert de fallback offline
+const CACHE_NAME = 'arts-alu-zen-v3';
 const STATIC_ASSETS = [
     '/',
     '/index.html',
@@ -15,17 +16,18 @@ const STATIC_ASSETS = [
     '/src/main.js'
 ];
 
-// Installation — mise en cache des fichiers statiques
+// Installation — pré-cache les fichiers pour le mode offline
 self.addEventListener('install', (event) => {
     event.waitUntil(
         caches.open(CACHE_NAME).then((cache) => {
             return cache.addAll(STATIC_ASSETS);
         })
     );
+    // Force le nouveau SW à prendre le contrôle immédiatement
     self.skipWaiting();
 });
 
-// Activation — nettoyage des anciens caches
+// Activation — supprime TOUS les anciens caches
 self.addEventListener('activate', (event) => {
     event.waitUntil(
         caches.keys().then((cacheNames) => {
@@ -39,32 +41,22 @@ self.addEventListener('activate', (event) => {
     self.clients.claim();
 });
 
-// Fetch — stratégie Network First pour les JSON, Cache First pour les assets
+// Fetch — NETWORK FIRST pour tout : toujours chercher le fichier frais
 self.addEventListener('fetch', (event) => {
-    const url = new URL(event.request.url);
+    // Ignorer les requêtes non-GET
+    if (event.request.method !== 'GET') return;
 
-    // Les fichiers de données JSON -> Network First
-    if (url.pathname.endsWith('.json') && url.pathname.includes('data')) {
-        event.respondWith(
-            fetch(event.request)
-                .then((response) => {
-                    const cloned = response.clone();
-                    caches.open(CACHE_NAME).then((cache) => cache.put(event.request, cloned));
-                    return response;
-                })
-                .catch(() => caches.match(event.request))
-        );
-        return;
-    }
-
-    // Tout le reste -> Cache First
     event.respondWith(
-        caches.match(event.request).then((response) => {
-            return response || fetch(event.request).then((fetchResponse) => {
-                const cloned = fetchResponse.clone();
+        fetch(event.request)
+            .then((response) => {
+                // Succès réseau : mettre à jour le cache et retourner la réponse fraîche
+                const cloned = response.clone();
                 caches.open(CACHE_NAME).then((cache) => cache.put(event.request, cloned));
-                return fetchResponse;
-            });
-        })
+                return response;
+            })
+            .catch(() => {
+                // Échec réseau (offline) : fallback sur le cache
+                return caches.match(event.request);
+            })
     );
 });
