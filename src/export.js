@@ -115,7 +115,7 @@ window.exportPDF = async function () {
     // Charger le logo Arts Alu
     let logoData = null;
     try {
-        const resp = await fetch('images/header/header_arts_alu.jpeg');
+        const resp = await fetch('images/logo_arts_alu.png');
         const blob = await resp.blob();
         const reader = new FileReader();
         logoData = await new Promise(resolve => {
@@ -137,7 +137,7 @@ window.exportPDF = async function () {
 
         // — Logo Arts Alu —
         if (logoData) {
-            doc.addImage(logoData, 'JPEG', 10, yPos, 50, 16);
+            doc.addImage(logoData, 'PNG', 10, yPos, 55, 18);
         }
 
         // — Titre BDC —
@@ -450,46 +450,30 @@ window.renderBDCV2 = function (title, items, chantier, type) {
     }
 
     container.innerHTML = `
-        <div class="bdc-header" style="display: flex; justify-content: space-between; margin-bottom: 20px;">
-            <div>
-                <h1 style="font-size: 28px; font-weight: 900; margin-bottom: 8px; color: #1e1b4b; letter-spacing: -0.5px;">ARTS ALU</h1>
-                <div style="font-size: 10px; color: #4b5563; line-height: 1.5;">
-                    <p style="font-weight: bold; color: #1f2937;">Menuiserie Aluminium & PVC • Stores & Volets • Abris de Piscines</p>
-                    <p>Les Quatre Chemins - R.N.7, 83460 LES ARCS S/ARGENS</p>
-                    <p>Tél. 04 94 73 67 04 • Port : 06 61 63 33 67 / 06 11 35 75 09</p>
-                    <p>E-Mail: contact@artsalu.fr</p>
-                    <p style="font-size: 8px; margin-top: 6px; color: #9ca3af;">Arts Alu - Eurl au capital de 8000 € • Siret 48065874900027 • TVA Intracom FR61480658749</p>
-                </div>
+        <div class="bdc-header" style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px;">
+            <div style="display: flex; align-items: center; gap: 20px;">
+                <img src="images/logo_arts_alu.png" alt="Arts Alu" style="height: 70px; object-fit: contain;">
             </div>
-            <div style="text-align: right; display: flex; flex-col; align-items: flex-end;">
-                <div style="background: #f3f4f6; padding: 10px 15px; border-radius: 6px; border: 1px solid #e5e7eb; display: inline-block;">
-                    <p style="font-size: 14px; font-weight: 900; color: #111827; text-transform: uppercase;">CHANTIER : ${chantier}</p>
-                    <p style="font-size: 11px; color: #6b7280; margin-top: 4px;">Date : ${date}</p>
+            <div style="text-align: right;">
+                <div style="background: #1e1b4b; padding: 12px 18px; border-radius: 8px; display: inline-block;">
+                    <p style="font-size: 14px; font-weight: 900; color: #fff; text-transform: uppercase;">CHANTIER : ${chantier}</p>
+                    <p style="font-size: 11px; color: #c7d2fe; margin-top: 4px;">Date : ${date}</p>
                 </div>
-                <div style="margin-top: 15px; float: right;">
-                    <p style="font-size: 14px; font-weight: 900; color: #4338ca; text-transform: uppercase; letter-spacing: 1px;">
+                <div style="margin-top: 15px;">
+                    <p style="font-size: 14px; font-weight: 900; color: #059669; text-transform: uppercase; letter-spacing: 1px;">
                         ${type === 'calpinage' ? 'DÉTAIL CALPINAGE' : (type === 'list' ? 'LISTE COMPLÈTE' : 'BON DE COMMANDE')}
                     </p>
                 </div>
             </div>
         </div>
 
-        <div style="margin-bottom: 30px; background: #f9f9f9; padding: 15px; border-radius: 8px;">
-            <p style="font-size: 10px; text-transform: uppercase; font-weight: bold; color: #999;">${type === 'bdc' ? 'FOURNISSEUR' : 'DOCUMENT'}</p>
-            <h2 style="font-size: 18px; font-weight: 800;">${type === 'bdc' ? title : (title === 'ALL' ? 'Tout le Chantier' : 'Feuille de Débits ')}</h2>
+        <div style="margin-bottom: 30px; background: #1e293b; padding: 15px 20px; border-radius: 8px; border-left: 4px solid #059669;">
+            <p style="font-size: 10px; text-transform: uppercase; font-weight: bold; color: #94a3b8;">${type === 'bdc' ? 'FOURNISSEUR' : 'DOCUMENT'}</p>
+            <h2 style="font-size: 18px; font-weight: 800; color: #fff;">${type === 'bdc' ? title : (title === 'ALL' ? 'Tout le Chantier' : 'Feuille de Débits ')}</h2>
         </div>
 
         ${contentHtml}
 
-        <div style="margin-top: 50px; display: flex; justify-content: space-between; page-break-inside: avoid;">
-            <div style="width: 40%; border-top: 1px solid #ccc; padding-top: 10px;">
-                <p style="font-size: 10px; font-weight: bold;">Date et Signature ${type === 'bdc' ? 'Commandeur' : 'Chef Atelier'} :</p>
-            </div>
-            ${type === 'bdc' ? `
-            <div style="width: 40%; border-top: 1px solid #ccc; padding-top: 10px; text-align: right;">
-                <p style="font-size: 10px; font-weight: bold;">Bon pour accord :</p>
-            </div>` : ''}
-        </div>
     `;
 };
 

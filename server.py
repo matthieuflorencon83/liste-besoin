@@ -71,22 +71,39 @@ class MyHandler(http.server.SimpleHTTPRequestHandler):
 
     def handle_add_article(self):
         try:
+            # Validation taille du body (max 10MB)
+            content_length = int(self.headers.get('Content-Length', 0))
+            if content_length > 10 * 1024 * 1024:
+                self.send_response(413)
+                self.send_header('Content-type', 'application/json')
+                self.end_headers()
+                self.wfile.write(json.dumps({'status': 'error', 'message': 'Fichier trop volumineux (max 10MB)'}).encode('utf-8'))
+                return
+
             form_data, files = self.parse_multipart()
 
-            # Extract fields
-            ref = form_data.get('reference')
-            des = form_data.get('designation')
-            four = form_data.get('fournisseur')
-            fam = form_data.get('famille')
-            sous_famille = form_data.get('sous_famille')
-            type_art = form_data.get('type')
-            ral = form_data.get('finition') # Match HTML input name
-            longueur = form_data.get('longueur')
-            unite = form_data.get('unite')
-            prix = form_data.get('prix')
-            poids = form_data.get('poids')
-            dimension = form_data.get('dimensions') # Nouveau
-            epaisseur = form_data.get('epaisseur') # Nouveau
+            # Nettoyage des champs texte
+            def sanitize(val, max_len=200):
+                if not val:
+                    return val
+                val = str(val).strip()[:max_len]
+                val = ''.join(c for c in val if c.isprintable() or c in ('\n', '\r', '\t'))
+                return val
+
+            # Extract fields (avec sanitization)
+            ref = sanitize(form_data.get('reference'), 50)
+            des = sanitize(form_data.get('designation'))
+            four = sanitize(form_data.get('fournisseur'), 100)
+            fam = sanitize(form_data.get('famille'), 100)
+            sous_famille = sanitize(form_data.get('sous_famille'), 100)
+            type_art = sanitize(form_data.get('type'), 100)
+            ral = sanitize(form_data.get('finition'), 50)
+            longueur = sanitize(form_data.get('longueur'), 20)
+            unite = sanitize(form_data.get('unite'), 20)
+            prix = sanitize(form_data.get('prix'), 20)
+            poids = sanitize(form_data.get('poids'), 20)
+            dimension = sanitize(form_data.get('dimensions'), 50)
+            epaisseur = sanitize(form_data.get('epaisseur'), 20)
 
             if not ref or not four:
                 self.send_response(400)
