@@ -1,6 +1,6 @@
-// store.js - State Management Centralisé (ES6 Module)
+// store.js - State Management Centralisé
 
-export const AppState = {
+window.AppState = {
     needs: [],
     catalogData: [],
     filteredData: [],
@@ -60,7 +60,4 @@ export const AppState = {
 };
 
 // Initialize early
-AppState.init();
-
-// Rétro-compatibilité : expose sur window pour les scripts inline
-window.AppState = AppState;
+window.AppState.init();

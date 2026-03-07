@@ -1,6 +1,5 @@
-// export.js — Gestion des exports PDF et Excel (ES6 Module)
+// export.js — Gestion des exports PDF et Excel
 // Dépendances : jsPDF, jsPDF-AutoTable, SheetJS (XLSX)
-import { AppState } from './store.js';
 
 // ============================================================
 // EXPORT EXCEL (SheetJS)

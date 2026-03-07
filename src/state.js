@@ -1,5 +1,3 @@
-// state.js — Catalogue & Filtres (ES6 Module)
-import { AppState } from './store.js';
 window.INCREMENT = 52;
 window.groupedData = [];
 window.displayCount = window.INCREMENT;

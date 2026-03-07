@@ -1,7 +1,3 @@
-// main.js — Entry Point (ES6 Module)
-// Charge les données catalogue via IndexedDB + fetch
-
-import { AppState } from './store.js';
 import { initDB, getFromDB, saveToDB, clearCatalogDB } from './db.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -18,6 +14,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         let storedVersion = await getFromDB('catalog_version').catch(() => null);
         if (storedVersion !== catalogIndex.version) {
+            console.log("Nouvelle version du catalogue détectée. Nettoyage du cache IndexedDB...");
             await clearCatalogDB().catch(() => { });
             await saveToDB('catalog_version', catalogIndex.version).catch(() => { });
         }
@@ -28,9 +25,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         let primaryData = await getFromDB(primarySrc.file).catch(() => null);
         if (!primaryData) {
+            console.log(`[Réseau] Chargement prioritaire de ${primarySrc.file}...`);
             const res = await fetch(primarySrc.file, { signal: controller.signal });
             primaryData = await res.json();
             await saveToDB(primarySrc.file, primaryData).catch(() => { });
+        } else {
+            console.log(`[Cache] Chargement prioritaire de ${primarySrc.file}`);
         }
 
         clearTimeout(timeout);
@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         AppState.catalogData = primaryData;
         if (typeof window.init === 'function') window.init();
 
-        // 4. Chargement paresseux du reste en parallèle
+        // 4. Chargement paresseux (Lazy Loading) du reste en parallèle !
         const restSources = catalogIndex.sources.filter(s => s.file !== primarySrc.file);
 
         setTimeout(async () => {
@@ -51,13 +51,14 @@ document.addEventListener('DOMContentLoaded', async () => {
                         data = await res.json();
                         await saveToDB(src.file, data).catch(() => { });
                     } catch (err) {
-                        console.error(`Erreur chargement de ${src.file}`, err);
+                        console.error(`Erreur chargement background de ${src.file}`, err);
                         return [];
                     }
                 }
                 return data || [];
             });
 
+            // On attend que tout soit dispo pour n'update le state qu'UNE seule fois
             const results = await Promise.all(promises);
             let combinedData = [];
             results.forEach(arr => combinedData = combinedData.concat(arr));
@@ -65,7 +66,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (combinedData.length > 0 && typeof window.appendCatalogData === 'function') {
                 window.appendCatalogData(combinedData, true);
             }
-        }, 150);
+        }, 150); // Léger retard pour ne pas concurrencer le rendu initial de l'UI
 
     } catch (e) {
         console.error("Erreur de chargement data.json:", e);

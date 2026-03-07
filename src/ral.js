@@ -1,5 +1,4 @@
-// ral.js — Gestion RAL / Finitions (ES6 Module)
-import { AppState } from './store.js';
+// ral.js — Gestion RAL / Finitions (extrait de ui.js)
 
 /* --- BATCH RAL MANAGEMENT --- */
 

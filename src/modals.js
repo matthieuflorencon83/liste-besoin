@@ -1,5 +1,4 @@
-// modals.js — Modales (ES6 Module)
-import { AppState } from './store.js';
+// modals.js — Modales (Ajout Manuel, Fiche Article, Budget, Historique)
 
 // ============================================================
 // MANUAL ADD SYSTEM (DATABASE)

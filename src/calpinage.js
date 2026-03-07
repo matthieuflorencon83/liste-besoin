@@ -1,5 +1,4 @@
-// calpinage.js — Module de calpinage (ES6 Module)
-import { AppState } from './store.js';
+// calpinage.js — Module de calpinage
 window.isCalpinageMode = localStorage.getItem('art-calpinage-mode') === 'true';
 window.activeCalpinageId = localStorage.getItem('art-active-calpinage-id') || null;
 
