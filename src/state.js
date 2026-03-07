@@ -630,12 +630,16 @@ function debounce(fn, delay) {
 }
 
 const debouncedApplyFilters = debounce(applyFilters, 250);
-window.searchInput.addEventListener('input', debouncedApplyFilters);
-window.fFour.addEventListener('change', (e) => applyFilters(e.target));
-window.fType.addEventListener('change', (e) => applyFilters(e.target));
-window.fSerie.addEventListener('change', (e) => applyFilters(e.target));
-document.getElementById('resetFilters').addEventListener('click', () => { window.fFour.value = ""; window.fType.value = ""; window.fSerie.value = ""; window.searchInput.value = ""; applyFilters(); });
-document.getElementById('toggleFavFilter').addEventListener('click', () => { window.showOnlyFavs = !window.showOnlyFavs; document.getElementById('toggleFavFilter').classList.toggle('active', window.showOnlyFavs); applyFilters(); });
-document.getElementById('modeToggle').addEventListener('click', () => { window.isDarkMode = !window.isDarkMode; document.body.classList.toggle('light-mode', !window.isDarkMode); localStorage.setItem('theme', window.isDarkMode ? 'dark' : 'light'); });
-document.getElementById('loadMoreBtn').addEventListener('click', () => { window.displayCount += window.INCREMENT; render(true); });
+if (window.searchInput) window.searchInput.addEventListener('input', debouncedApplyFilters);
+if (window.fFour) window.fFour.addEventListener('change', (e) => applyFilters(e.target));
+if (window.fType) window.fType.addEventListener('change', (e) => applyFilters(e.target));
+if (window.fSerie) window.fSerie.addEventListener('change', (e) => applyFilters(e.target));
+const _resetBtn = document.getElementById('resetFilters');
+if (_resetBtn) _resetBtn.addEventListener('click', () => { window.fFour.value = ""; window.fType.value = ""; window.fSerie.value = ""; window.searchInput.value = ""; applyFilters(); });
+const _favBtn = document.getElementById('toggleFavFilter');
+if (_favBtn) _favBtn.addEventListener('click', () => { window.showOnlyFavs = !window.showOnlyFavs; _favBtn.classList.toggle('active', window.showOnlyFavs); applyFilters(); });
+const _modeToggle = document.getElementById('modeToggle');
+if (_modeToggle) _modeToggle.addEventListener('click', () => { window.isDarkMode = !window.isDarkMode; document.body.classList.toggle('light-mode', !window.isDarkMode); localStorage.setItem('theme', window.isDarkMode ? 'dark' : 'light'); });
+const _loadMoreBtn = document.getElementById('loadMoreBtn');
+if (_loadMoreBtn) _loadMoreBtn.addEventListener('click', () => { window.displayCount += window.INCREMENT; render(true); });
 
