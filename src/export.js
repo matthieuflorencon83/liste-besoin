@@ -184,7 +184,7 @@ window.exportPDF = async function () {
                     i + 1,
                     it.reference || '-',
                     it.designation || '-',
-                    it.ral || '-',
+                    [it.ral, it.finition].filter(Boolean).join(' ') || '-',
                     `${conditVal} ${u}`,
                     puPiece > 0 ? `${puPiece.toFixed(2)} €` : '-',
                     it.need,
@@ -373,7 +373,7 @@ window.renderBDCV2 = function (title, items, chantier, type) {
                 </td>
                 <td style="padding-right: 15px;">
                     <div>${item.designation}</div>
-                    <div style="font-size: 10px; color: #666;">${item.ral || '-'}</div>
+                    <div style="font-size: 10px; color: #666;">${[item.ral, item.finition].filter(Boolean).join(' ') || '-'}</div>
                 </td>
                 <td style="text-align: center;">${item.longueur || '-'}</td>
                 <td style="text-align: center; font-weight: bold;">${item.need}</td>
@@ -410,7 +410,7 @@ window.renderBDCV2 = function (title, items, chantier, type) {
             <tr>
                 <td>${item.reference}</td>
                 <td>${item.designation}</td>
-                <td style="text-align: center;">${item.ral || '-'}</td>
+                <td style="text-align: center;">${[item.ral, item.finition].filter(Boolean).join(' ') || '-'}</td>
                 <td style="text-align: center;">${item.longueur || '-'} ${item.unit_condit || ''}</td>
                 ${!isBdc ? `<td style="text-align: center;">${item.need}</td>` : ''}
                 ${!isBdc ? `<td style="text-align: center;">${item.stock}</td>` : ''}
