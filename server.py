@@ -26,6 +26,12 @@ class MyHandler(http.server.SimpleHTTPRequestHandler):
             self.send_header('Access-Control-Allow-Origin', origin)
         else:
             self.send_header('Access-Control-Allow-Origin', 'http://localhost:8000')
+            
+        # FORCE NO CACHE - VERY IMPORTANT to override rogue Service Workers
+        self.send_header('Cache-Control', 'no-cache, no-store, must-revalidate')
+        self.send_header('Pragma', 'no-cache')
+        self.send_header('Expires', '0')
+        
         super().end_headers()
 
     def do_POST(self):
@@ -270,9 +276,13 @@ class MyHandler(http.server.SimpleHTTPRequestHandler):
 if not os.path.exists(os.path.join(BASE_DIR, "scripts")):
     os.makedirs(os.path.join(BASE_DIR, "scripts"))
 
-socketserver.TCPServer.allow_reuse_address = True
-with socketserver.TCPServer(("", PORT), MyHandler) as httpd:
-    print(f"Serveur Python actif sur le port {PORT}")
+# Utilisation d'un serveur multithread pour éviter le blocage sur WinError 10053
+class ThreadedHTTPServer(socketserver.ThreadingTCPServer):
+    daemon_threads = True
+    allow_reuse_address = True
+
+with ThreadedHTTPServer(("", PORT), MyHandler) as httpd:
+    print(f"Serveur Python multithread actif sur le port {PORT}")
     print("Vous pouvez utiliser l'application.")
     try:
         httpd.serve_forever()
