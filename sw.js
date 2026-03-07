@@ -1,5 +1,5 @@
 // Service Worker — Arts Alu Zen PWA
-const CACHE_NAME = 'arts-alu-zen-v1';
+const CACHE_NAME = 'arts-alu-zen-v2';
 const STATIC_ASSETS = [
     '/',
     '/index.html',

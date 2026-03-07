@@ -851,18 +851,28 @@
     </div>
 
     <!-- Scripts classiques (ordre important) -->
-    <script src="src/store.js?v=134"></script>
-    <script src="src/state.js?v=134"></script>
-    <script src="src/calpinage.js?v=134"></script>
-    <script src="src/export.js?v=134"></script>
-    <script src="src/modals.js?v=134"></script>
-    <script src="src/ral.js?v=134"></script>
-    <script src="src/ui.js?v=134"></script>
-    <script type="module" src="src/main.js?v=134"></script>
+    <script src="src/store.js?v=135"></script>
+    <script src="src/state.js?v=135"></script>
+    <script src="src/calpinage.js?v=135"></script>
+    <script src="src/export.js?v=135"></script>
+    <script src="src/modals.js?v=135"></script>
+    <script src="src/ral.js?v=135"></script>
+    <script src="src/ui.js?v=135"></script>
+    <script type="module" src="src/main.js?v=135"></script>
     <script>
-        // Enregistrement du Service Worker PWA
+        // Force le nettoyage de l'ancien cache Service Worker
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/sw.js').catch(() => { });
+            navigator.serviceWorker.getRegistrations().then(function (registrations) {
+                registrations.forEach(function (registration) {
+                    registration.unregister();
+                });
+            });
+            // Vider les caches du SW
+            if ('caches' in window) {
+                caches.keys().then(function (names) {
+                    names.forEach(function (name) { caches.delete(name); });
+                });
+            }
         }
     </script>
 </body>

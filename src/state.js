@@ -1,5 +1,6 @@
 window.INCREMENT = 52;
 window.groupedData = [];
+AppState.filteredData = [];
 window.displayCount = window.INCREMENT;
 AppState.favorites = [];
 AppState.needs = [];
