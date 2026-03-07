@@ -37,7 +37,7 @@ window.startApp = () => {
     setTimeout(() => document.getElementById('startOverlay').classList.add('hidden'), 1000);
 }
 
-// SPRINT 6 — Skip écran de démarrage si chantier ou besoins déjà présents
+// Skip écran de démarrage si chantier ou besoins déjà présents
 try {
     const hasNeeds = JSON.parse(localStorage.getItem('art-needs') || '[]').length > 0;
     const hasChantier = !!localStorage.getItem('art-chantier');
@@ -101,7 +101,7 @@ function escapeHtml(str) {
 }
 
 // ============================================================
-// SPRINT 6 — SURLIGNAGE DES TERMES DE RECHERCHE
+// SURLIGNAGE DES TERMES DE RECHERCHE
 // ============================================================
 function highlight(text, query) {
     if (!query || query.length < 2) return escapeHtml(text);
@@ -175,7 +175,7 @@ window.init = async function () {
     }
 }
 
-// SPRINT 10 - Ajout progressif des données JSON
+// Ajout progressif des données JSON
 window.appendCatalogData = function (newItems, isLastBatch = false) {
     if (!AppState.catalogData) AppState.catalogData = [];
 
@@ -545,7 +545,7 @@ function updateFavCount() {
 }
 
 // ============================================================
-// SPRINT 6 — TOAST DE CONFIRMATION
+// TOAST DE CONFIRMATION
 // ============================================================
 window.showToast = function (message, color = 'indigo') {
     let container = document.getElementById('toastContainer');
@@ -625,7 +625,7 @@ window.closeVisualizer = () => {
 };
 
 // ============================================================
-// SPRINT 4 — PERFORMANCE : Debounce
+// PERFORMANCE : Debounce
 // ============================================================
 function debounce(fn, delay) {
     let timer;
@@ -645,7 +645,17 @@ if (_resetBtn) _resetBtn.addEventListener('click', () => { window.fFour.value = 
 const _favBtn = document.getElementById('toggleFavFilter');
 if (_favBtn) _favBtn.addEventListener('click', () => { window.showOnlyFavs = !window.showOnlyFavs; _favBtn.classList.toggle('active', window.showOnlyFavs); applyFilters(); });
 const _modeToggle = document.getElementById('modeToggle');
-if (_modeToggle) _modeToggle.addEventListener('click', () => { window.isDarkMode = !window.isDarkMode; document.body.classList.toggle('light-mode', !window.isDarkMode); localStorage.setItem('theme', window.isDarkMode ? 'dark' : 'light'); });
+if (_modeToggle) _modeToggle.addEventListener('click', () => {
+    window.isDarkMode = !window.isDarkMode;
+    document.body.classList.toggle('light-mode', !window.isDarkMode);
+    localStorage.setItem('theme', window.isDarkMode ? 'dark' : 'light');
+    // Swap icône sun ↔ moon
+    const icon = _modeToggle.querySelector('i');
+    if (icon) {
+        icon.setAttribute('data-lucide', window.isDarkMode ? 'sun' : 'moon');
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+    }
+});
 const _loadMoreBtn = document.getElementById('loadMoreBtn');
 if (_loadMoreBtn) _loadMoreBtn.addEventListener('click', () => { window.displayCount += window.INCREMENT; render(true); });
 

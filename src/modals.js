@@ -171,7 +171,7 @@ window.submitManualArticle = async () => {
 };
 
 // ============================================================
-// SPRINT 3 — FICHE ARTICLE RAPIDE
+// FICHE ARTICLE RAPIDE
 // ============================================================
 window.showArticleCard = function (realIndex) {
     const item = AppState.needs[realIndex];
@@ -241,7 +241,7 @@ window.closeArticleCard = function () {
 };
 
 // ============================================================
-// SPRINT 3 — GRAPHIQUE BUDGET PAR FOURNISSEUR
+// GRAPHIQUE BUDGET PAR FOURNISSEUR
 // ============================================================
 window.openBudgetChart = function () {
     const modal = document.getElementById('budgetChartModal');
@@ -313,7 +313,7 @@ window.closeBudgetChart = function () {
 };
 
 // ============================================================
-// SPRINT 5 — HISTORIQUE PROJETS RÉCENTS
+// HISTORIQUE PROJETS RÉCENTS
 // ============================================================
 window.openProjectHistory = function () {
     const hist = JSON.parse(localStorage.getItem('art-project-history') || '[]');
@@ -353,7 +353,7 @@ function _histClickOutside(e) {
 }
 
 // ============================================================
-// SPRINT 7 — MODIFICATION DES LIGNES DES BESOINS
+// MODIFICATION DES LIGNES DES BESOINS
 // ============================================================
 window.openEditNeedModal = function (realIndex) {
     const item = AppState.needs[realIndex];

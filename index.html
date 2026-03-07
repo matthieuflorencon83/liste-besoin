@@ -7,12 +7,14 @@
     <meta name="description" content="Gestion de catalogue et listes de besoins pour Arts Alu — menuiserie aluminium">
     <meta name="theme-color" content="#6366f1">
     <link rel="manifest" href="manifest.json">
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%236366f1'/><text x='50' y='68' font-size='50' font-weight='900' text-anchor='middle' fill='white'>AZ</text></svg>">
     <meta http-equiv="Content-Security-Policy"
-        content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://unpkg.com https://cdn.sheetjs.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob:;">
+        content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://unpkg.com https://cdn.sheetjs.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' https://unpkg.com https://cdn.sheetjs.com;">
     <title>Arts Alu | Catalogue Premium [V3.6]</title>
     <script src="https://cdn.tailwindcss.com/3.4.1"></script>
     <script src="https://unpkg.com/lucide@0.315.0"></script>
-    <!-- Sprint 8 : Export Excel + PDF -->
+    <!-- Export Excel + PDF -->
     <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
     <script src="https://unpkg.com/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
     <script src="https://unpkg.com/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.min.js"></script>
@@ -21,7 +23,7 @@
         rel="stylesheet">
     <link rel="stylesheet" href="style.css?v=132">
     <style>
-        /* ======= CSS PRINT — Sprint 5 ======= */
+        /* ======= CSS PRINT ======= */
         @media print {
             body {
                 background: white !important;
@@ -147,8 +149,8 @@
                 </button>
                 <button onclick="window.toggleFS()" class="action-btn h-10 w-10 rounded-2xl"><i data-lucide="maximize"
                         class="w-5 h-5"></i></button>
-                <button id="modeToggle" class="action-btn h-10 w-10 rounded-2xl"><i data-lucide="sparkles"
-                        class="w-5 h-5"></i></button>
+                <button id="modeToggle" class="action-btn h-10 w-10 rounded-2xl" title="Mode clair/sombre"><i
+                        data-lucide="sun" class="w-5 h-5"></i></button>
                 <div class="ml-6 pl-6 border-l border-[var(--border)] text-right">
                     <span id="matchCount" class="text-2xl font-black text-[var(--indigo)] block leading-none">0</span>
                     <span
@@ -195,9 +197,15 @@
                 <!-- EXPORT BUTTONS REGROUPED BELOW -->
                 <button onclick="window.openExportModalV2()"
                     class="action-btn px-4 h-10 w-auto rounded-2xl gap-2 !bg-indigo-600 border !border-indigo-500 hover:!bg-indigo-500 shadow-lg shadow-indigo-500/20"
-                    title="Exporter la liste">
+                    title="Exporter BDC / PDF">
                     <i data-lucide="download" class="w-4 h-4 text-white"></i>
                     <span class="text-[10px] font-black uppercase tracking-widest text-white">EXPORTER</span>
+                </button>
+                <button onclick="window.exportNeedsCSV()"
+                    class="action-btn px-4 h-10 w-auto rounded-2xl gap-2 !bg-emerald-600 border !border-emerald-500 hover:!bg-emerald-500 shadow-lg shadow-emerald-500/20"
+                    title="Exporter en CSV (Excel)">
+                    <i data-lucide="file-spreadsheet" class="w-4 h-4 text-white"></i>
+                    <span class="text-[10px] font-black uppercase tracking-widest text-white">CSV</span>
                 </button>
                 <button onclick="window.clearNeeds()"
                     class="action-btn px-4 h-10 w-auto rounded-2xl gap-2 !bg-[var(--card)] border !border-[var(--border)] hover:!bg-red-900/30 group"
@@ -761,7 +769,7 @@
         </div>
     </div>
 
-    <!-- MODAL EDIT NEED LINE (SPRINT 7) -->
+    <!-- MODAL EDIT NEED LINE -->
     <div id="editNeedModal" class="hidden fixed inset-0 z-[120] flex items-center justify-center">
         <div class="absolute inset-0 bg-black/85 backdrop-blur-sm" onclick="window.closeEditNeedModal()"></div>
         <div

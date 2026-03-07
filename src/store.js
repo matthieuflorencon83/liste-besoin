@@ -32,7 +32,7 @@ window.AppState = {
                 this.needs = JSON.parse(savedNeeds);
             }
 
-            const savedFavs = localStorage.getItem('art-favorites');
+            const savedFavs = localStorage.getItem('art-favs') || localStorage.getItem('art-favorites');
             if (savedFavs) {
                 this.favorites = new Set(JSON.parse(savedFavs));
             }
@@ -51,7 +51,7 @@ window.AppState = {
     },
 
     saveFavorites() {
-        localStorage.setItem('art-favorites', JSON.stringify([...this.favorites]));
+        localStorage.setItem('art-favs', JSON.stringify([...this.favorites]));
     },
 
     saveViewMode() {
