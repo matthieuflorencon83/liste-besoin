@@ -149,7 +149,7 @@ window.exportPDF = async function () {
         doc.setFontSize(9);
         doc.setFont('helvetica', 'normal');
         doc.setTextColor(...DARK_TEXT);
-        doc.text(`Chantier : ${chantier}`, pageW / 2, yPos + 12, { align: 'center' });
+        doc.text(`Référence : ${chantier}`, pageW / 2, yPos + 12, { align: 'center' });
         doc.text(`Date : ${dateStr}`, pageW / 2, yPos + 17, { align: 'center' });
 
         // — Fournisseur box —
@@ -280,7 +280,7 @@ window.openExportModalV2 = function () {
 
     // A. Special Tabs
     if (allItems.length > 0) {
-        const tabAll = createTab('ALL', `TOUT LE CHANTIER (${allItems.length})`, allItems, 'list');
+        const tabAll = createTab('ALL', `TOUTE LA RÉFÉRENCE (${allItems.length})`, allItems, 'list');
         tabsContainer.appendChild(tabAll);
     }
 
@@ -450,26 +450,20 @@ window.renderBDCV2 = function (title, items, chantier, type) {
     }
 
     container.innerHTML = `
-        <div class="bdc-header" style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px;">
-            <div style="display: flex; align-items: center; gap: 20px;">
-                <img src="images/logo_arts_alu.png" alt="Arts Alu" style="height: 70px; object-fit: contain;">
-            </div>
+        <div class="bdc-header" style="background: #0f172a; padding: 25px 30px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 0;">
+            <img src="images/logo_arts_alu.png" alt="Arts Alu" style="height: 90px; object-fit: contain;">
             <div style="text-align: right;">
-                <div style="background: #1e1b4b; padding: 12px 18px; border-radius: 8px; display: inline-block;">
-                    <p style="font-size: 14px; font-weight: 900; color: #fff; text-transform: uppercase;">CHANTIER : ${chantier}</p>
-                    <p style="font-size: 11px; color: #c7d2fe; margin-top: 4px;">Date : ${date}</p>
-                </div>
-                <div style="margin-top: 15px;">
-                    <p style="font-size: 14px; font-weight: 900; color: #059669; text-transform: uppercase; letter-spacing: 1px;">
-                        ${type === 'calpinage' ? 'DÉTAIL CALPINAGE' : (type === 'list' ? 'LISTE COMPLÈTE' : 'BON DE COMMANDE')}
-                    </p>
-                </div>
+                <p style="font-size: 22px; font-weight: 900; color: #fff; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 6px;">
+                    ${type === 'calpinage' ? 'DÉTAIL CALPINAGE' : (type === 'list' ? 'LISTE COMPLÈTE' : 'BON DE COMMANDE')}
+                </p>
+                <p style="font-size: 13px; font-weight: 700; color: #94a3b8;">Référence : <span style="color: #fff;">${chantier}</span></p>
+                <p style="font-size: 11px; color: #64748b; margin-top: 2px;">Date : ${date}</p>
             </div>
         </div>
 
-        <div style="margin-bottom: 30px; background: #1e293b; padding: 15px 20px; border-radius: 8px; border-left: 4px solid #059669;">
-            <p style="font-size: 10px; text-transform: uppercase; font-weight: bold; color: #94a3b8;">${type === 'bdc' ? 'FOURNISSEUR' : 'DOCUMENT'}</p>
-            <h2 style="font-size: 18px; font-weight: 800; color: #fff;">${type === 'bdc' ? title : (title === 'ALL' ? 'Tout le Chantier' : 'Feuille de Débits ')}</h2>
+        <div style="margin-bottom: 25px; background: #059669; padding: 14px 24px; border-radius: 0 0 10px 10px;">
+            <p style="font-size: 9px; text-transform: uppercase; font-weight: bold; color: rgba(255,255,255,0.6); letter-spacing: 1px;">${type === 'bdc' ? 'FOURNISSEUR' : 'DOCUMENT'}</p>
+            <h2 style="font-size: 17px; font-weight: 800; color: #fff; margin-top: 2px;">${type === 'bdc' ? title : (title === 'ALL' ? 'Toute la Référence' : 'Feuille de Débits')}</h2>
         </div>
 
         ${contentHtml}
