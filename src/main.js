@@ -1,14 +1,8 @@
-// main.js — Entry Point (ES6 Module / Vite)
-// Importe tous les modules pour les initialiser
+// main.js — Entry Point (ES6 Module)
+// Charge les données catalogue via IndexedDB + fetch
 
 import { AppState } from './store.js';
 import { initDB, getFromDB, saveToDB, clearCatalogDB } from './db.js';
-import './calpinage.js';
-import './state.js';
-import './export.js';
-import './modals.js';
-import './ral.js';
-import './ui.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
     try {
