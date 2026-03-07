@@ -548,6 +548,10 @@ h3 {
         background: white;
         height: auto !important;
         overflow: visible !important;
+        -webkit-print-color-adjust: exact;
+        /* Chrome/Safari */
+        print-color-adjust: exact;
+        /* Firefox */
     }
 
     /* Hide everything initially */
