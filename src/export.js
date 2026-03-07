@@ -441,8 +441,8 @@ window.renderBDCV2 = function (title, items, chantier, type) {
                 <tbody>
                     ${rows}
                     <tr>
-                        <td colspan="${!isBdc ? 8 : 6}" style="text-align: right; font-weight: 900; padding-top: 15px; border-top: 2px solid #000;">TOTAL GÉNÉRAL HT</td>
-                        <td style="text-align: right; font-weight: 900; font-size: 16px; padding-top: 15px; border-top: 2px solid #000; color: #166534;">${totalGlobalHT.toFixed(2)} €</td>
+                        <td colspan="${!isBdc ? 8 : 6}" style="text-align: right; font-weight: 900; padding-top: 15px; border-top: 2px solid #059669; color: #059669; font-size: 14px;">TOTAL HT</td>
+                        <td style="text-align: right; font-weight: 900; font-size: 14px; padding-top: 15px; border-top: 2px solid #059669; color: #000;">${totalGlobalHT.toFixed(2)} €</td>
                     </tr>
                 </tbody>
             </table>
