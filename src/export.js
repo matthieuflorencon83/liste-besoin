@@ -450,20 +450,20 @@ window.renderBDCV2 = function (title, items, chantier, type) {
     }
 
     container.innerHTML = `
-        <div class="bdc-header" style="background: #ffffff; padding: 25px 30px; border-radius: 10px 10px 0 0; border: 1px solid #e2e8f0; border-bottom: none; display: flex; justify-content: space-between; align-items: center; margin-bottom: 0;">
-            <img src="images/logo_arts_alu.png" alt="Arts Alu" style="height: 90px; object-fit: contain;">
-            <div style="text-align: right;">
-                <p style="font-size: 24px; font-weight: 900; color: #0f172a; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px;">
+        <div class="bdc-header" style="background: #ffffff; padding: 10px 0 20px 0; display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 25px; border-bottom: 3px solid #059669;">
+            <img src="images/logo_arts_alu.png" alt="Arts Alu" style="height: 100px; object-fit: contain;">
+            <div style="text-align: right; margin-top: 10px;">
+                <p style="font-size: 26px; font-weight: 900; color: #1e293b; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">
                     ${type === 'calpinage' ? 'DÉTAIL CALPINAGE' : (type === 'list' ? 'LISTE COMPLÈTE' : 'BON DE COMMANDE')}
                 </p>
-                <p style="font-size: 13px; font-weight: 700; color: #475569;">Référence : <span style="color: #0f172a; font-weight: 900;">${chantier}</span></p>
-                <p style="font-size: 11px; color: #64748b; margin-top: 2px;">Date : ${date}</p>
+                <p style="font-size: 14px; font-weight: 700; color: #475569;">Référence : <span style="color: #0f172a; font-weight: 900;">${chantier}</span></p>
+                <p style="font-size: 12px; color: #64748b; margin-top: 4px;">Date : ${date}</p>
             </div>
         </div>
 
-        <div style="margin-bottom: 25px; background: #059669; padding: 14px 24px; border-radius: 0 0 10px 10px;">
-            <p style="font-size: 9px; text-transform: uppercase; font-weight: bold; color: rgba(255,255,255,0.7); letter-spacing: 1px;">${type === 'bdc' ? 'FOURNISSEUR' : 'DOCUMENT'}</p>
-            <h2 style="font-size: 20px; font-weight: 800; color: #ffffff; margin-top: 2px; text-transform: uppercase;">${type === 'bdc' ? title : (title === 'ALL' ? 'Toute la Référence' : 'Feuille de Débits')}</h2>
+        <div style="margin-bottom: 30px; background: #059669; padding: 16px 24px; border-radius: 8px; border-left: 6px solid #047857;">
+            <p style="font-size: 10px; text-transform: uppercase; font-weight: 900; color: rgba(255,255,255,0.7); letter-spacing: 1.5px; margin-bottom: 4px;">${type === 'bdc' ? 'FOURNISSEUR' : 'DOCUMENT'}</p>
+            <h2 style="font-size: 22px; font-weight: 900; color: #ffffff; text-transform: uppercase; letter-spacing: 0.5px;">${type === 'bdc' ? title : (title === 'ALL' ? 'Toute la Référence' : 'Feuille de Débits')}</h2>
         </div>
 
         ${contentHtml}
