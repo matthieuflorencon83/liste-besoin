@@ -686,37 +686,6 @@ window.onNeedDrop = function (e, targetIndex) {
     window.renderNeeds();
 };
 
-// ============================================================
-// EXPORT CSV DES BESOINS (compatible Excel FR)
-// ============================================================
-window.exportNeedsCSV = function () {
-    const needs = AppState.needs || [];
-    if (needs.length === 0) {
-        if (typeof showToast === 'function') showToast('Aucun besoin à exporter', 'red');
-        return;
-    }
-    const headers = ['Référence', 'Désignation', 'Fournisseur', 'Longueur', 'Besoin', 'Stock', 'PU HT', 'Total HT', 'RAL', 'Finition', 'Note'];
-    const rows = needs.map(n => {
-        const pu = parseFloat(n.pu || n.price || 0);
-        const besoin = parseInt(n.besoin || n.quantity || 0);
-        const total = (pu * besoin).toFixed(2);
-        return [
-            n.ref || '', n.designation || '', n.fournisseur || '',
-            n.longueur || '', besoin, n.stock || 0, pu.toFixed(2), total,
-            n.ral || '', n.finition || '', (n.note || '').replace(/[\r\n]+/g, ' ')
-        ].map(v => `"${v}"`).join(';');
-    });
-    const csv = '\uFEFF' + headers.join(';') + '\n' + rows.join('\n');
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    const chantier = localStorage.getItem('art-chantier') || 'besoins';
-    a.href = url;
-    a.download = `${chantier.replace(/[^a-zA-Z0-9]/g, '_')}_besoins.csv`;
-    a.click();
-    URL.revokeObjectURL(url);
-    if (typeof showToast === 'function') showToast(`${needs.length} besoins exportés en CSV`, 'green');
-};
 
 // Fin ui.js
 
