@@ -652,7 +652,29 @@ if (window.fSerie) window.fSerie.addEventListener('change', (e) => applyFilters(
 const _resetBtn = document.getElementById('resetFilters');
 if (_resetBtn) _resetBtn.addEventListener('click', () => { window.fFour.value = ""; window.fType.value = ""; window.fSerie.value = ""; window.searchInput.value = ""; applyFilters(); });
 const _favBtn = document.getElementById('toggleFavFilter');
-if (_favBtn) _favBtn.addEventListener('click', () => { window.showOnlyFavs = !window.showOnlyFavs; _favBtn.classList.toggle('active', window.showOnlyFavs); applyFilters(); });
+if (_favBtn) _favBtn.addEventListener('click', () => {
+    window.showOnlyFavs = !window.showOnlyFavs;
+
+    // Modification dynamique des couleurs du bouton au clic
+    const favText = _favBtn.querySelector('span');
+    const favIcon = _favBtn.querySelector('i');
+
+    if (window.showOnlyFavs) {
+        _favBtn.classList.add('!bg-amber-500', '!border-amber-500', 'shadow-lg', 'shadow-amber-500/20');
+        _favBtn.classList.remove('!bg-[var(--card)]', '!border-[var(--border)]');
+        favText.classList.add('text-white');
+        favIcon.classList.remove('text-amber-400');
+        favIcon.classList.add('text-white');
+    } else {
+        _favBtn.classList.remove('!bg-amber-500', '!border-amber-500', 'shadow-lg', 'shadow-amber-500/20');
+        _favBtn.classList.add('!bg-[var(--card)]', '!border-[var(--border)]');
+        favText.classList.remove('text-white');
+        favIcon.classList.remove('text-white');
+        favIcon.classList.add('text-amber-400');
+    }
+
+    applyFilters();
+});
 const _modeToggle = document.getElementById('modeToggle');
 if (_modeToggle) _modeToggle.addEventListener('click', () => {
     window.isDarkMode = !window.isDarkMode;
