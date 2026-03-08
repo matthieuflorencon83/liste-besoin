@@ -251,8 +251,8 @@ input:focus {
     max-height: 100%;
     object-fit: contain;
     transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
-    /* Inversion pour transformer les silhouettes noires/grises en fond blanc / traits foncés */
-    filter: invert(1) grayscale(1) contrast(3) brightness(1.2);
+    /* Inversion pour transformer les silhouettes noires/grises en fond clair / traits foncés avec un contraste modéré */
+    filter: invert(1) grayscale(1) contrast(1.5) brightness(1.1);
 }
 
 .item-card:hover .img-container img {
