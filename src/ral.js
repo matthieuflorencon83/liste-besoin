@@ -48,14 +48,23 @@ function updateRalModeUI() {
 
         if (count > 0) {
             // Mode: Apply
-            btn.className = "flex items-center gap-2 px-6 py-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-bold transition-all border border-indigo-600 shadow-sm shadow-indigo-500/20";
+            btn.className = "action-btn flex items-center px-4 h-10 w-auto rounded-2xl gap-2 !bg-indigo-600 border !border-indigo-600 hover:!bg-indigo-500 shadow-lg shadow-indigo-500/20 text-white";
             btnText.textContent = `APPLIQUER (${count})`;
+            btnText.className = "text-[10px] font-black uppercase tracking-widest text-white";
 
             // Allow clicking to Apply
         } else {
             // Mode: Active but empty (Cancel option)
-            btn.className = "flex items-center gap-2 px-6 py-3 bg-zinc-700 hover:bg-zinc-600 text-zinc-300 rounded-lg text-xs font-bold transition-all border border-zinc-600 shadow-sm";
+            btn.className = "action-btn flex items-center px-4 h-10 w-auto rounded-2xl gap-2 !bg-zinc-700 border !border-zinc-600 hover:!bg-zinc-600 shadow-sm text-zinc-300";
             btnText.textContent = "ANNULER";
+            btnText.className = "text-[10px] font-black uppercase tracking-widest text-zinc-300";
+        }
+
+        // Make icon white when active
+        const icon = btn.querySelector('svg') || btn.querySelector('i');
+        if (icon) {
+            icon.classList.remove('text-purple-600', 'text-[var(--text-main)]');
+            icon.classList.add('text-white');
         }
 
         // Show Select All Checkbox header
@@ -65,15 +74,16 @@ function updateRalModeUI() {
         }
 
     } else {
-        // Mode: Default (Inactive)
-        btn.className = "flex items-center gap-2 px-6 py-3 bg-white hover:bg-zinc-50 text-zinc-900 rounded-lg text-xs font-bold transition-all border border-zinc-200 shadow-sm";
+        // Mode: Default (Inactive) - EN VIOLET
+        btn.className = "action-btn flex items-center px-4 h-10 w-auto rounded-2xl gap-2 !bg-purple-600 border !border-purple-600 hover:!bg-purple-500 shadow-lg shadow-purple-500/20 text-white";
         btnText.textContent = "FINITIONS";
+        btnText.className = "text-[10px] font-black uppercase tracking-widest text-white";
 
-        // Ensure icon is purple
+        // Ensure icon is white
         const icon = btn.querySelector('svg') || btn.querySelector('i');
         if (icon) {
-            icon.classList.remove('text-white', 'text-zinc-300');
-            icon.classList.add('text-purple-600');
+            icon.classList.remove('text-purple-600', 'text-zinc-300', 'text-[var(--text-main)]');
+            icon.classList.add('text-white');
         }
 
         // Hide Select All Checkbox header
