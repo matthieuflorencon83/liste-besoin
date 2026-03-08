@@ -216,17 +216,24 @@ window.renderNeeds = function () {
             ? 'opacity-100'
             : 'opacity-0 pointer-events-none';
 
+        // Check if reordering is allowed
+        const canReorder = !searchQ && !sortCol;
+        const dragAttrs = canReorder
+            ? `draggable="true" ondragstart="window.onNeedDragStart(event, ${realIndex})" ondragover="window.onNeedDragOver(event)" ondragend="window.onNeedDragEnd(event)" ondrop="window.onNeedDrop(event, ${realIndex})"`
+            : '';
+
         return `
         <tr onclick="window.handleRowClick(event, ${realIndex})" 
-            draggable="true"
-            ondragstart="window.onNeedDragStart(event, ${realIndex})"
-            ondragover="window.onNeedDragOver(event)"
-            ondragend="window.onNeedDragEnd(event)"
-            ondrop="window.onNeedDrop(event, ${realIndex})"
-            class="group transition-all cursor-grab active:cursor-grabbing ${rowBg} border-l-2 ${borderLeft}">
+            ${dragAttrs}
+            class="group transition-all ${canReorder ? 'cursor-grab active:cursor-grabbing draggable-row' : ''} ${rowBg} border-l-2 ${borderLeft}">
 
             <!-- # (numéro de ligne) -->
-            <td class="p-2 w-8 text-center text-[10px] font-black text-[var(--text-muted)] select-none">${index + 1}</td>
+            <td class="p-2 w-8 text-center text-[10px] font-black text-[var(--text-muted)] select-none">
+                <div class="flex items-center justify-center gap-1">
+                    ${canReorder ? '<i data-lucide="grip-vertical" class="w-3 h-3 text-zinc-300 opacity-0 group-hover:opacity-100 transition-opacity"></i>' : ''}
+                    <span>${index + 1}</span>
+                </div>
+            </td>
             
             <!-- CHECKBOX -->
             <td class="text-center p-2 w-12 transition-opacity ${checkboxCellClass}">
@@ -675,12 +682,16 @@ window.onNeedDragEnd = function (e) {
 
 window.onNeedDrop = function (e, targetIndex) {
     e.preventDefault();
+    document.querySelectorAll('#needsTableBody tr.drag-over').forEach(r => r.classList.remove('drag-over', 'border-t-2', 'border-t-indigo-500'));
+
     if (_draggedIndex === null || _draggedIndex === targetIndex) return;
 
     // Réordonner
     const item = AppState.needs.splice(_draggedIndex, 1)[0];
     AppState.needs.splice(targetIndex, 0, item);
-    localStorage.setItem('art-needs', JSON.stringify(AppState.needs));
+
+    // Save state
+    window.saveState();
 
     _draggedIndex = null;
     window.renderNeeds();

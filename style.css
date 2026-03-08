@@ -623,3 +623,25 @@ h3 {
         break-inside: avoid;
     }
 }
+
+/* DRAG & DROP STYLES */
+.draggable-row {
+    cursor: grab;
+}
+
+.draggable-row:active {
+    cursor: grabbing;
+}
+
+.dragging {
+    opacity: 0.4;
+    background-color: var(--indigo-soft) !important;
+}
+
+.drag-over-top {
+    border-top: 2px solid var(--indigo) !important;
+}
+
+.drag-over-bottom {
+    border-bottom: 2px solid var(--indigo) !important;
+}
