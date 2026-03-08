@@ -578,6 +578,8 @@ window.switchView = (v) => {
     document.getElementById('needsToolbar').classList.toggle('hidden', v !== 'needs');
     const actionsDrop = document.getElementById('actionsDropdown');
     if (actionsDrop) actionsDrop.classList.toggle('hidden', v !== 'needs');
+    const refContainer = document.getElementById('chantierRefContainer');
+    if (refContainer) refContainer.classList.toggle('hidden', v !== 'needs');
     if (v === 'needs') window.renderNeeds();
 };
 

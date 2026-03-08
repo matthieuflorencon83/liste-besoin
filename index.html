@@ -120,6 +120,15 @@
                             class="hidden ml-2 inline-flex items-center justify-center bg-indigo-500 text-white text-[9px] font-black rounded-full w-5 h-5">0</span>
                     </button>
 
+                    <!-- Bouton Favoris (Déplacé) -->
+                    <button id="toggleFavFilter"
+                        class="action-btn relative h-10 w-auto px-5 gap-3 rounded-2xl ml-2 !bg-[var(--card)] border !border-[var(--border)] hover:!bg-[var(--card-hover)]">
+                        <i data-lucide="star" class="w-4 h-4 text-amber-400"></i>
+                        <span class="text-[10px] font-black uppercase tracking-widest">Favoris</span>
+                        <span id="favCountBadge"
+                            class="hidden absolute -top-1.5 -right-1.5 bg-red-500 text-[9px] w-5 h-5 flex items-center justify-center rounded-full text-white font-black border-2 border-[#050507]">0</span>
+                    </button>
+
                     <!-- MENU DÉROULANT COMPLET DES ACTIONS (affiché selon la vue via JS) -->
                     <div class="relative group hidden ml-2" id="actionsDropdown">
                         <input type="file" id="projectFileInput" accept=".json" class="hidden"
@@ -186,6 +195,20 @@
                             <div id="projectHistoryList"></div>
                         </div>
                     </div>
+
+                    <!-- Reference Chantier (Déplacée à gauche) -->
+                    <div class="relative group hidden ml-4" id="chantierRefContainer">
+                        <label
+                            class="absolute -top-6 left-0 text-[10px] font-black text-[var(--indigo)] uppercase tracking-[0.2em] opacity-0 group-focus-within:opacity-100 transition-opacity">RÉFÉRENCE
+                            CHANTIER</label>
+                        <div
+                            class="flex items-center bg-[var(--card)] border border-[var(--border)] hover:border-[var(--indigo)]/50 rounded-2xl px-4 h-10 transition-all focus-within:border-[var(--indigo)] focus-within:ring-4 focus-within:ring-[var(--indigo)]/10">
+                            <i data-lucide="map-pin" class="w-4 h-4 text-[var(--indigo)] mr-3"></i>
+                            <input type="text" id="chantierRef" placeholder="Réf. Chantier..."
+                                class="bg-transparent !border-0 !p-0 text-sm font-bold text-[var(--text-main)] placeholder:text-[var(--text-muted)] focus:ring-0 min-w-[200px]"
+                                oninput="window.saveChantier(this.value)">
+                        </div>
+                    </div>
                 </nav>
             </div>
 
@@ -201,12 +224,7 @@
                         title="Liste"><i data-lucide="layout-list" class="w-4 h-4"></i></button>
                 </div>
                 <!-- Bouton Calpinage supprimé d'ici car il est dans la vue Besoins -->
-                <button id="toggleFavFilter" class="action-btn relative h-10 w-auto px-5 gap-3 rounded-2xl">
-                    <i data-lucide="star" class="w-4 h-4"></i>
-                    <span class="text-[10px] font-black uppercase tracking-widest">Favoris</span>
-                    <span id="favCountBadge"
-                        class="hidden absolute -top-1.5 -right-1.5 bg-red-500 text-[9px] w-5 h-5 flex items-center justify-center rounded-full text-white font-black border-2 border-[#050507]">0</span>
-                </button>
+                <!-- Bouton Favoris a été déplacé dans la navigation principale -->
                 <button onclick="window.toggleFS()" class="action-btn h-10 w-10 rounded-2xl"><i data-lucide="maximize"
                         class="w-5 h-5"></i></button>
                 <button id="modeToggle" class="action-btn h-10 w-10 rounded-2xl" title="Mode clair/sombre"><i
@@ -226,20 +244,7 @@
 
                 <div class="h-6 w-px bg-[var(--border)] mx-1"></div>
 
-                <!-- Reference Chantier (Remontée) -->
-                <div class="relative group">
-                    <label
-                        class="absolute -top-6 left-0 text-[10px] font-black text-[var(--indigo)] uppercase tracking-[0.2em] opacity-0 group-focus-within:opacity-100 transition-opacity">RÉFÉRENCE
-                        CHANTIER</label>
-                    <div
-                        class="flex items-center bg-[var(--card)] border border-[var(--border)] hover:border-[var(--indigo)]/50 rounded-2xl px-4 h-10 transition-all focus-within:border-[var(--indigo)] focus-within:ring-4 focus-within:ring-[var(--indigo)]/10">
-                        <i data-lucide="map-pin" class="w-4 h-4 text-[var(--indigo)] mr-3"></i>
-                        <input type="text" id="chantierRef" placeholder="Réf. Chantier..."
-                            class="bg-transparent !border-0 !p-0 text-sm font-bold text-[var(--text-main)] placeholder:text-[var(--text-muted)] focus:ring-0 min-w-[200px]"
-                            oninput="window.saveChantier(this.value)">
-                    </div>
-                </div>
-
+                <!-- Reference Chantier a été déplacée dans le menu nav de gauche -->
                 <!-- Boutons d'action (Remontés) -->
                 <button id="ralModeBtn" onclick="window.toggleFinitionMode()"
                     class="action-btn flex items-center px-4 h-10 w-auto rounded-2xl gap-2 !bg-[var(--card)] border !border-[var(--border)] hover:!bg-[var(--card-hover)] shadow-sm">
@@ -847,14 +852,14 @@
     </div>
 
     <!-- Scripts classiques (ordre important) -->
-    <script src="src/store.js?v=148"></script>
-    <script src="src/state.js?v=148"></script>
-    <script src="src/calpinage.js?v=148"></script>
-    <script src="src/export.js?v=148"></script>
-    <script src="src/modals.js?v=148"></script>
-    <script src="src/ral.js?v=148"></script>
-    <script src="src/ui.js?v=148"></script>
-    <script type="module" src="src/main.js?v=148"></script>
+    <script src="src/store.js?v=150"></script>
+    <script src="src/state.js?v=150"></script>
+    <script src="src/calpinage.js?v=150"></script>
+    <script src="src/export.js?v=150"></script>
+    <script src="src/modals.js?v=150"></script>
+    <script src="src/ral.js?v=150"></script>
+    <script src="src/ui.js?v=150"></script>
+    <script type="module" src="src/main.js?v=150"></script>
     <script>
         // Inscription (Registration) du Service Worker
         if ('serviceWorker' in navigator) {
