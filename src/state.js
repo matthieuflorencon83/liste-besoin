@@ -580,6 +580,11 @@ window.switchView = (v) => {
     if (actionsDrop) actionsDrop.classList.toggle('hidden', v !== 'needs');
     const refContainer = document.getElementById('chantierRefContainer');
     if (refContainer) refContainer.classList.toggle('hidden', v !== 'needs');
+
+    // Le bouton Favoris ne s'affiche que dans le catalogue
+    const favBtn = document.getElementById('toggleFavFilter');
+    if (favBtn) favBtn.classList.toggle('hidden', v !== 'catalogue');
+
     if (v === 'needs') window.renderNeeds();
 };
 
