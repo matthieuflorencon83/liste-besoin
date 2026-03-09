@@ -467,10 +467,42 @@ window.initScrollObserver = function () {
 
 window.toggleF = (e, id) => {
     if (window.isCatalogEditMode) return;
-    e.stopPropagation(); const i = AppState.favorites.indexOf(id);
-    if (i > -1) AppState.favorites.splice(i, 1); else AppState.favorites.push(id);
+    e.stopPropagation(); 
+    
+    const i = AppState.favorites.indexOf(id);
+    const isNowFav = i === -1;
+    
+    if (isNowFav) {
+        AppState.favorites.push(id);
+    } else {
+        AppState.favorites.splice(i, 1);
+    }
+    
     localStorage.setItem('art-favs', JSON.stringify(AppState.favorites));
-    updateFavCount(); if (window.showOnlyFavs) applyFilters(); else render();
+    updateFavCount(); 
+    
+    // Update DOM directly to preserve scroll position
+    const btn = e.currentTarget;
+    if (btn) {
+        btn.classList.toggle('active', isNowFav);
+        const icon = btn.querySelector('i');
+        if (icon) icon.classList.toggle('fill-current', isNowFav);
+        
+        // Hide the card completely if we are filtering by favorites and we just removed it
+        if (window.showOnlyFavs && !isNowFav) {
+            const card = btn.closest('.item-card');
+            if (card) {
+                // Remove from filteredData to sync state
+                const idx = AppState.filteredData.findIndex(item => {
+                    return `${item.reference}_${item.fournisseur || item.fabricant || ''}`.toLowerCase() === id;
+                });
+                if (idx > -1) AppState.filteredData.splice(idx, 1);
+                
+                card.remove(); // Direct DOM removal
+                document.getElementById('matchCount').textContent = AppState.filteredData.length;
+            }
+        }
+    }
 };
 
 window.toggleN = (e, id, idx) => {
@@ -651,30 +683,35 @@ if (window.fType) window.fType.addEventListener('change', (e) => applyFilters(e.
 if (window.fSerie) window.fSerie.addEventListener('change', (e) => applyFilters(e.target));
 const _resetBtn = document.getElementById('resetFilters');
 if (_resetBtn) _resetBtn.addEventListener('click', () => { window.fFour.value = ""; window.fType.value = ""; window.fSerie.value = ""; window.searchInput.value = ""; applyFilters(); });
-const _favBtn = document.getElementById('toggleFavFilter');
-if (_favBtn) _favBtn.addEventListener('click', () => {
+window.toggleFavFilter = () => {
     window.showOnlyFavs = !window.showOnlyFavs;
 
-    // Modification dynamique des couleurs du bouton au clic
-    const favText = _favBtn.querySelector('span');
-    const favIcon = _favBtn.querySelector('i');
+    const _favBtn = document.getElementById('toggleFavFilter');
+    if (_favBtn) {
+        const favText = _favBtn.querySelector('span');
+        const favIcon = _favBtn.querySelector('i') || _favBtn.querySelector('svg');
 
-    if (window.showOnlyFavs) {
-        _favBtn.classList.add('!bg-amber-500', '!border-amber-500', 'shadow-lg', 'shadow-amber-500/20');
-        _favBtn.classList.remove('!bg-[var(--card)]', '!border-[var(--border)]');
-        favText.classList.add('text-white');
-        favIcon.classList.remove('text-amber-400');
-        favIcon.classList.add('text-white');
-    } else {
-        _favBtn.classList.remove('!bg-amber-500', '!border-amber-500', 'shadow-lg', 'shadow-amber-500/20');
-        _favBtn.classList.add('!bg-[var(--card)]', '!border-[var(--border)]');
-        favText.classList.remove('text-white');
-        favIcon.classList.remove('text-white');
-        favIcon.classList.add('text-amber-400');
+        if (window.showOnlyFavs) {
+            _favBtn.classList.add('!bg-amber-500', '!border-amber-500', 'shadow-lg', 'shadow-amber-500/20');
+            _favBtn.classList.remove('!bg-[var(--card)]', '!border-[var(--border)]');
+            if (favText) favText.classList.add('text-white');
+            if (favIcon) {
+                favIcon.classList.remove('text-amber-400');
+                favIcon.classList.add('text-white');
+            }
+        } else {
+            _favBtn.classList.remove('!bg-amber-500', '!border-amber-500', 'shadow-lg', 'shadow-amber-500/20');
+            _favBtn.classList.add('!bg-[var(--card)]', '!border-[var(--border)]');
+            if (favText) favText.classList.remove('text-white');
+            if (favIcon) {
+                favIcon.classList.remove('text-white');
+                favIcon.classList.add('text-amber-400');
+            }
+        }
     }
-
     applyFilters();
-});
+};
+
 const _modeToggle = document.getElementById('modeToggle');
 if (_modeToggle) _modeToggle.addEventListener('click', () => {
     window.isDarkMode = !window.isDarkMode;
